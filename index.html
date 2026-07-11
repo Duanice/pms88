@@ -233,12 +233,6 @@ body{
 <script>
 /* ================= STATE ================= */
 const TODAY = "2025-07-11";
-const LS_KEY = "jielv_state_v2";
-
-function loadState(){
-  try{ const s = JSON.parse(localStorage.getItem(LS_KEY)); if(s) return s; }catch(e){}
-  return null;
-}
 /* ===== 历史数据库：按日期编入过往记录 =====
    周期模型：上次月经 6/18 起，周期 28 天 → 卵泡期平稳、7/2 排卵、之后进入黄体期，
    越靠近下次月经(7/16) PMS 症状越明显。今天 7/11 = 黄体后期，PMS 高发。 */
@@ -292,10 +286,27 @@ const seed = {
   calMonth:6, // July (0-indexed)
   calYear:2025,
 };
-let S = loadState() || JSON.parse(JSON.stringify(seed));
-// ensure today's timeline exists
-if(!S.timeline[TODAY]) S.timeline[TODAY]=[];
-function save(){ localStorage.setItem(LS_KEY, JSON.stringify(S)); }
+let S = {};
+window.AUTH = false;
+let _syncT=null;
+function save(){ if(!window.AUTH) return; clearTimeout(_syncT); _syncT=setTimeout(()=>{ api('PUT','/api/state',{state:collectState()}).catch(e=>console.warn('sync',e.message)); },400); }
+function collectState(){ return { nickname:S.nickname, cycle:S.cycle, tasks:S.tasks, rewards:S.rewards, points:S.points, chat:S.chat, ai:S.ai }; }
+async function api(method,url,body){
+  const r=await fetch(url,{method,headers:{'content-type':'application/json'},credentials:'include',body:body?JSON.stringify(body):undefined});
+  if(!r.ok){ let t=''; try{t=await r.text()}catch(e){} throw new Error(t||('HTTP '+r.status)); }
+  return r.status===204?null:r.json();
+}
+function applyServerData(data){
+  const st=data.state||{};
+  const timeline={};
+  (data.entries||[]).forEach(e=>{ (timeline[e.date]=timeline[e.date]||[]).push({cat:e.cat,icon:e.icon,label:e.label,ind:e.ind,time:e.time}); });
+  if(!timeline[TODAY]) timeline[TODAY]=[];
+  S={ tab:(S&&S.tab)||'home', selectedMoods:[], draft:'', timeline, briefs:{},
+      cycle:st.cycle||{last:'2025-06-18',avgLen:28,periodLen:5,conf:'低'},
+      chat:st.chat||[], nickname:st.nickname||'小X', goalTab:'today',
+      tasks:st.tasks||[], rewards:st.rewards||[], points:st.points||0,
+      calMonth:6, calYear:2025, ai:st.ai||{}, user:data.user };
+}
 
 /* ================= MASCOT (SVG placeholder for 桃子IP) ================= */
 function mascot(size=120, mood="star"){
@@ -437,8 +448,8 @@ function topBar(){
 
 /* ================= AI (Claude / Anthropic) ================= */
 const AI = {
-  cfg(){ try{ return JSON.parse(localStorage.getItem('jielv_ai')||'{}'); }catch(e){ return {}; } },
-  saveCfg(c){ localStorage.setItem('jielv_ai', JSON.stringify(c)); },
+  cfg(){ return (typeof S!=='undefined' && S && S.ai) ? S.ai : {}; },
+  saveCfg(c){ S.ai=c; save(); },
   on(){ const c=this.cfg(); return !!(c.enabled && c.key); },
   async call(system, userContent, {json=false, maxTokens=1024}={}){
     const c=this.cfg();
@@ -517,7 +528,8 @@ function openSettings(){
     <div style="font-size:12px;color:var(--gray2);margin-bottom:16px">默认 claude-opus-4-8；想更快更省可填 claude-haiku-4-5。</div>
     <div id="ai_status" style="font-size:13px;min-height:18px;margin-bottom:10px"></div>
     <div class="row" style="display:flex;gap:10px"><button class="ghost" onclick="testAI()">测试连接</button><button class="fill" onclick="saveSettings(this)">保存</button></div>
-    <button class="close-btn" style="background:none;color:var(--gray);box-shadow:none;margin-top:8px" onclick="this.closest('.overlay').remove()">关闭</button>
+    <button class="close-btn" style="background:none;color:#e03131;box-shadow:none;margin-top:12px;border:1px solid #ffc9c9" onclick="doLogout()">退出登录${(typeof S!=='undefined'&&S.user)?'（'+S.user.username+'）':''}</button>
+    <button class="close-btn" style="background:none;color:var(--gray);box-shadow:none;margin-top:6px" onclick="this.closest('.overlay').remove()">关闭</button>
   </div>`;
   document.querySelector('.screen').appendChild(ov);
 }
@@ -594,6 +606,7 @@ function viewHome(){
     <div class="card-title"><span class="ic">🕐</span> 今日时间线</div>
     ${today.map(e=>`<div class="tl-item"><div class="tl-dot">${e.icon}</div><div><div class="t">${e.time} · ${e.ind}</div><div class="c">${e.label}</div></div></div>`).join("")}
     <button class="send-btn" style="margin-top:14px" onclick="openBrief('${TODAY}')">✨ 生成今日简报</button>
+    <div style="text-align:center;margin-top:10px"><span onclick="clearToday()" style="font-size:12px;color:var(--gray2);cursor:pointer">清除今天的记录</span></div>
   </div>`:""}
 
   <div class="banner"><span style="font-size:26px">✨</span><div><h3>你的规律只属于你自己</h3><p>我们寻找趋势，不轻易贴标签</p></div><span class="fl">🌸</span></div>
@@ -637,9 +650,11 @@ function submitRecord(){
 function clearRecog(){ document.getElementById('recogArea').innerHTML=""; }
 function confirmRecord(){
   const p=window._pending; if(!p)return;
-  const now = new Date(); const time = "09:41";
+  const now=new Date(); const time=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  const evs=p.events.map(e=>({cat:e.cat,icon:e.icon,label:e.label,ind:e.ind,time}));
   if(!S.timeline[TODAY]) S.timeline[TODAY]=[];
-  p.events.forEach(e=> S.timeline[TODAY].push({...e, time}));
+  evs.forEach(e=>S.timeline[TODAY].push(e));
+  api('POST','/api/entries',{date:TODAY,events:evs}).catch(e=>console.warn('save entries',e.message));
   S.draft=""; S.selectedMoods=[]; window._pending=null;
   save(); render();
   toast("✓ 已保存到你的时间线");
@@ -649,6 +664,10 @@ function confirmRecord(){
   } else {
     setTimeout(()=> openBrief(TODAY), 700);
   }
+}
+function clearToday(){
+  api('DELETE','/api/entries?date='+TODAY).then(()=>{ S.timeline[TODAY]=[]; render(); toast('已清除今天的记录'); })
+    .catch(e=>toast('清除失败：'+e.message));
 }
 function nudgeDialogue(inds){
   const missing=ALL_INDS.filter(i=>!inds.includes(i));
@@ -990,8 +1009,52 @@ function renderTabs(){
     </div>`).join("");
 }
 
+/* ============ AUTH (注册/登录) ============ */
+function viewAuth(){
+  const mode=window._authMode||'login';
+  return `
+  <div style="padding:34px 6px 6px;text-align:center">
+    <div>${mascot(130)}</div>
+    <div class="logo" style="font-size:34px;margin-top:2px">节律<span class="sp">✦</span></div>
+    <div class="sub" style="margin:8px 0 22px">温柔地陪你走过每一个周期</div>
+  </div>
+  <div class="card" style="margin:0 6px">
+    <div class="seg" style="margin-bottom:18px">
+      <button type="button" class="${mode==='login'?'on':''}" onclick="setAuthMode('login')">登录</button>
+      <button type="button" class="${mode==='register'?'on':''}" onclick="setAuthMode('register')">注册</button>
+    </div>
+    <div style="font-size:13px;color:var(--gray);margin:0 0 4px">用户名</div>
+    <input id="au_user" autocomplete="username" placeholder="给自己起个名字" style="width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;font-size:15px;margin-bottom:12px;font-family:inherit">
+    <div style="font-size:13px;color:var(--gray);margin:0 0 4px">密码</div>
+    <input id="au_pass" type="password" autocomplete="${mode==='login'?'current-password':'new-password'}" placeholder="至少 4 位" onkeydown="if(event.key==='Enter')doAuth()" style="width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;font-size:15px;margin-bottom:6px;font-family:inherit">
+    <div id="au_err" style="font-size:13px;color:#e03131;min-height:18px;margin:2px 0 8px"></div>
+    <button class="send-btn" onclick="doAuth()">${mode==='login'?'登录':'注册并进入'}</button>
+    <div style="text-align:center;font-size:12px;color:var(--gray2);margin-top:14px">🔒 数据存储在 SQLite 数据库中，非本地缓存</div>
+  </div>`;
+}
+function setAuthMode(m){ window._authMode=m; render(); }
+async function doAuth(){
+  const u=document.getElementById('au_user').value.trim();
+  const p=document.getElementById('au_pass').value;
+  const err=document.getElementById('au_err');
+  if(u.length<2){ err.style.color='#e03131'; err.textContent='用户名至少 2 位'; return; }
+  if(p.length<4){ err.style.color='#e03131'; err.textContent='密码至少 4 位'; return; }
+  const mode=window._authMode||'login';
+  err.style.color='var(--blue)'; err.textContent='请稍候…';
+  try{
+    const data=await api('POST', mode==='login'?'/api/login':'/api/register', {username:u,password:p});
+    applyServerData(data); window.AUTH=true; S.tab='home'; render();
+  }catch(e){ err.style.color='#e03131'; err.textContent=cleanErr(e.message); }
+}
+function cleanErr(m){ try{ return (JSON.parse(m).error)||m; }catch(e){ return m; } }
+function doLogout(){
+  const ov=document.querySelector('.overlay'); if(ov) ov.remove();
+  api('POST','/api/logout').catch(()=>{}).finally(()=>{ window.AUTH=false; S={}; window._authMode='login'; render(); });
+}
+
 /* ============ MAIN RENDER ============ */
 function render(){
+  if(!window.AUTH){ $body.innerHTML=viewAuth(); document.getElementById('tabbar').innerHTML=''; return; }
   const v={home:viewHome,cycle:viewCycle,support:viewSupport,goals:viewGoals,insights:viewInsights,science:viewScience}[S.tab]||viewHome;
   $body.innerHTML=v();
   renderTabs();
@@ -999,7 +1062,12 @@ function render(){
   const d=document.getElementById('draft'); if(d){ d.addEventListener('input',e=>{S.draft=e.target.value;}); }
   if(S.tab==="support") scrollChat();
 }
-render();
+async function boot(){
+  try{ const data=await api('GET','/api/me'); applyServerData(data); window.AUTH=true; }
+  catch(e){ window.AUTH=false; }
+  render();
+}
+boot();
 window.go=go;window.toggleMood=toggleMood;window.demoFill=demoFill;window.submitRecord=submitRecord;window.clearRecog=clearRecog;window.confirmRecord=confirmRecord;window.openBrief=openBrief;window.sendChat=sendChat;window.quickReply=quickReply;window.chatBtn=chatBtn;window.toggleTask=toggleTask;window.acceptTask=acceptTask;window.claim=claim;window.calMove=calMove;window.dayTap=dayTap;
 </script>
 </body>
