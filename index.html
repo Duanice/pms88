@@ -233,25 +233,50 @@ body{
 <script>
 /* ================= STATE ================= */
 const TODAY = "2025-07-11";
-const LS_KEY = "jielv_state_v1";
+const LS_KEY = "jielv_state_v2";
 
 function loadState(){
   try{ const s = JSON.parse(localStorage.getItem(LS_KEY)); if(s) return s; }catch(e){}
   return null;
 }
+/* ===== 历史数据库：按日期编入过往记录 =====
+   周期模型：上次月经 6/18 起，周期 28 天 → 卵泡期平稳、7/2 排卵、之后进入黄体期，
+   越靠近下次月经(7/16) PMS 症状越明显。今天 7/11 = 黄体后期，PMS 高发。 */
+function seedHistory(){
+  const E=(cat,icon,label,ind,time)=>({cat,icon,label,ind,time});
+  return {
+    // —— 月经期（6/18–6/22）——
+    "2025-06-18":[E("physical","🤕","身体不适","生活事件","09:20")],
+    "2025-06-19":[E("energy","🪫","精力低","精力","10:05"),E("physical","🤕","痛经","生活事件","21:30")],
+    "2025-06-20":[E("mood","😢","情绪低落","情绪","14:10")],
+    // —— 卵泡期（平静、有劲）——
+    "2025-06-24":[E("sleep","😴","睡眠良好","睡眠","08:00")],
+    "2025-06-26":[E("mood","😌","情绪平稳","情绪","12:00")],
+    "2025-06-28":[E("bowel","🚽","已排便","排便","08:30"),E("mood","😌","情绪平稳","情绪","19:00")],
+    "2025-06-30":[E("sleep","😴","睡眠良好","睡眠","07:40"),E("energy","💪","精力充沛","精力","11:00")],
+    // —— 排卵前后（7/2）——
+    "2025-07-02":[E("mood","😌","情绪平稳","情绪","13:00")],
+    // —— 黄体期，PMS 逐渐加重 ——
+    "2025-07-03":[E("energy","🪫","精力低","精力","16:20")],
+    "2025-07-04":[E("mood","😢","情绪低落","情绪","20:10"),E("craving","🍰","想吃甜食","情绪","21:00")],
+    "2025-07-05":[E("mood","😰","焦虑","情绪","09:50"),E("sleep","🌙","睡眠不佳","睡眠","23:40")],
+    "2025-07-06":[E("mood","😮‍💨","情绪烦躁","情绪","15:30"),E("skin","🌵","皮肤状态变化","皮肤","08:15")],
+    "2025-07-07":[E("bowel","🚽","便秘","排便","08:20"),E("energy","🪫","精力低","精力","17:00")],
+    "2025-07-08":[E("relationship","💔","伴侣冲突","生活事件","21:15"),E("mood","😢","情绪低落","情绪","22:00")],
+    "2025-07-09":[E("mood","😰","焦虑","情绪","10:30"),E("sleep","🌙","睡眠不佳","睡眠","23:50"),E("craving","🍰","想吃甜食","情绪","16:40")],
+    "2025-07-10":[E("bowel","🚽","排便偏硬","排便","08:10"),E("physical","👀","眼睛酸涩","生活事件","14:00"),E("mood","😮‍💨","情绪烦躁","情绪","18:30"),E("energy","🪫","精力低 / 低动力","精力","20:00")],
+    "2025-07-11":[]
+  };
+}
 const seed = {
   tab:"home",
   selectedMoods:[],
   draft:"",
-  timeline:{
-    // date -> [events]
-    "2025-07-11":[]
-  },
+  timeline: seedHistory(),
   briefs:{},
-  cycle:{ last:"2025-07-02", nextPred:"2025-07-30", avgLen:29, conf:"低" },
-  chat:[
-    {role:"me", text:"我今天特别烦躁，也很累，差点对伴侣发火。"},
-  ],
+  cycle:{ last:"2025-06-18", avgLen:28, periodLen:5, conf:"低" },
+  chat:[],
+  nickname:"小X",
   goalTab:"today",
   tasks:[
     {id:1, name:"出去慢走 10 分钟", done:1, total:1, status:"已完成"},
@@ -360,6 +385,28 @@ function cyclePhase(){
   else {phase="黄体期"; emoji="🌗";}
   return {d, toNext, prog, phase, emoji};
 }
+/* 由周期模型算出某个月的经期/易孕期/排卵日标记 */
+function cycleMarks(year, month){
+  const period=new Set(), fertile=new Set(), ovul=new Set();
+  const base=new Date(S.cycle.last), len=S.cycle.avgLen, plen=S.cycle.periodLen||5;
+  for(let k=-4;k<=4;k++){
+    const start=new Date(base); start.setDate(start.getDate()+k*len);
+    for(let i=0;i<plen;i++){ const d=new Date(start); d.setDate(d.getDate()+i); if(d.getFullYear()===year&&d.getMonth()===month) period.add(d.getDate()); }
+    const ov=new Date(start); ov.setDate(ov.getDate()+len-14);
+    if(ov.getFullYear()===year&&ov.getMonth()===month) ovul.add(ov.getDate());
+    for(let i=1;i<=5;i++){ const f=new Date(ov); f.setDate(f.getDate()-i); if(f.getFullYear()===year&&f.getMonth()===month) fertile.add(f.getDate()); }
+  }
+  return {period, fertile, ovul};
+}
+/* 最近一次月经开始 & 预计下次 */
+function periodDates(){
+  const base=new Date(S.cycle.last), len=S.cycle.avgLen, today=new Date(TODAY);
+  let last=new Date(base);
+  while(true){ const n=new Date(last); n.setDate(n.getDate()+len); if(n>today) break; last=n; }
+  const next=new Date(last); next.setDate(next.getDate()+len);
+  return {last, next};
+}
+function fmtMD(d){ return (d.getMonth()+1)+"月"+d.getDate()+"日"; }
 
 /* ================= RENDER HELPERS ================= */
 const $body = document.getElementById('body');
@@ -624,7 +671,24 @@ function startGuidedChat(haveInds){
   window._chatInds = new Set(haveInds||[]);
   window._guided=true;
 }
+function greetPrefix(){
+  const h=new Date().getHours();
+  if(h<5) return "夜深了";
+  if(h<11) return "早上好";
+  if(h<13) return "中午好";
+  if(h<18) return "下午好";
+  return "晚上好";
+}
+function ensureGreeting(){
+  if(S.chat.some(m=>m.greet)) return;
+  const name=S.nickname||"小X";
+  S.chat.unshift({role:"ai", greet:true,
+    text:`${greetPrefix()}，${name} ✨\n今天也要温柔地照顾自己。\n现在感觉怎么样呀？想说什么都可以——一句话、一个词，都行。`,
+    followBtns:["还挺烦的","有点累","还不错","不太想说"]});
+  save();
+}
 function viewSupport(){
+  ensureGreeting();
   return `
   ${topBar()}
   <div style="position:relative">
@@ -755,32 +819,35 @@ function viewCycle(){
   const first=new Date(y,m,1).getDay();
   const dim=new Date(y,m+1,0).getDate();
   const prevDim=new Date(y,m,0).getDate();
-  const period=[2,3,4,5,30], fertile=[8,9,10,11,12], ovul=[16];
+  const marks=cycleMarks(y,m);
+  const period=marks.period, fertile=marks.fertile, ovul=marks.ovul;
   let cells="";
   for(let i=0;i<first;i++) cells+=`<div class="day mute">${prevDim-first+1+i}</div>`;
   for(let d=1;d<=dim;d++){
     let cls="day";
-    if(period.includes(d))cls+=" period";
-    else if(fertile.includes(d))cls+=" fertile";
-    if(ovul.includes(d))cls+=" ovul";
+    if(period.has(d))cls+=" period";
+    else if(fertile.has(d))cls+=" fertile";
+    if(ovul.has(d))cls+=" ovul";
     const ds=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     if(ds===TODAY)cls+=" today";
     if(S.timeline[ds]&&S.timeline[ds].length)cls+=" has";
     cells+=`<div class="${cls}" onclick="dayTap('${ds}',${d})">${d}</div>`;
   }
   const total=first+dim; for(let i=1;i<=(7-total%7)%7;i++) cells+=`<div class="day mute">${i}</div>`;
+  const pd=periodDates(); const ph=cyclePhase();
   return `
   ${topBar()}
   <div style="position:relative"><div class="h1">周期</div><div class="sub">轻柔查看你的节律</div><div class="mascot" style="right:0;top:2px">${mascot(104)}</div></div>
+  <div class="phase-pill">${ph.emoji} 当前 · ${ph.phase} · 距月经约 ${ph.toNext} 天</div>
   <div class="card">
     <div class="cal-head"><button class="nav" onclick="calMove(-1)">‹</button><div class="m">${y}年${m+1}月</div><button class="nav" onclick="calMove(1)">›</button></div>
     <div class="grid">${["日","一","二","三","四","五","六"].map(w=>`<div class="wd">${w}</div>`).join("")}${cells}</div>
     <div class="legend"><div><i style="background:var(--pink)"></i>经期</div><div><i style="background:#c3ccf5"></i>易孕期</div><div><i style="background:var(--blue)"></i>排卵日</div></div>
   </div>
   <div class="card">
-    <div class="info-row"><div class="k">🩸 上次月经开始</div><div class="v">7月2日</div></div>
-    <div class="info-row"><div class="k">📅 预计下次月经</div><div class="v">7月30日</div></div>
-    <div class="info-row"><div class="k">🕐 平均周期</div><div class="v">29天</div></div>
+    <div class="info-row"><div class="k">🩸 上次月经开始</div><div class="v">${fmtMD(pd.last)}</div></div>
+    <div class="info-row"><div class="k">📅 预计下次月经</div><div class="v">${fmtMD(pd.next)}</div></div>
+    <div class="info-row"><div class="k">🕐 平均周期</div><div class="v">${S.cycle.avgLen}天</div></div>
     <div class="info-row"><div class="k">🛡️ 置信度</div><div class="v">${S.cycle.conf} ⓘ</div></div>
   </div>
   <div class="two-btn"><button onclick="toast('已标记：周期不太确定')">❓ 我不太确定</button><button onclick="toast('已标记：周期不规律')">〰️ 我的周期不规律</button></div>
