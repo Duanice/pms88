@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>蜜桃日记 · 注册后首次登录引导 v3</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root{
+    --bg-page:#EFE9F6;
+    --bg-cream:#FCF8F3;
+    --card:#FFFFFF;
+    --grad-peach:linear-gradient(135deg,#CBAFEA 0%,#F2B7D4 55%,#FBCBB0 100%);
+    --grad-peach-warm:linear-gradient(135deg,#F6B999 0%,#F2899B 55%,#E8698F 100%);
+    --grad-peach-calm:linear-gradient(135deg,#A9C9EE 0%,#C6AEE9 55%,#EAB6DD 100%);
+    --ink:#372B4A;
+    --ink-soft:#6F6182;
+    --ink-faint:#A79BB8;
+    --line:#EAE1F2;
+    --coral:#EF8C74;
+    --coral-deep:#E06B52;
+    --luteal:#F2A8C4;
+    --follicular:#B9AEE8;
+    --ovulation:#F4CE7E;
+    --menstrual:#E9917E;
+    --grad-luteal:linear-gradient(135deg,#F6C6DD 0%,#E8799E 100%);
+    --grad-follicular:linear-gradient(135deg,#CFC8F5 0%,#96B4E8 100%);
+    --grad-ovulation:linear-gradient(135deg,#FCE7AE 0%,#EFB955 100%);
+    --grad-menstrual:linear-gradient(135deg,#F5B49B 0%,#DD7657 100%);
+    --good:#7FBF8E;
+    --radius-lg:28px;
+    --radius-md:18px;
+    --radius-sm:12px;
+    --shadow-card:0 10px 30px -14px rgba(89,58,120,0.28);
+    --shadow-soft:0 4px 14px -6px rgba(89,58,120,0.22);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    background:radial-gradient(circle at 30% 0%,#F2E9FB 0%,var(--bg-page) 55%,#E6DCF3 100%);
+    display:flex;align-items:center;justify-content:center;
+    min-height:100vh;padding:24px;color:var(--ink);
+  }
+  .device{
+    width:390px;height:844px;background:var(--bg-cream);
+    border-radius:46px;box-shadow:0 30px 70px -20px rgba(55,43,74,0.45), 0 0 0 10px #1E1626, 0 0 0 12px #3a2c4a;
+    overflow:hidden;position:relative;display:flex;flex-direction:column;
+  }
+  .statusbar{
+    height:46px;flex:0 0 46px;display:flex;align-items:center;justify-content:space-between;
+    padding:0 26px;font-size:14px;font-weight:600;color:var(--ink);
+  }
+  .notch{
+    position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:26px;
+    background:#1E1626;border-radius:0 0 18px 18px;z-index:50;
+  }
+  .screen{flex:1;overflow-y:auto;position:relative;scrollbar-width:none;}
+  .screen::-webkit-scrollbar{display:none;}
+  .pad{padding:0 22px;}
+
+  /* ---------- generic ---------- */
+  .eyebrow{font-size:11px;letter-spacing:1.5px;font-weight:700;color:var(--coral-deep);text-transform:uppercase;}
+  h1.title{font-size:24px;font-weight:800;color:var(--ink);line-height:1.35;}
+  p.sub{font-size:13.5px;color:var(--ink-soft);line-height:1.65;margin-top:8px;}
+  .btn-primary{
+    background:var(--grad-peach-warm);color:#fff;border:none;border-radius:999px;
+    padding:15px 20px;font-size:15.5px;font-weight:700;width:100%;
+    box-shadow:0 10px 22px -10px rgba(224,107,82,0.55);cursor:pointer;transition:transform .15s ease;
+  }
+  .btn-primary:active{transform:scale(.97);}
+  .btn-ghost{
+    background:#fff;color:var(--ink);border:1.5px solid var(--line);border-radius:999px;
+    padding:14px 20px;font-size:14.5px;font-weight:600;width:100%;cursor:pointer;
+  }
+  .btn-text{background:none;border:none;color:var(--ink-faint);font-size:13.5px;font-weight:600;cursor:pointer;}
+  .card{background:var(--card);border-radius:var(--radius-md);box-shadow:var(--shadow-soft);padding:18px;}
+  .dots{display:flex;gap:6px;justify-content:center;margin:18px 0;}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--line);transition:.25s;}
+  .dot.active{width:20px;background:var(--coral);}
+  .backbar{display:flex;align-items:center;gap:10px;padding-top:6px;padding-bottom:6px;}
+  .backbtn{width:32px;height:32px;border-radius:50%;background:#fff;box-shadow:var(--shadow-soft);display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;flex:0 0 32px;}
+  .headtitle{font-size:15.5px;font-weight:800;color:var(--ink);}
+  .mini-peach{border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none;line-height:1;}
+
+  /* ---------- onboarding ---------- */
+  .onb-wrap{height:100%;display:flex;flex-direction:column;padding:36px 26px 26px;}
+  .onb-icon{
+    width:96px;height:96px;border-radius:32px;margin:0 auto 26px;
+    display:flex;align-items:center;justify-content:center;font-size:44px;
+    background:var(--grad-peach);box-shadow:var(--shadow-card);
+  }
+  .onb-body{flex:1;text-align:center;padding-top:6px;}
+  .onb-list{text-align:left;margin-top:22px;display:flex;flex-direction:column;gap:12px;}
+  .onb-list li{list-style:none;display:flex;gap:10px;font-size:13.5px;color:var(--ink-soft);align-items:flex-start;background:#fff;border-radius:14px;padding:12px 14px;box-shadow:var(--shadow-soft);}
+  .onb-list b{color:var(--ink);}
+  .tag{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--grad-peach);color:#fff;font-size:11px;font-weight:800;flex:0 0 22px;}
+
+  /* ---------- profile / cycle setup ---------- */
+  .field-label{font-size:13px;font-weight:700;color:var(--ink);margin:22px 0 10px;}
+  .chip-row{display:flex;gap:10px;flex-wrap:wrap;}
+  .chip{padding:10px 18px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-size:13.5px;font-weight:600;color:var(--ink-soft);cursor:pointer;}
+  .chip.sel{background:var(--grad-peach-warm);color:#fff;border-color:transparent;box-shadow:0 6px 14px -6px rgba(224,107,82,0.5);}
+  .age-input{width:100%;padding:14px 16px;border-radius:16px;border:1.5px solid var(--line);font-size:16px;font-weight:700;color:var(--ink);background:#fff;}
+  .age-input:focus{outline:none;border-color:var(--coral);}
+  .date-input{width:100%;padding:14px 16px;border-radius:16px;border:1.5px solid var(--line);font-size:15px;font-weight:700;color:var(--ink);background:#fff;font-family:inherit;}
+  .date-input:focus{outline:none;border-color:var(--coral);}
+  .unclear-box{background:#F6F1FB;border-radius:16px;padding:12px 14px;margin-top:14px;font-size:12.5px;color:#7A5CA8;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+
+  /* ---------- home / composer ---------- */
+  .home-head{display:flex;align-items:center;justify-content:space-between;padding-top:6px;}
+  .home-date{font-size:12px;color:var(--ink-faint);font-weight:600;margin-top:3px;}
+  .home-day{font-size:20px;font-weight:800;color:var(--ink);}
+  .cal-btn{width:34px;height:34px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-soft);font-size:15px;flex:0 0 34px;}
+  .points-badge{font-size:11px;font-weight:800;color:var(--coral-deep);background:#FFF3EC;padding:5px 11px;border-radius:999px;}
+
+  .peach-wrap{display:flex;flex-direction:column;align-items:center;margin-top:2px;}
+  .peach{
+    width:150px;height:150px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 18px 40px -14px rgba(220,120,150,0.55);animation:breathe 4.2s ease-in-out infinite;
+  }
+  @keyframes breathe{0%,100%{transform:scale(1);}50%{transform:scale(1.035);}}
+  .peach-face{font-size:38px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.08));}
+  .peach-glow{position:absolute;inset:-14px;border-radius:50%;background:inherit;filter:blur(22px);opacity:.45;z-index:-1;}
+
+  .chat-scroll{display:flex;flex-direction:column;gap:12px;padding-top:10px;}
+  .chat-row{display:flex;gap:8px;align-items:flex-end;}
+  .chat-row.me{justify-content:flex-end;}
+  .bubble{max-width:76%;padding:12px 15px;border-radius:16px;font-size:13.6px;line-height:1.65;}
+  .bubble.bot{background:#fff;box-shadow:var(--shadow-soft);border-bottom-left-radius:4px;color:var(--ink);}
+  .bubble.user{background:var(--grad-peach-warm);color:#fff;border-bottom-right-radius:4px;}
+  .chat-avatar{width:28px;height:28px;border-radius:50%;flex:0 0 28px;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:var(--shadow-soft);}
+  .chat-done-card{background:#fff;border-radius:16px;padding:14px 16px;box-shadow:var(--shadow-soft);margin-top:4px;text-align:center;}
+
+  .mood-chip-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+  .mood-chip{padding:8px 15px;border-radius:999px;background:#F8F4FC;border:1.5px solid var(--line);font-size:12.5px;font-weight:700;color:var(--ink);cursor:pointer;}
+  .mood-chip:active{transform:scale(.95);}
+
+  .task-suggest-card{
+    background:linear-gradient(135deg,#FFF3EC,#FCEAF4);border-radius:16px;padding:14px 16px;position:relative;
+    box-shadow:var(--shadow-soft);max-width:82%;border:1px solid rgba(224,107,82,.15);
+  }
+  .task-suggest-card .tsc-close{
+    position:absolute;top:9px;right:9px;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.85);
+    display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--ink-soft);cursor:pointer;font-weight:700;
+  }
+  .task-suggest-card .tsc-tag{font-size:10.5px;font-weight:800;color:var(--coral-deep);letter-spacing:.5px;}
+  .task-suggest-card b{font-size:13.5px;color:var(--ink);display:block;margin:4px 0 4px;}
+  .task-suggest-card span{font-size:12px;color:var(--ink-soft);line-height:1.55;}
+  .task-suggest-card .tsc-hint{margin-top:8px;font-size:10.5px;color:var(--ink-faint);}
+  .task-done-badge{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--good);font-weight:700;background:#fff;padding:11px 14px;border-radius:14px;box-shadow:var(--shadow-soft);max-width:82%;}
+
+  .composer-bar{
+    position:absolute;left:0;right:0;bottom:0;background:#fff;padding:10px 16px 18px;
+    box-shadow:0 -6px 16px -10px rgba(55,43,74,.15);display:flex;align-items:center;gap:8px;z-index:30;
+  }
+  .composer-plus{width:38px;height:38px;border-radius:12px;border:1.5px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--ink);flex:0 0 38px;cursor:pointer;}
+  .composer-input{flex:1;border:1.5px solid var(--line);border-radius:999px;padding:11px 16px;font-size:13.5px;color:var(--ink);background:#FAF7FC;min-width:0;}
+  .composer-input:focus{outline:none;border-color:var(--coral);}
+  .composer-mic{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--ink-soft);flex:0 0 38px;cursor:pointer;}
+  .composer-send{width:40px;height:40px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;flex:0 0 40px;cursor:pointer;}
+
+  /* ---------- modals ---------- */
+  .modal-mask{position:absolute;inset:0;background:rgba(55,43,74,0.42);z-index:80;display:flex;align-items:flex-end;}
+  .sheet{width:100%;background:#fff;border-radius:26px 26px 0 0;padding:22px 22px 28px;box-shadow:0 -10px 30px rgba(0,0,0,0.2);animation:slideup .28s ease;max-height:78%;overflow-y:auto;}
+  @keyframes slideup{from{transform:translateY(30px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+  .sheet-handle{width:38px;height:4px;background:var(--line);border-radius:99px;margin:0 auto 16px;}
+  textarea.compose{width:100%;min-height:110px;border:1.5px solid var(--line);border-radius:16px;padding:14px;font-size:14.5px;color:var(--ink);resize:none;font-family:inherit;line-height:1.6;}
+  textarea.compose:focus{outline:none;border-color:var(--coral);}
+  .perm-icon{width:64px;height:64px;border-radius:20px;background:var(--grad-peach);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 14px;}
+  .rec-pulse{width:90px;height:90px;border-radius:50%;margin:14px auto;background:var(--grad-peach-warm);display:flex;align-items:center;justify-content:center;font-size:30px;color:#fff;animation:pulse 1.1s ease-in-out infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(224,107,82,.45);}70%{box-shadow:0 0 0 22px rgba(224,107,82,0);}100%{box-shadow:0 0 0 0 rgba(224,107,82,0);}}
+
+  /* ---------- summary / report chips ---------- */
+  .chip-item{display:flex;align-items:center;gap:12px;background:#fff;border-radius:16px;padding:13px 15px;margin-bottom:10px;box-shadow:var(--shadow-soft);}
+  .chip-item .ic2{width:38px;height:38px;border-radius:11px;background:#F6F1FB;display:flex;align-items:center;justify-content:center;font-size:17px;flex:0 0 38px;}
+  .chip-item .body b{font-size:13.5px;color:var(--ink);display:block;}
+  .chip-item .body span{font-size:12px;color:var(--ink-faint);}
+  .chip-item .ok{margin-left:auto;width:22px;height:22px;border-radius:50%;background:var(--good);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;flex:0 0 22px;}
+  .chip-item .ok.empty{background:#F0EBF7;color:var(--ink-faint);}
+  .report-card{background:#fff;border-radius:22px;padding:22px;box-shadow:var(--shadow-card);}
+  .report-phase{display:inline-block;padding:6px 13px;border-radius:999px;font-size:11.5px;font-weight:700;color:#fff;margin-bottom:14px;}
+  .report-stat-row{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0;}
+  .stat-pill{flex:1 1 40%;background:#F8F4FC;border-radius:14px;padding:11px 12px;}
+  .stat-pill b{font-size:12.5px;color:var(--ink);display:block;}
+  .stat-pill span{font-size:11px;color:var(--ink-faint);}
+  .encour{background:linear-gradient(135deg,#FFF3EC,#FCEAF4);border-radius:16px;padding:15px;font-size:13.5px;line-height:1.7;color:var(--ink);margin-top:14px;}
+  .sug-item{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink-soft);margin-top:10px;line-height:1.6;}
+  .sug-item .num{width:19px;height:19px;border-radius:50%;background:var(--coral);color:#fff;font-size:10.5px;display:flex;align-items:center;justify-content:center;flex:0 0 19px;margin-top:1px;font-weight:700;}
+
+  /* ---------- calendar ---------- */
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:10px;}
+  .cal-wk{font-size:9.5px;color:var(--ink-faint);text-align:center;font-weight:700;}
+  .cal-cell{aspect-ratio:1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;color:var(--ink);cursor:pointer;position:relative;background:#fff;}
+  .cal-cell.blank{visibility:hidden;}
+  .cal-cell .dotmark{width:4px;height:4px;border-radius:50%;background:var(--coral);margin-top:1px;}
+  .cal-cell.today{box-shadow:inset 0 0 0 2px var(--coral);}
+  .cal-cell.ph-menstrual{background:#FBEAE4;}
+  .cal-cell.ph-follicular{background:#EFECFB;}
+  .cal-cell.ph-ovulation{background:#FDF5E1;}
+  .cal-cell.ph-luteal{background:#FCEAF1;}
+  .cal-cell.sel{background:var(--grad-peach-warm)!important;color:#fff;}
+  .cal-collapse-toggle{display:flex;align-items:center;justify-content:center;gap:4px;padding:8px 0 0;color:var(--ink-faint);font-size:11px;font-weight:700;cursor:pointer;}
+  .cal-quick-add{width:34px;height:34px;border-radius:50%;background:var(--ink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:var(--shadow-soft);cursor:pointer;flex:0 0 34px;}
+
+  .ring-wrap{display:flex;flex-direction:column;align-items:center;padding-top:4px;}
+  .ring-box{position:relative;width:210px;height:210px;}
+  .ring-box svg{width:100%;height:100%;position:absolute;inset:0;}
+  .ring-peach-icon{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;transform:translate(-50%,-50%);box-shadow:0 4px 10px -4px rgba(55,43,74,.4);}
+  .ring-inner-label{position:absolute;font-size:8.5px;font-weight:800;color:#fff;transform:translate(-50%,-50%);text-align:center;line-height:1.25;pointer-events:none;text-shadow:0 1px 3px rgba(0,0,0,.2);width:56px;}
+  .ring-marker{position:absolute;width:11px;height:11px;border-radius:50%;background:#fff;border:3px solid var(--coral-deep);transform:translate(-50%,-50%);box-shadow:0 2px 6px rgba(0,0,0,.28);}
+  .ring-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;width:92px;}
+  .ring-center b{display:block;font-size:12px;color:var(--ink);margin-top:4px;}
+  .ring-center span{font-size:9.5px;color:var(--ink-faint);}
+
+  .phase-legend{display:flex;flex-direction:column;gap:9px;margin-top:16px;}
+  .legend-row{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--ink-soft);}
+  .phase-pill{font-size:11px;font-weight:700;padding:5px 11px;border-radius:999px;color:#fff;}
+  .empty-peach{font-size:56px;text-align:center;margin:6px 0;}
+  .empty-state p{font-size:12.5px;color:var(--ink-faint);margin-top:4px;text-align:center;}
+
+  /* ---------- insight ---------- */
+  .insight-card{background:#fff;border-radius:20px;padding:18px;box-shadow:var(--shadow-card);margin-top:14px;}
+  .insight-card h4{font-size:14px;font-weight:800;color:var(--ink);line-height:1.5;}
+  .insight-caption{font-size:11px;color:var(--ink-faint);margin-top:2px;}
+  .insight-tip{background:#F3EBFB;border-radius:12px;padding:10px 12px;font-size:12px;color:#7A5CA8;margin-top:12px;font-weight:600;}
+  .flow-row{display:flex;align-items:center;gap:8px;margin-top:14px;}
+  .flow-chip{flex:1;background:#F8F4FC;border-radius:14px;padding:12px 6px;text-align:center;}
+  .flow-chip .fc-ic{font-size:17px;}
+  .flow-chip b{display:block;font-size:10.5px;color:var(--ink);margin-top:4px;font-weight:700;line-height:1.3;}
+  .flow-arrow{color:var(--ink-faint);font-size:14px;flex:0 0 10px;}
+
+  /* ---------- edu ---------- */
+  .edu-hero{background:linear-gradient(135deg,#EDE7FB,#F7E4EF);border-radius:22px;padding:20px;box-shadow:var(--shadow-card);}
+  .edu-hero h2{font-size:18px;font-weight:800;color:var(--ink);}
+  .edu-hero p{font-size:12.5px;color:var(--ink-soft);line-height:1.6;margin-top:8px;}
+  .edu-article{display:flex;gap:12px;align-items:center;background:#fff;border-radius:16px;padding:14px;margin-top:12px;box-shadow:var(--shadow-soft);cursor:pointer;}
+  .edu-article .ea-ic{width:38px;height:38px;border-radius:11px;background:#F6F1FB;display:flex;align-items:center;justify-content:center;font-size:17px;flex:0 0 38px;}
+  .edu-article b{font-size:13.5px;color:var(--ink);display:block;}
+  .edu-article span{font-size:11.5px;color:var(--ink-faint);}
+  .edu-disclaimer{background:#F6F1FB;border-radius:12px;padding:10px 12px;font-size:11px;color:var(--ink-soft);margin-top:14px;}
+  .edu-quick-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+
+  /* ---------- profile ---------- */
+  .prof-head{display:flex;align-items:center;gap:14px;padding:8px 0 4px;}
+  .avatar{width:62px;height:62px;border-radius:50%;background:var(--grad-peach);display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:var(--shadow-soft);}
+  .prof-name{font-size:17px;font-weight:800;color:var(--ink);}
+  .prof-tag{font-size:12px;color:var(--ink-faint);margin-top:2px;}
+  .list-item{display:flex;align-items:center;gap:12px;background:#fff;border-radius:16px;padding:15px 16px;margin-top:10px;box-shadow:var(--shadow-soft);cursor:pointer;}
+  .list-item .ic3{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;background:#F6F1FB;flex:0 0 34px;}
+  .list-item b{font-size:13.8px;color:var(--ink);flex:1;font-weight:600;}
+  .list-item .chev{color:var(--ink-faint);}
+  .section-label{display:flex;align-items:center;justify-content:space-between;margin:22px 0 10px;}
+  .section-label h3{font-size:15px;font-weight:800;color:var(--ink);}
+
+  /* ---------- stress relief widget ---------- */
+  .earth-wrap{display:flex;flex-direction:column;align-items:center;padding-top:30px;}
+  .earth{
+    width:172px;height:172px;border-radius:50%;position:relative;cursor:pointer;user-select:none;
+    background:radial-gradient(circle at 35% 30%,#8FE0AC,#4C9F6E 55%,#2F6B4C);
+    box-shadow:0 22px 46px -16px rgba(50,120,80,.65);display:flex;align-items:center;justify-content:center;
+    transition:filter .2s;
+  }
+  .earth.shake{animation:earthShake .22s;}
+  @keyframes earthShake{0%,100%{transform:translate(0,0) rotate(0);}25%{transform:translate(-7px,3px) rotate(-3deg);}75%{transform:translate(7px,-3px) rotate(3deg);}}
+  .earth-face{font-size:40px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.2));}
+  .earth-crack{position:absolute;font-size:22px;pointer-events:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.3));}
+  .integrity-track{width:220px;height:10px;background:var(--line);border-radius:99px;margin-top:28px;overflow:hidden;}
+  .integrity-fill{height:100%;background:linear-gradient(90deg,#7FBF8E,#F4CE7E,#E06B52);border-radius:99px;transition:width .25s ease;}
+  .earth-stat-row{display:flex;gap:10px;margin-top:18px;width:100%;}
+  .earth-stat{flex:1;background:#fff;border-radius:14px;padding:12px;text-align:center;box-shadow:var(--shadow-soft);}
+  .earth-stat b{display:block;font-size:16px;color:var(--ink);}
+  .earth-stat span{font-size:10.5px;color:var(--ink-faint);}
+
+  .confetti-layer{position:absolute;inset:0;pointer-events:none;z-index:150;overflow:hidden;}
+  .confetti-piece{position:absolute;width:8px;height:8px;border-radius:2px;animation:confettiFly .9s ease-out forwards;}
+  @keyframes confettiFly{0%{transform:translate(0,0) rotate(0deg);opacity:1;}100%{transform:translate(var(--dx),var(--dy)) rotate(var(--rot));opacity:0;}}
+  .points-pop{position:absolute;z-index:150;font-size:15px;font-weight:800;color:var(--coral-deep);animation:pointsPop 1.1s ease-out forwards;pointer-events:none;}
+  @keyframes pointsPop{0%{transform:translateY(0);opacity:0;}20%{opacity:1;}100%{transform:translateY(-46px);opacity:0;}}
+
+  /* ---------- bottom nav (5 tabs) ---------- */
+  .navbar{flex:0 0 76px;background:#fff;display:flex;align-items:center;justify-content:space-around;box-shadow:0 -6px 18px -10px rgba(55,43,74,0.2);position:relative;z-index:40;padding-bottom:6px;}
+  .nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--ink-faint);font-size:9.5px;font-weight:700;cursor:pointer;}
+  .nav-item.active{color:var(--coral-deep);}
+  .nav-item .nic{font-size:17px;}
+  .nav-item.center{transform:translateY(-14px);}
+  .nav-item.center .nic{width:50px;height:50px;border-radius:50%;background:var(--grad-peach-warm);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 10px 20px -8px rgba(224,107,82,0.6);}
+
+  .toast{position:absolute;left:50%;bottom:100px;transform:translateX(-50%);background:rgba(55,43,74,0.92);color:#fff;padding:10px 18px;border-radius:999px;font-size:12.5px;font-weight:600;z-index:120;animation:toastIn .25s ease;white-space:nowrap;}
+  @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(8px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+
+  /* ---------- auth (welcome / register / login) ---------- */
+  .auth-wrap{height:100%;display:flex;flex-direction:column;padding:44px 28px 30px;}
+  .auth-hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
+  .brand-peach{width:118px;height:118px;border-radius:38px;background:var(--grad-peach);display:flex;align-items:center;justify-content:center;font-size:56px;box-shadow:var(--shadow-card);margin-bottom:22px;animation:breathe 4.2s ease-in-out infinite;}
+  .brand-name{font-size:27px;font-weight:800;color:var(--ink);letter-spacing:1.5px;}
+  .brand-tag{font-size:13.5px;color:var(--ink-soft);margin-top:12px;line-height:1.7;max-width:250px;}
+  .auth-title{font-size:22px;font-weight:800;color:var(--ink);}
+  .auth-sub{font-size:13px;color:var(--ink-soft);margin-top:6px;line-height:1.6;}
+  .auth-label{font-size:12.5px;font-weight:700;color:var(--ink);margin:18px 0 8px;}
+  .auth-input{width:100%;padding:14px 16px;border-radius:16px;border:1.5px solid var(--line);font-size:15px;font-weight:600;color:var(--ink);background:#fff;font-family:inherit;}
+  .auth-input::placeholder{color:var(--ink-faint);font-weight:500;}
+  .auth-input:focus{outline:none;border-color:var(--coral);}
+  .code-row{display:flex;gap:10px;}
+  .code-row .auth-input{flex:1;min-width:0;}
+  .code-btn{white-space:nowrap;padding:0 16px;border-radius:16px;border:1.5px solid var(--coral);color:var(--coral-deep);background:#fff;font-size:12.5px;font-weight:700;cursor:pointer;flex:0 0 auto;}
+  .code-btn:disabled{opacity:.5;border-color:var(--line);color:var(--ink-faint);cursor:default;}
+  .terms{display:flex;gap:8px;align-items:flex-start;margin-top:18px;font-size:11.5px;color:var(--ink-faint);line-height:1.6;}
+  .terms .cbx{width:18px;height:18px;border-radius:6px;border:1.5px solid var(--line);flex:0 0 18px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:11px;color:#fff;margin-top:1px;}
+  .terms .cbx.on{background:var(--grad-peach-warm);border-color:transparent;}
+  .terms a{color:var(--coral-deep);font-weight:700;}
+  .auth-alt{text-align:center;margin-top:20px;font-size:13px;color:var(--ink-faint);}
+  .auth-alt a{color:var(--coral-deep);font-weight:700;cursor:pointer;}
+  .auth-divider{display:flex;align-items:center;gap:10px;margin:24px 0 6px;color:var(--ink-faint);font-size:11px;}
+  .auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:var(--line);}
+  .social-row{display:flex;gap:14px;justify-content:center;margin-top:16px;}
+  .social-btn{width:46px;height:46px;border-radius:50%;background:#fff;box-shadow:var(--shadow-soft);display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="device">
+  <div class="notch"></div>
+  <div class="statusbar"><span>9:41</span><span>📶 🔋</span></div>
+  <div class="screen" id="screen"></div>
+  <div class="navbar" id="navbar" style="display:none">
+    <div class="nav-item" data-tab="edu" onclick="switchTab('edu')"><div class="nic">📖</div><div>科普</div></div>
+    <div class="nav-item" data-tab="calendar" onclick="switchTab('calendar')"><div class="nic">📅</div><div>日历</div></div>
+    <div class="nav-item center" data-tab="record" onclick="switchTab('record')"><div class="nic">🖊️</div><div style="color:var(--coral-deep)">记录</div></div>
+    <div class="nav-item" data-tab="insight" onclick="switchTab('insight')"><div class="nic">📈</div><div>洞察</div></div>
+    <div class="nav-item" data-tab="profile" onclick="switchTab('profile')"><div class="nic">👤</div><div>我的</div></div>
+  </div>
+</div>
+
+<script>
+/* ===================== STATE ===================== */
+const TODAY_DAY = 12; // internal "today" cycle-day used across the demo (follicular, 5 days before PMS/luteal)
+const S = {
+  onbStep: 0,
+  auth: { phone:'', code:'', pwd:'', agree:false, codeSent:false, mode:'register' },
+  profile: { age:null, gender:null, nickname:'桃桃', lastPeriodDate:null, periodUnknown:false, cycleLength:28 },
+  screen: 'welcome', // welcome -> register -> welcomeBack -> onboarding -> profileSetup -> cycleSetup -> main (login 支线: welcome -> login -> onboarding)
+  prevTab: 'record',
+  tab: 'record', // edu | calendar | record | insight | profile
+  recordStep: 'chat', // chat | chips | report
+  indicators: { emotion:null, bowel:null, sleep:null, skin:null, life:null, energy:null },
+  chatLog: [],
+  chatTurns: 0,
+  chatStarted: false,
+  moodPicked: false,
+  moodToday: null,
+  moodIssue: false,
+  taskSuggested: false,
+  points: 0,
+  calSelected: TODAY_DAY,
+  calExpanded: true,
+  dayRecords: {
+    3:{summary:'情绪平稳 · 精力还不错'},
+    5:{summary:'皮肤有点出油 · 睡眠正常'},
+    8:{summary:'排便顺畅 · 心情不错'},
+    9:{summary:'精力充沛 · 适合运动'},
+    11:{summary:'情绪偏低落 · 与朋友聊天缓解了一些'}
+  },
+  toast: null,
+  modal: null,
+  pendingInputType: null,
+  earth: { integrity:100, smashes:0 }
+};
+
+/* ===================== SHARED PHASE / PEACH DATA ===================== */
+const PHASES = [
+  { key:'menstrual',  name:'月经期', color:'var(--menstrual)',  grad:'var(--grad-menstrual)',  range:[1,5],   face:'·﹏·', desc:'子宫内膜脱落，容易疲惫、腹坠，注意保暖与休息。' },
+  { key:'follicular', name:'卵泡期', color:'var(--follicular)', grad:'var(--grad-follicular)', range:[6,13],  face:'˘ᵕ˘',  desc:'雌激素回升，精力逐渐变好，适合安排轻度运动。' },
+  { key:'ovulation',  name:'排卵期', color:'var(--ovulation)',  grad:'var(--grad-ovulation)',  range:[14,16], face:'✧ᴗ✧',  desc:'状态通常最佳，情绪相对稳定，精力充沛。' },
+  { key:'luteal',     name:'黄体期', color:'var(--luteal)',     grad:'var(--grad-luteal)',     range:[17,28], face:'≧﹏≦', desc:'孕酮上升后骤降，是 PMS 高发期，情绪/皮肤/睡眠更易波动。' }
+];
+function phaseByKey(k){ return PHASES.find(p=>p.key===k); }
+function dayPhase(day){
+  const cyc = ((day-1)%28)+1;
+  return PHASES.find(p=> cyc>=p.range[0] && cyc<=p.range[1]) || PHASES[0];
+}
+function cycDayOf(day){ return ((day-1)%28)+1; }
+function peachIcon(phase, size){
+  size = size||30;
+  return `<div class="mini-peach" style="width:${size}px;height:${size}px;background:${phase.grad};font-size:${Math.round(size*0.34)}px;color:#fff;font-weight:700;">${phase.face}</div>`;
+}
+
+/* keyword dictionaries for lightweight "AI recognition" */
+const KEY = {
+  emotion:{ words:['难过','开心','低落','烦躁','焦虑','沮丧','生气','哭','想哭','emo','什么都不想做','情绪','不开心'], label:'情绪状态', icon:'😔' },
+  bowel:{ words:['拉','排便','便秘','腹泻','大便','拉肚子'], label:'排便', icon:'💩' },
+  sleep:{ words:['睡','失眠','没睡好','早醒','睡眠','熬夜'], label:'睡眠', icon:'🌙' },
+  skin:{ words:['皮肤','长痘','爆痘','干燥','敏感','痘痘','出油'], label:'皮肤状态', icon:'✨' },
+  life:{ words:['吵架','分手','加班','出差','生病','旅行','冲突','伴侣','女朋友','男朋友','朋友','考试','面试'], label:'生活事件', icon:'💔' },
+  energy:{ words:['累','疲惫','没精神','精力','乏力','困','没力气'], label:'精力', icon:'🔋' }
+};
+function analyzeText(text){
+  Object.keys(KEY).forEach(k=>{
+    if(S.indicators[k]) return;
+    const hit = KEY[k].words.find(w=>text.includes(w));
+    if(hit){ S.indicators[k] = summarize(k,text,hit); }
+  });
+}
+function summarize(k,text,hit){
+  const map = {
+    emotion:'情绪偏低落，提到"'+hit+'"',
+    bowel: text.includes('硬')?'已排便·偏硬（可能是布里斯托2-3型）':'已排便',
+    sleep: '睡眠受影响，提到"'+hit+'"',
+    skin: '皮肤有波动，提到"'+hit+'"',
+    life: '与他人发生冲突/事件，提到"'+hit+'"',
+    energy: '精力较低，提到"'+hit+'"'
+  };
+  return map[k];
+}
+function filledCount(){ return Object.values(S.indicators).filter(Boolean).length; }
+
+/* ===================== RENDER ROUTER ===================== */
+function render(){
+  const el = document.getElementById('screen');
+  document.getElementById('navbar').style.display = S.screen==='main' ? 'flex':'none';
+  if(S.screen==='welcome') el.innerHTML = viewWelcome();
+  else if(S.screen==='register') el.innerHTML = viewRegister();
+  else if(S.screen==='login') el.innerHTML = viewLogin();
+  else if(S.screen==='welcomeBack') el.innerHTML = viewWelcomeBack();
+  else if(S.screen==='onboarding') el.innerHTML = viewOnboarding();
+  else if(S.screen==='profileSetup') el.innerHTML = viewProfileSetup();
+  else if(S.screen==='cycleSetup') el.innerHTML = viewCycleSetup();
+  else if(S.screen==='stressRelief') el.innerHTML = viewStressRelief();
+  else if(S.screen==='main'){
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.tab===S.tab));
+    if(S.tab==='record') el.innerHTML = viewRecord();
+    else if(S.tab==='calendar') el.innerHTML = viewCalendar();
+    else if(S.tab==='insight') el.innerHTML = viewInsight();
+    else if(S.tab==='edu') el.innerHTML = viewEdu();
+    else el.innerHTML = viewProfile();
+  }
+  el.scrollTop = el.scrollTop || 0;
+  if(S.tab==='record' && S.screen==='main'){ setTimeout(()=>{ el.scrollTop = el.scrollHeight; },0); }
+}
+
+/* ===================== AUTH (welcome / register / login) ===================== */
+function viewWelcome(){
+  return `
+  <div class="auth-wrap">
+    <div class="auth-hero">
+      <div class="brand-peach">🍑</div>
+      <div class="brand-name">蜜桃日记</div>
+      <div class="brand-tag">懂你的 PMS 陪伴助手<br>每天 10 秒，让身体被看见、被理解</div>
+    </div>
+    <button class="btn-primary" onclick="goRegister()">注册，开启陪伴</button>
+    <button class="btn-ghost" style="margin-top:12px" onclick="goLogin()">我已有账号，登录</button>
+    <p style="text-align:center;font-size:10.5px;color:var(--ink-faint);margin-top:16px;line-height:1.6;">注册即代表同意《用户协议》与《隐私政策》</p>
+  </div>`;
+}
+function viewRegister(){
+  const a = S.auth;
+  return `
+  <div class="auth-wrap" style="padding-top:34px;">
+    <div class="backbar"><div class="backbtn" onclick="goWelcome()">‹</div><div class="headtitle">注册账号</div></div>
+    <h1 class="auth-title" style="margin-top:14px;">创建你的蜜桃账号</h1>
+    <p class="auth-sub">仅需手机号即可开始，我们不会向任何第三方分享你的信息。</p>
+
+    <div class="auth-label">手机号</div>
+    <input class="auth-input" type="tel" placeholder="请输入手机号" value="${a.phone}" oninput="S.auth.phone=this.value">
+
+    <div class="auth-label">验证码</div>
+    <div class="code-row">
+      <input class="auth-input" type="number" placeholder="6 位验证码" value="${a.code}" oninput="S.auth.code=this.value">
+      <button class="code-btn" ${a.codeSent?'disabled':''} onclick="sendCode()">${a.codeSent?'已发送':'获取验证码'}</button>
+    </div>
+
+    <div class="auth-label">设置密码</div>
+    <input class="auth-input" type="password" placeholder="至少 6 位" value="${a.pwd}" oninput="S.auth.pwd=this.value">
+
+    <div class="terms">
+      <div class="cbx ${a.agree?'on':''}" onclick="toggleAgree()">${a.agree?'✓':''}</div>
+      <div>我已阅读并同意 <a>《用户协议》</a> 和 <a>《隐私政策》</a></div>
+    </div>
+
+    <div style="flex:1;min-height:14px"></div>
+    <button class="btn-primary" onclick="submitRegister()">注册并登录</button>
+    <div class="auth-alt">已有账号？<a onclick="goLogin()">直接登录</a></div>
+    <div style="height:10px"></div>
+  </div>
+  ${S.toast? `<div class="toast">${S.toast}</div>`:''}
+  `;
+}
+function viewLogin(){
+  const a = S.auth;
+  return `
+  <div class="auth-wrap" style="padding-top:34px;">
+    <div class="backbar"><div class="backbtn" onclick="goWelcome()">‹</div><div class="headtitle">登录</div></div>
+    <div class="brand-peach" style="width:78px;height:78px;border-radius:24px;font-size:38px;margin:22px auto 10px;">🍑</div>
+    <h1 class="auth-title" style="text-align:center;">欢迎回来</h1>
+    <p class="auth-sub" style="text-align:center;">登录以继续你的蜜桃日记</p>
+
+    <div class="auth-label">手机号</div>
+    <input class="auth-input" type="tel" placeholder="请输入手机号" value="${a.phone}" oninput="S.auth.phone=this.value">
+    <div class="auth-label">密码</div>
+    <input class="auth-input" type="password" placeholder="请输入密码" value="${a.pwd}" oninput="S.auth.pwd=this.value">
+
+    <div style="text-align:right;margin-top:10px;"><a style="font-size:12px;color:var(--ink-faint);cursor:pointer;">忘记密码？</a></div>
+
+    <div style="flex:1;min-height:14px"></div>
+    <button class="btn-primary" onclick="submitLogin()">登录</button>
+    <div class="auth-alt">还没有账号？<a onclick="goRegister()">立即注册</a></div>
+    <div class="auth-divider">其他登录方式</div>
+    <div class="social-row"><div class="social-btn">💬</div><div class="social-btn">🍎</div><div class="social-btn">📱</div></div>
+    <div style="height:10px"></div>
+  </div>
+  ${S.toast? `<div class="toast">${S.toast}</div>`:''}
+  `;
+}
+function viewWelcomeBack(){
+  return `
+  <div class="auth-wrap">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
+      <div class="brand-peach">🎉</div>
+      <h1 class="auth-title" style="margin-top:6px;">注册成功！</h1>
+      <p class="auth-sub" style="max-width:250px;">欢迎加入蜜桃日记 🍑<br>接下来花 1 分钟，让小桃更懂你。</p>
+    </div>
+    <button class="btn-primary" onclick="startFirstLogin()">开始设置</button>
+    <div style="height:6px"></div>
+  </div>`;
+}
+function goWelcome(){ S.screen='welcome'; render(); }
+function goRegister(){ S.auth.mode='register'; S.screen='register'; render(); }
+function goLogin(){ S.auth.mode='login'; S.screen='login'; render(); }
+function sendCode(){ S.auth.codeSent=true; S.auth.code='123456'; render(); showToast('验证码已发送（演示：123456）'); }
+function toggleAgree(){ S.auth.agree=!S.auth.agree; render(); }
+function submitRegister(){
+  if(!S.auth.phone){ showToast('请输入手机号'); return; }
+  if(!S.auth.agree){ showToast('请先阅读并同意用户协议'); return; }
+  S.screen='welcomeBack'; render();
+}
+function submitLogin(){
+  if(!S.auth.phone){ showToast('请输入手机号'); return; }
+  S.screen='onboarding'; S.onbStep=0; render();
+}
+function startFirstLogin(){ S.screen='onboarding'; S.onbStep=0; render(); }
+
+/* ===================== ONBOARDING ===================== */
+const onbSlides = [
+  { icon:'🌙', eyebrow:'什么是 PMS', title:'经前综合征\n是身体在提前打招呼', body:'PMS（经前综合征）指月经前 1～2 周，因激素波动出现的一系列身体和情绪变化，超过 90% 的女性都经历过，是很正常的生理现象。' },
+  { icon:'💭', eyebrow:'常见表现', title:'不只是"emo"\n是真实的生理反应', list:['情绪：烦躁、低落、易哭、敏感','身体：胀痛、头痛、疲惫、皮肤爆痘','行为：食欲变化、嗜睡或失眠'] },
+  { icon:'🍑', eyebrow:'蜜桃能做什么', title:'记录感受\n让身体被看见、被理解', body:'每天花 10 秒说说感受，蜜桃会帮你识别情绪、身体和生活事件，慢慢画出属于你的周期地图。' }
+];
+function viewOnboarding(){
+  const s = onbSlides[S.onbStep];
+  return `
+  <div class="onb-wrap">
+    <div style="display:flex;justify-content:flex-end;"><button class="btn-text" onclick="skipOnboarding()">跳过</button></div>
+    <div class="onb-body">
+      <div class="onb-icon">${s.icon}</div>
+      <div class="eyebrow">${s.eyebrow}</div>
+      <h1 class="title" style="margin-top:10px;white-space:pre-line">${s.title}</h1>
+      ${s.body? `<p class="sub">${s.body}</p>`:''}
+      ${s.list? `<ul class="onb-list">${s.list.map((t,i)=>`<li><span class="tag">${i+1}</span><span>${t}</span></li>`).join('')}</ul>`:''}
+    </div>
+    <div class="dots">${onbSlides.map((_,i)=>`<div class="dot ${i===S.onbStep?'active':''}"></div>`).join('')}</div>
+    <button class="btn-primary" onclick="nextOnboarding()">${S.onbStep===onbSlides.length-1?'开始使用':'下一步'}</button>
+  </div>`;
+}
+function nextOnboarding(){
+  if(S.onbStep < onbSlides.length-1){ S.onbStep++; } else { S.screen='profileSetup'; }
+  render();
+}
+function skipOnboarding(){ S.screen='profileSetup'; render(); }
+
+/* ===================== PROFILE SETUP ===================== */
+function viewProfileSetup(){
+  return `
+  <div class="onb-wrap" style="padding-top:50px;">
+    <div class="eyebrow">开始之前</div>
+    <h1 class="title" style="margin-top:8px;">先认识一下你</h1>
+    <p class="sub">这些信息帮助蜜桃更准确地理解你的周期与状态，我们只用于个性化建议，不会分享给第三方。</p>
+
+    <div class="field-label">你的性别</div>
+    <div class="chip-row">
+      ${['女性','男性','其他/不透露'].map(g=>`<div class="chip ${S.profile.gender===g?'sel':''}" onclick="setGender('${g}')">${g}</div>`).join('')}
+    </div>
+
+    <div class="field-label">你的年龄</div>
+    <input class="age-input" type="number" placeholder="例如 25" value="${S.profile.age||''}" oninput="setAge(this.value)">
+
+    <div style="flex:1"></div>
+    <button class="btn-primary" style="margin-top:26px" onclick="goCycleSetup()">下一步</button>
+  </div>`;
+}
+function setGender(g){ S.profile.gender=g; render(); }
+function setAge(v){ S.profile.age=v; }
+function goCycleSetup(){ S.screen='cycleSetup'; render(); }
+
+/* ===================== CYCLE SETUP (last period date) ===================== */
+function viewCycleSetup(){
+  return `
+  <div class="onb-wrap" style="padding-top:50px;">
+    <div class="eyebrow">经期信息</div>
+    <h1 class="title" style="margin-top:8px;">最近一次月经\n从哪天开始？</h1>
+    <p class="sub">帮助蜜桃估算你现在所处的周期阶段，随时可以在设置里修改。</p>
+
+    <div class="field-label">选择日期</div>
+    <input class="date-input" type="date" ${S.profile.periodUnknown?'disabled':''} value="${S.profile.lastPeriodDate||''}" onchange="setPeriodDate(this.value)">
+
+    <div class="unclear-box">
+      <span>记不清具体日期也没关系</span>
+      <button class="btn-ghost" style="width:auto;padding:8px 14px;font-size:12px;${S.profile.periodUnknown?'background:var(--grad-peach-warm);color:#fff;border-color:transparent;':''}" onclick="toggleUnclear()">${S.profile.periodUnknown?'已选择“不清楚”':'写不清楚'}</button>
+    </div>
+
+    <div class="field-label">平均周期长度</div>
+    <div class="chip-row">
+      ${[24,26,28,30,32].map(n=>`<div class="chip ${S.profile.cycleLength===n?'sel':''}" onclick="setCycleLen(${n})">${n} 天</div>`).join('')}
+    </div>
+
+    <div style="flex:1"></div>
+    <button class="btn-primary" style="margin-top:26px" onclick="finishProfile()">完成，进入蜜桃日记</button>
+  </div>`;
+}
+function setPeriodDate(v){ S.profile.lastPeriodDate=v; if(v){ S.profile.periodUnknown=false; } render(); }
+function toggleUnclear(){ S.profile.periodUnknown = !S.profile.periodUnknown; if(S.profile.periodUnknown){ S.profile.lastPeriodDate=null; } render(); }
+function setCycleLen(n){ S.profile.cycleLength=n; render(); }
+function finishProfile(){ S.screen='main'; S.tab='record'; render(); }
+
+/* ===================== RECORD TAB (unified chat composer) ===================== */
+function viewRecord(){
+  if(!S.chatStarted){ initChat(); }
+  if(S.recordStep==='chips') return recordChips();
+  if(S.recordStep==='report') return recordReport();
+  return recordChat();
+}
+
+function greetingForToday(){
+  const phase = dayPhase(TODAY_DAY);
+  if(phase.key==='luteal'){
+    return { type:'mood', text:'早上好，今天想和我聊点什么呢？' };
+  }
+  const daysToPMS = phaseByKey('luteal').range[0] - cycDayOf(TODAY_DAY);
+  const text = `早上好，${S.profile.nickname}～\n根据你的周期，你可能还有 ${daysToPMS} 天进入 PMS 期。\n过去 3 个月，你在这个阶段更容易：\n😣 焦虑　😡 易怒\n现在感觉怎么样？要跟小桃聊聊吗？`;
+  return { type:'mood', text };
+}
+function initChat(){
+  S.chatStarted = true;
+  const g = greetingForToday();
+  S.chatLog = [{ from:'bot', type:g.type, text:g.text }];
+  S.chatTurns = 0;
+  S.moodPicked = false;
+  S.moodToday = null;
+  S.moodIssue = false;
+  S.taskSuggested = false;
+  S.indicators = { emotion:null, bowel:null, sleep:null, skin:null, life:null, energy:null };
+}
+
+function recordChat(){
+  const count = filledCount();
+  const ready = count>=3 || S.chatTurns>=6;
+  const curPhase = dayPhase(TODAY_DAY);
+  return `
+  <div class="pad" style="padding-bottom:2px;">
+    <div class="home-head">
+      <div><div class="home-day">和小桃聊聊</div><div class="home-date">${curPhase.name} · 周期第 ${cycDayOf(TODAY_DAY)} 天</div></div>
+      <div class="points-badge">✨ ${S.points} 分</div>
+    </div>
+    <div class="peach-wrap"><div class="peach" style="background:${curPhase.grad}"><div class="peach-glow" style="background:${curPhase.grad}"></div><div class="peach-face">${curPhase.face}</div></div></div>
+
+    <div class="chat-scroll">
+      ${S.chatLog.map((m,i)=>renderChatMsg(m,i)).join('')}
+      ${ready? `<div class="chat-done-card">🍑 今天聊得很不错，随时可以生成小结～<br><button class="btn-primary" style="margin-top:10px" onclick="goSummary()">完成记录，查看小结</button></div>`:''}
+    </div>
+    <div style="height:${ready?190:110}px"></div>
+  </div>
+  <div class="composer-bar">
+    <div class="composer-plus" onclick="openInput('photo')">＋</div>
+    <input id="chatInput" class="composer-input" placeholder="有什么想和小桃说的…" onkeydown="if(event.key==='Enter')sendChat()">
+    <div class="composer-mic" onclick="openInput('voice')">🎙️</div>
+    <div class="composer-send" onclick="sendChat()">➤</div>
+  </div>
+  ${S.modal? renderModal():''}
+  ${S.toast? `<div class="toast">${S.toast}</div>`:''}
+  `;
+}
+function renderChatMsg(m,i){
+  if(m.from==='user'){
+    return `<div class="chat-row me"><div class="bubble user">${m.text}</div></div>`;
+  }
+  const avatar = `<div class="chat-avatar" style="background:${dayPhase(TODAY_DAY).grad};color:#fff;">${dayPhase(TODAY_DAY).face}</div>`;
+  if(m.type==='task'){
+    if(m.done){
+      return `<div class="chat-row">${avatar}<div class="task-done-badge">✅ 已完成「${m.task.title}」· 蜜桃悄悄给你加了 5 分</div></div>`;
+    }
+    return `<div class="chat-row">${avatar}<div class="task-suggest-card" id="task-${i}">
+      <div class="tsc-close" onclick="dismissTask(${i},event)">✕</div>
+      <div class="tsc-tag">小任务建议</div>
+      <b>${m.task.title}</b>
+      <span>${m.task.desc}</span>
+      <div class="tsc-hint">完成后点右上角 ✕ 划掉，解锁小惊喜 🎉</div>
+    </div></div>`;
+  }
+  const moodRow = (m.type==='mood' && !S.moodPicked)
+    ? `<div class="mood-chip-row">
+        <div class="mood-chip" onclick="pickMood('开心')">😊 开心</div>
+        <div class="mood-chip" onclick="pickMood('一般')">😐 一般</div>
+        <div class="mood-chip" onclick="pickMood('不开心')">😔 不开心</div>
+      </div>` : '';
+  return `<div class="chat-row">${avatar}<div><div class="bubble bot" style="white-space:pre-line;">${m.text}</div>${moodRow}</div></div>`;
+}
+
+function pickMood(mood){
+  if(S.moodPicked) return;
+  S.moodPicked = true;
+  S.moodToday = mood;
+  if(mood==='不开心') S.moodIssue = true;
+  S.chatLog.push({from:'user', text: mood});
+  S.chatTurns++;
+  render();
+  scheduleBotReply();
+}
+function sendChat(){
+  const inp = document.getElementById('chatInput');
+  const text = inp.value.trim();
+  if(!text) return;
+  if(!S.moodPicked) S.moodPicked = true; // free text also closes the mood-chip prompt
+  S.chatLog.push({from:'user', text});
+  analyzeText(text);
+  S.chatTurns++;
+  inp.value='';
+  render();
+  scheduleBotReply();
+}
+const askMap = { emotion:'这两天心情怎么样呀？', bowel:'排便这边顺畅吗？', sleep:'昨晚睡得还好吗？', skin:'皮肤最近有没有什么变化？', life:'最近有没有发生什么特别的事？', energy:'最近精力状态怎么样，容易累吗？' };
+const fallbackAsks = ['嗯，我在听，还有什么想说的吗？','身体上还有没有别的感觉？','要不要再多说一点点？'];
+function nextFollowUp(){
+  const missing = Object.keys(KEY).filter(k=>!S.indicators[k]);
+  if(missing.length) return askMap[missing[0]];
+  return fallbackAsks[Math.min(S.chatTurns, fallbackAsks.length-1)];
+}
+function scheduleBotReply(){
+  const count = filledCount();
+  setTimeout(()=>{
+    if(S.moodIssue && !S.taskSuggested && S.chatTurns>=4){
+      S.taskSuggested = true;
+      S.chatLog.push({from:'bot', type:'task', done:false, task: pickTaskSuggestion()});
+    } else if(count>=3 || S.chatTurns>=6){
+      S.chatLog.push({from:'bot', text:'谢谢你告诉我这些 🍑 今天的状态蜜桃大概了解啦，随时可以生成小结哦。'});
+    } else {
+      S.chatLog.push({from:'bot', text: nextFollowUp()});
+    }
+    render();
+  }, 450);
+}
+function pickTaskSuggestion(){
+  const curPhase = dayPhase(TODAY_DAY);
+  const bank = curPhase.key==='luteal'
+    ? { title:'深呼吸 60 秒', desc:'黄体期情绪容易被放大，试试跟着吸气4秒、屏息4秒、呼气6秒，做 3 组。' }
+    : { title:'出门走 5 分钟', desc:'晒晒太阳、活动一下身体，很多时候能让情绪松一口气。' };
+  return bank;
+}
+function dismissTask(i, evt){
+  const m = S.chatLog[i];
+  if(!m || m.done) return;
+  m.done = true;
+  S.points += 5;
+  burstConfettiAt(evt.currentTarget, 16);
+  showPointsPop(evt.currentTarget, '+5');
+  render();
+  setTimeout(()=>{
+    S.chatLog.push({from:'bot', text:'太棒啦，完成得很好 🎉 现在感觉好一些了吗？'});
+    render();
+  }, 500);
+}
+function goSummary(){ S.recordStep='chips'; render(); }
+function backToChat(){ S.recordStep='chat'; render(); }
+
+/* ---- 完成记录 summary (shown once, after the conversation) ---- */
+function recordChips(){
+  const items = Object.keys(KEY).map(k=>{
+    const filled = S.indicators[k];
+    return `<div class="chip-item">
+      <div class="ic2">${KEY[k].icon}</div>
+      <div class="body"><b>${KEY[k].label}</b><span>${filled||'暂未提及'}</span></div>
+      <div class="ok ${filled?'':'empty'}">${filled?'✓':'–'}</div>
+    </div>`;
+  }).join('');
+  return `
+  <div class="pad">
+    <div class="backbar"><div class="backbtn" onclick="backToChat()">‹</div>${peachIcon(dayPhase(TODAY_DAY),30)}<div class="headtitle">完成记录</div></div>
+    <p class="sub" style="margin-bottom:4px;">根据这次聊天，蜜桃整理出了以下内容：</p>
+    <div style="margin-top:12px;">${items}</div>
+    <button class="btn-primary" style="margin-top:16px" onclick="goReport()">生成今日简报</button>
+    <div style="height:16px"></div>
+  </div>`;
+}
+
+/* ---- report ---- */
+function goReport(){ S.recordStep='report'; render(); }
+function reportData(){
+  const ind = S.indicators;
+  const filled = Object.entries(ind).filter(([k,v])=>v);
+  const encourage = "辛苦啦，这两天的确不太容易。身体的这些反应，都是激素波动带来的正常信号，不是你的错，也不是你不够坚强。慢慢来，蜜桃会一直陪着你。";
+  const suggestions = [
+    '今晚尽量 23:00 前入睡，给身体多一点修复时间',
+    '如果情绪波动大，可以提前和身边人说明这几天需要多一点耐心',
+    '适量补充镁和 B6（如香蕉、坚果），有助缓解情绪波动'
+  ];
+  return {filled, encourage, suggestions};
+}
+function recordReport(){
+  const {filled, encourage, suggestions} = reportData();
+  const curPhase = dayPhase(TODAY_DAY);
+  return `
+  <div class="pad">
+    <div class="backbar"><div class="backbtn" onclick="closeReport()">‹</div>${peachIcon(curPhase,30)}<div class="headtitle">今日简报</div></div>
+    <div id="reportCard" class="report-card" style="margin-top:6px;">
+      <div class="report-phase" style="background:${curPhase.color}">${curPhase.name} · 第 ${cycDayOf(TODAY_DAY)} 天</div>
+      <h1 class="title" style="font-size:19px;">今天的你，辛苦了 🍑</h1>
+      <p class="sub">基于你的记录，蜜桃整理了以下状态：</p>
+      <div class="report-stat-row">
+        ${filled.length? filled.map(([k,v])=>`<div class="stat-pill"><b>${KEY[k].icon} ${KEY[k].label}</b><span>${v}</span></div>`).join(''):'<div class="stat-pill"><b>今天状态平稳</b><span>没有特别的波动</span></div>'}
+      </div>
+      <div class="encour">💌 ${encourage}</div>
+      <div style="margin-top:16px;">
+        <div style="font-size:13px;font-weight:800;color:var(--ink);">给你的小建议</div>
+        ${suggestions.map((s,i)=>`<div class="sug-item"><div class="num">${i+1}</div><div>${s}</div></div>`).join('')}
+      </div>
+    </div>
+    <button class="btn-primary" style="margin-top:18px" onclick="saveReportImage()">保存为图片</button>
+    <button class="btn-ghost" style="margin-top:10px" onclick="closeReport()">完成</button>
+    <div style="height:16px"></div>
+  </div>
+  ${S.toast? `<div class="toast">${S.toast}</div>`:''}
+  `;
+}
+function saveReportImage(){
+  const node = document.getElementById('reportCard');
+  html2canvas(node,{backgroundColor:'#ffffff',scale:2}).then(canvas=>{
+    const link = document.createElement('a');
+    link.download = '蜜桃简报.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast('简报图片已保存');
+  }).catch(()=>{ showToast('保存失败，请重试'); });
+}
+function closeReport(){
+  S.points += 10;
+  showToast('今日记录完成，蜜桃更懂你了 🍑 +10 分');
+  S.dayRecords[S.calSelected] = { summary: (S.indicators.emotion||S.indicators.energy||'今天完成了一次记录') };
+  S.chatStarted = false; // reset so re-entering the tab starts a fresh conversation
+  S.recordStep='chat';
+  render();
+}
+
+/* ---- input modals (photo / voice) ---- */
+function openInput(type){ S.pendingInputType=type; S.modal = type==='voice' ? 'voicePerm' : 'photoPerm'; render(); }
+function closeModal(){ S.modal=null; render(); }
+function closeModalIfOutside(e){ if(e.target.classList.contains('modal-mask')) closeModal(); }
+function permSheet(icon,title,sub,onallow){
+  return `
+  <div class="modal-mask">
+    <div class="sheet" style="text-align:center;">
+      <div class="sheet-handle"></div>
+      <div class="perm-icon">${icon}</div>
+      <div class="headtitle">${title}</div>
+      <p class="sub">${sub}</p>
+      <div style="display:flex;gap:10px;margin-top:18px;">
+        <button class="btn-ghost" style="flex:1" onclick="closeModal()">不允许</button>
+        <button class="btn-primary" style="flex:1" onclick="${onallow}">允许</button>
+      </div>
+    </div>
+  </div>`;
+}
+function renderModal(){
+  if(S.modal==='voicePerm') return permSheet('🎙️','需要麦克风权限','用于识别你的语音内容，仅本次记录使用','requestVoice()');
+  if(S.modal==='voiceRec') return `
+    <div class="modal-mask"><div class="sheet" style="text-align:center;">
+      <div class="sheet-handle"></div><div class="headtitle">正在聆听…</div>
+      <div class="rec-pulse">🎙️</div><p class="sub">松开结束录音（示例：自动生成转写文字）</p>
+      <button class="btn-primary" style="margin-top:16px" onclick="finishVoice()">松开，发送</button>
+    </div></div>`;
+  if(S.modal==='photoPerm') return permSheet('🖼️','需要相册权限','用于识别照片中的皮肤/身体状态','requestPhoto()');
+  if(S.modal==='photoPick') return `
+    <div class="modal-mask"><div class="sheet" style="text-align:center;">
+      <div class="sheet-handle"></div><div class="headtitle">已选择照片</div>
+      <div style="width:100%;height:150px;border-radius:16px;background:linear-gradient(135deg,#F6D9C8,#F2B7CF);margin:14px 0;display:flex;align-items:center;justify-content:center;font-size:30px;">🖼️</div>
+      <p class="sub">蜜桃将结合照片描述你的皮肤/身体状态</p>
+      <button class="btn-primary" style="margin-top:14px" onclick="submitPhoto()">发送</button>
+    </div></div>`;
+  return '';
+}
+function requestVoice(){ S.modal='voiceRec'; render(); }
+function finishVoice(){
+  const text = '今天有点累，昨晚没睡好，皮肤也冒了两颗痘';
+  S.modal=null;
+  S.chatLog.push({from:'user', text});
+  analyzeText(text);
+  S.chatTurns++;
+  render();
+  scheduleBotReply();
+}
+function requestPhoto(){ S.modal='photoPick'; render(); }
+function submitPhoto(){
+  const text = '[图片] 脸颊有痘痘，皮肤偏干燥暗沉';
+  S.modal=null;
+  S.chatLog.push({from:'user', text});
+  analyzeText('皮肤 痘痘');
+  S.chatTurns++;
+  render();
+  scheduleBotReply();
+}
+
+/* ===================== CALENDAR TAB ===================== */
+const INNER_PHASES = [
+  { name:'雌激素期', range:[1,16], color:'#C79FE0' },
+  { name:'孕酮期 · PMS期', range:[17,28], color:'#E8799E' }
+];
+function polar(cx,cy,r,angleDeg){
+  const rad = (angleDeg-90) * Math.PI/180;
+  return { x: cx + r*Math.cos(rad), y: cy + r*Math.sin(rad) };
+}
+function arcPath(cx,cy,r,startDeg,endDeg){
+  const p1 = polar(cx,cy,r,startDeg);
+  const p2 = polar(cx,cy,r,endDeg);
+  const large = (endDeg-startDeg) > 180 ? 1 : 0;
+  return `M ${p1.x} ${p1.y} A ${r} ${r} 0 ${large} 1 ${p2.x} ${p2.y}`;
+}
+function cycleRing(selectedDay){
+  const cx=105, cy=105, rOuter=86, rInner=60;
+  const cycDay = cycDayOf(selectedDay);
+  const outerArcs = PHASES.map(p=>{
+    const startDeg = (p.range[0]-1)/28*360, endDeg = p.range[1]/28*360;
+    const colorSolid = { menstrual:'#E9917E', follicular:'#B9AEE8', ovulation:'#F4CE7E', luteal:'#F2A8C4' }[p.key];
+    return `<path d="${arcPath(cx,cy,rOuter,startDeg+2,endDeg-2)}" stroke="${colorSolid}" stroke-width="19" stroke-linecap="round" fill="none"/>`;
+  }).join('');
+  const innerArcs = INNER_PHASES.map(p=>{
+    const startDeg = (p.range[0]-1)/28*360, endDeg = p.range[1]/28*360;
+    return `<path d="${arcPath(cx,cy,rInner,startDeg+2,endDeg-2)}" stroke="${p.color}" stroke-width="13" stroke-linecap="round" fill="none" opacity="0.88"/>`;
+  }).join('');
+  const outerIcons = PHASES.map(p=>{
+    const mid = ((p.range[0]-1)+p.range[1])/2/28*360;
+    const pos = polar(cx,cy,rOuter,mid);
+    return `<div class="ring-peach-icon" style="left:${pos.x}px;top:${pos.y}px;width:28px;height:28px;background:${p.grad};font-size:10.5px;color:#fff;font-weight:700;">${p.face}</div>`;
+  }).join('');
+  const innerLabels = INNER_PHASES.map(p=>{
+    const mid = ((p.range[0]-1)+p.range[1])/2/28*360;
+    const pos = polar(cx,cy,rInner,mid);
+    return `<div class="ring-inner-label" style="left:${pos.x}px;top:${pos.y}px;">${p.name.replace(' · ','<br>')}</div>`;
+  }).join('');
+  const markerAngle = (cycDay-0.5)/28*360;
+  const markerPos = polar(cx,cy,rOuter,markerAngle);
+  const curPhase = dayPhase(selectedDay);
+  return `
+  <div class="ring-wrap">
+    <div class="ring-box">
+      <svg viewBox="0 0 210 210">${outerArcs}${innerArcs}</svg>
+      ${outerIcons}${innerLabels}
+      <div class="ring-marker" style="left:${markerPos.x}px;top:${markerPos.y}px;"></div>
+      <div class="ring-center">${peachIcon(curPhase,42)}<b>${curPhase.name} · 第${cycDay}天</b><span>7月${selectedDay}日</span></div>
+    </div>
+  </div>`;
+}
+
+function buildWeeks(){
+  const daysInMonth = 31, firstWeekday = 3; // July 2026 demo grid
+  const flat = [];
+  for(let i=0;i<firstWeekday;i++) flat.push(null);
+  for(let d=1; d<=daysInMonth; d++) flat.push(d);
+  while(flat.length % 7 !== 0) flat.push(null);
+  const weeks = [];
+  for(let i=0;i<flat.length;i+=7) weeks.push(flat.slice(i,i+7));
+  return weeks;
+}
+function viewCalendar(){
+  const weeks = buildWeeks();
+  const curWeekIdx = weeks.findIndex(w=>w.includes(TODAY_DAY));
+  const weeksToShow = S.calExpanded ? weeks : [weeks[curWeekIdx]];
+  const cellsHtml = weeksToShow.map(week=> week.map(d=>{
+    if(!d) return '<div class="cal-cell blank"></div>';
+    const ph = dayPhase(d);
+    const hasRecord = !!S.dayRecords[d];
+    const isToday = d===TODAY_DAY;
+    const isSel = d===S.calSelected;
+    return `<div class="cal-cell ph-${ph.key} ${isToday?'today':''} ${isSel?'sel':''}" onclick="selectDay(${d})">
+      <div>${d}</div>${hasRecord?'<div class="dotmark"></div>':''}
+    </div>`;
+  }).join('')).join('');
+  const selPhase = dayPhase(S.calSelected);
+  const rec = S.dayRecords[S.calSelected];
+  return `
+  <div class="pad">
+    <div class="home-head">
+      <div><div class="home-day">2026年 7月</div><div class="home-date">${S.calExpanded?'点击日期查看当天简报':'仅展示本周'}</div></div>
+      <div class="cal-quick-add" onclick="openQuickAdd()">＋</div>
+    </div>
+    <div class="cal-grid">
+      ${['一','二','三','四','五','六','日'].map(w=>`<div class="cal-wk">${w}</div>`).join('')}
+      ${cellsHtml}
+    </div>
+    <div class="cal-collapse-toggle" onclick="toggleCalExpand()">${S.calExpanded?'收起为本周 ︿':'展开完整月份 ﹀'}</div>
+
+    ${cycleRing(S.calSelected)}
+
+    <div class="phase-legend" style="margin-top:2px;">
+      ${PHASES.map(p=>`
+        <div class="legend-row">
+          ${peachIcon(p,22)}
+          <div style="flex:1"><b style="color:var(--ink)">${p.name}</b> · 第${p.range[0]}-${p.range[1]}天</div>
+          ${(p.key==='luteal')? '<span style="color:var(--coral-deep);font-weight:700;font-size:11px;">PMS 重点期</span>':''}
+        </div>`).join('')}
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        ${peachIcon(selPhase,26)}
+        <div class="phase-pill" style="background:${selPhase.color}">${selPhase.name}</div>
+        <span style="font-size:12px;color:var(--ink-faint);">7月${S.calSelected}日</span>
+      </div>
+      ${rec ? `
+        <div style="margin-top:12px;background:#F8F4FC;border-radius:14px;padding:12px;">
+          <div style="font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:4px;">当天记录内容</div>
+          <div style="font-size:12px;color:var(--ink-soft);line-height:1.6;">${rec.summary}</div>
+          <button class="btn-ghost" style="margin-top:10px;" onclick="openHistoryReport()">查看完整简报</button>
+        </div>` : `
+        <div class="empty-state">
+          <div class="empty-peach">🍑📖</div>
+          <div style="font-weight:700;color:var(--ink);text-align:center;">空空如也~</div>
+          <p>快去记录吧~</p>
+          <button class="btn-primary" style="margin-top:12px" onclick="goRecordFromCalendar()">去记录</button>
+        </div>`}
+    </div>
+    <div style="height:16px"></div>
+  </div>
+  ${S.modal2? historyModal():''}
+  ${S.quickAddOpen? quickAddModal():''}
+  `;
+}
+function toggleCalExpand(){ S.calExpanded = !S.calExpanded; render(); }
+function selectDay(d){ S.calSelected=d; render(); }
+function goRecordFromCalendar(){ S.tab='record'; render(); }
+
+S.modal2=false;
+function openHistoryReport(){ S.modal2=true; render(); }
+function historyModal(){
+  const rec = S.dayRecords[S.calSelected] || {summary:'暂无记录'};
+  return `<div class="modal-mask" onclick="closeHistoryIfOutside(event)">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="report-phase" style="background:${dayPhase(S.calSelected).color}">${dayPhase(S.calSelected).name}</div>
+      <h1 class="title" style="font-size:18px;">7月${S.calSelected}日 简报</h1>
+      <div class="encour">💌 ${rec.summary}</div>
+      <button class="btn-ghost" style="margin-top:16px" onclick="closeHistory()">关闭</button>
+    </div>
+  </div>`;
+}
+function closeHistoryIfOutside(e){ if(e.target.classList.contains('modal-mask')) closeHistory(); }
+function closeHistory(){ S.modal2=false; render(); }
+
+S.quickAddOpen=false;
+function openQuickAdd(){ S.quickAddOpen=true; render(); }
+function closeQuickAdd(){ S.quickAddOpen=false; render(); }
+function quickAddModal(){
+  return `<div class="modal-mask" onclick="closeQuickAddIfOutside(event)">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">${peachIcon(dayPhase(S.calSelected),30)}<div class="headtitle">快捷记录 · 7月${S.calSelected}日</div></div>
+      <textarea class="compose" id="quickAddInput" placeholder="例如：今天有点累，皮肤爆痘"></textarea>
+      <button class="btn-primary" style="margin-top:14px" onclick="submitQuickAdd()">确定</button>
+    </div>
+  </div>`;
+}
+function closeQuickAddIfOutside(e){ if(e.target.classList.contains('modal-mask')) closeQuickAdd(); }
+function submitQuickAdd(){
+  const t = document.getElementById('quickAddInput').value.trim();
+  if(!t){ closeQuickAdd(); return; }
+  S.dayRecords[S.calSelected] = { summary:t };
+  S.points += 5;
+  S.quickAddOpen=false;
+  showToast('已记录 · +5 分');
+}
+
+/* ===================== INSIGHT TAB ===================== */
+function insightChart(){
+  const w=310, h=150, padL=26, padR=10, padT=14, padB=22;
+  const days=[1,5,10,15,20,25,28];
+  const data=[22,20,24,30,34,55,72,68,52,40,33,30,28,26,24,26,25,24,27,32,45,66,78,70,50,36,28,24]; // 28 points, peak ~day23-24
+  const maxV=Math.max(...data), minV=Math.min(...data);
+  const xFor = day => padL + (day-1)/27*(w-padL-padR);
+  const yFor = v => padT + (1-(v-minV)/(maxV-minV))*(h-padT-padB);
+  const pts = data.map((v,i)=>`${xFor(i+1)},${yFor(v)}`).join(' ');
+  const hlX1=xFor(22), hlX2=xFor(24);
+  return `
+  <svg viewBox="0 0 ${w} ${h}" style="width:100%;height:auto;">
+    <rect x="${hlX1}" y="${padT}" width="${hlX2-hlX1}" height="${h-padT-padB}" fill="#E9DEF7" opacity="0.7"/>
+    <line x1="${padL}" y1="${h-padB}" x2="${w-padR}" y2="${h-padB}" stroke="var(--line)" stroke-width="1"/>
+    <polyline points="${pts}" fill="none" stroke="#8A5FC2" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    ${days.map(d=>`<text x="${xFor(d)}" y="${h-6}" font-size="9" fill="#A79BB8" text-anchor="middle">${d}</text>`).join('')}
+    <text x="${padL-4}" y="${padT+6}" font-size="9" fill="#A79BB8" text-anchor="end">强</text>
+    <text x="${padL-4}" y="${h-padB}" font-size="9" fill="#A79BB8" text-anchor="end">弱</text>
+  </svg>`;
+}
+function viewInsight(){
+  return `
+  <div class="pad">
+    <div class="home-head">
+      <div><div class="home-day">洞察</div><div class="home-date">来自最近 3 个周期的模式</div></div>
+      ${peachIcon(phaseByKey('luteal'),36)}
+    </div>
+
+    <div class="insight-card">
+      <h4>📈 你经常在月经前 4-6 天记录焦虑</h4>
+      <div class="insight-caption">情绪强度（平均） · 周期日</div>
+      ${insightChart()}
+      <div class="insight-tip">✨ 在这段时间，你的焦虑强度通常更高，可以提前安排更轻松的日程。</div>
+    </div>
+
+    <div class="insight-card">
+      <h4>🌙 睡眠少于 6 小时时，烦躁更容易出现</h4>
+      <div class="flow-row">
+        <div class="flow-chip"><div class="fc-ic">🌙</div><b>睡得更少<br>(少于6小时)</b></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-chip"><div class="fc-ic">📅</div><b>更晚的<br>周期阶段</b></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-chip" style="background:#FCEAF1;"><div class="fc-ic">😣</div><b>更烦躁</b></div>
+      </div>
+    </div>
+    <div style="height:16px"></div>
+  </div>`;
+}
+
+/* ===================== EDU TAB ===================== */
+const EDU_CONTENT = {
+  mood:{ title:'为什么月经前情绪会波动', body:'月经前，雌激素和孕酮水平快速下降，会影响大脑中调节情绪的血清素水平，这是很多人在经前更容易烦躁、低落或敏感的生理原因之一。' },
+  record:{ title:'如何记录规律，但不过度紧张', body:'不需要每天都记录很多内容，抓住情绪、身体感受、生活事件中让你印象最深的一两点就够了。记录是为了看见趋势，而不是增加负担。' },
+  help:{ title:'什么时候可以考虑寻求专业帮助', body:'如果经前的情绪或身体不适已经明显影响到工作、学习或人际关系，持续多个周期，建议和医生或心理咨询师聊一聊，专业支持并不代表你不够坚强。' },
+  PMS:{ title:'PMS', body:'PMS（经前综合征）指月经前 1～2 周出现的一系列身体和情绪变化，如胀痛、疲惫、情绪波动等，超过 90% 的女性都经历过。' },
+  PMDD:{ title:'PMDD', body:'PMDD（经前烦躁障碍）是 PMS 中症状更严重的一种类型，情绪症状显著影响生活，通常需要专业评估和干预。' },
+  sleep:{ title:'睡眠与周期', body:'黄体期孕酮上升，可能让人更嗜睡；而经前失眠也很常见。保持规律作息，能一定程度缓解经前的情绪波动。' },
+  pain:{ title:'腹痛', body:'经期腹痛多与子宫收缩、前列腺素分泌有关，热敷、轻度拉伸有助缓解；若疼痛剧烈影响生活，建议就医排查。' }
+};
+function viewEdu(){
+  return `
+  <div class="pad">
+    <div class="home-head"><div><div class="home-day">科普</div><div class="home-date">了解自己的周期与身体</div></div>${peachIcon(phaseByKey('follicular'),36)}</div>
+
+    <div class="edu-hero" style="margin-top:10px;">
+      <h2>什么是 PMS？</h2>
+      <p>PMS 是指月经来临前几天到一两周内，可能出现的一组身体和情绪变化。它很常见，也并不代表你有问题。</p>
+      <button class="btn-primary" style="margin-top:14px" onclick="openEdu('PMS')">继续阅读</button>
+    </div>
+
+    <div class="edu-article" onclick="openEdu('mood')"><div class="ea-ic">🧠</div><div style="flex:1"><b>为什么月经前情绪会波动</b><span>了解激素变化如何影响你的情绪、睡眠和注意力</span></div><div class="chev" style="color:var(--ink-faint);">›</div></div>
+    <div class="edu-article" onclick="openEdu('record')"><div class="ea-ic">📝</div><div style="flex:1"><b>如何记录规律，但不过度紧张</b><span>简单记录，帮助你更好地看见趋势，而不是焦虑</span></div><div class="chev" style="color:var(--ink-faint);">›</div></div>
+    <div class="edu-article" onclick="openEdu('help')"><div class="ea-ic">💗</div><div style="flex:1"><b>什么时候可以考虑寻求专业帮助</b><span>识别需要关注的信号，知道何时向专业人士求助</span></div><div class="chev" style="color:var(--ink-faint);">›</div></div>
+
+    <div class="edu-disclaimer">ⓘ 科普帮助你理解自己，但不能替代医疗建议。</div>
+
+    <div class="section-label"><h3>快速查看</h3></div>
+    <div class="edu-quick-row">
+      <div class="chip" onclick="openEdu('PMS')">💧 PMS</div>
+      <div class="chip" onclick="openEdu('PMDD')">☁️ PMDD</div>
+      <div class="chip" onclick="openEdu('sleep')">🌙 睡眠</div>
+      <div class="chip" onclick="openEdu('pain')">🩹 腹痛</div>
+    </div>
+    <div style="height:16px"></div>
+  </div>
+  ${S.eduModal? eduModal():''}
+  `;
+}
+S.eduModal=null;
+function openEdu(key){ S.eduModal=key; render(); }
+function closeEdu(){ S.eduModal=null; render(); }
+function closeEduIfOutside(e){ if(e.target.classList.contains('modal-mask')) closeEdu(); }
+function eduModal(){
+  const c = EDU_CONTENT[S.eduModal];
+  return `<div class="modal-mask" onclick="closeEduIfOutside(event)">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <h1 class="title" style="font-size:19px;">${c.title}</h1>
+      <p class="sub">${c.body}</p>
+      <div class="edu-disclaimer" style="margin-top:16px;">ⓘ 内容仅供参考，不能替代医疗建议。</div>
+      <button class="btn-ghost" style="margin-top:16px" onclick="closeEdu()">关闭</button>
+    </div>
+  </div>`;
+}
+
+/* ===================== PROFILE TAB ===================== */
+function viewProfile(){
+  return `
+  <div class="pad">
+    <div class="prof-head" style="padding-top:10px;">
+      <div class="avatar">🍑</div>
+      <div>
+        <div class="prof-name">${S.profile.nickname}</div>
+        <div class="prof-tag">${S.profile.gender||'未设置'} · ${S.profile.age? S.profile.age+'岁':'年龄未填写'} · ✨ ${S.points} 分</div>
+      </div>
+    </div>
+
+    <div class="section-label"><h3>账户</h3></div>
+    ${item('😊','昵称','点击修改')}
+    ${item('🖼️','头像','更换头像')}
+    ${item('🩸','经期信息', S.profile.periodUnknown? '不清楚 · 周期'+S.profile.cycleLength+'天' : (S.profile.lastPeriodDate||'未设置'))}
+
+    <div class="section-label"><h3>放松一下</h3></div>
+    ${item('🌍','解压小组件','捶地球，释放一下情绪', 'openStressRelief()')}
+
+    <div class="section-label"><h3>设置与帮助</h3></div>
+    ${item('🔔','提醒设置','经期与记录提醒')}
+    ${item('📘','新手攻略','3 分钟了解蜜桃日记')}
+    ${item('💜','关于我们','了解我们的故事')}
+    ${item('✉️','联系我们','有问题随时找我们')}
+    ${item('📝','意见反馈','帮助蜜桃变得更好')}
+    <div style="height:20px"></div>
+  </div>`;
+}
+function item(icon,title,sub,onclickFn){
+  return `<div class="list-item" ${onclickFn?`onclick="${onclickFn}"`:''}><div class="ic3">${icon}</div><b>${title}</b><span style="font-size:11.5px;color:var(--ink-faint);margin-right:6px;">${sub}</span><div class="chev">›</div></div>`;
+}
+function openStressRelief(){ S.prevTab = S.tab; S.screen='stressRelief'; render(); }
+function closeStressRelief(){ S.screen='main'; S.tab=S.prevTab||'profile'; render(); }
+
+/* ===================== STRESS RELIEF WIDGET ===================== */
+function viewStressRelief(){
+  return `
+  <div class="pad">
+    <div class="backbar"><div class="backbtn" onclick="closeStressRelief()">‹</div><div class="headtitle">捶地球解压</div><div style="margin-left:auto;" class="points-badge">✨ ${S.points} 分</div></div>
+    <div class="earth-wrap">
+      <div class="earth ${S.earthShake?'shake':''}" id="earthBall" onclick="smashEarth(event)">
+        <div class="earth-face">${S.earth.integrity>60?'😊':S.earth.integrity>25?'😵':'🤯'}</div>
+      </div>
+      <div class="integrity-track"><div class="integrity-fill" style="width:${S.earth.integrity}%"></div></div>
+      <p class="sub" style="text-align:center;">地球韧性 ${S.earth.integrity}%　点一下就能捶一拳</p>
+      <div class="earth-stat-row">
+        <div class="earth-stat"><b>${S.earth.smashes}</b><span>累计捶爆次数</span></div>
+        <div class="earth-stat"><b>${S.points}</b><span>获得积分</span></div>
+      </div>
+    </div>
+    <div style="height:16px"></div>
+  </div>
+  ${S.toast? `<div class="toast">${S.toast}</div>`:''}
+  `;
+}
+function smashEarth(evt){
+  if(S.earth.integrity<=0) return;
+  S.earth.integrity = Math.max(0, S.earth.integrity-14);
+  S.points += 1;
+  S.earthShake = true;
+  burstConfettiAt(evt.currentTarget, 8);
+  showPointsPop(evt.currentTarget, '+1');
+  if(S.earth.integrity<=0){
+    S.earth.smashes++;
+    S.points += 10;
+    render();
+    setTimeout(()=>{
+      burstConfettiAt(document.getElementById('earthBall')||evt.currentTarget, 40);
+      showToast('地球都被你捶爆啦！+10 分 🎉');
+      S.earth.integrity = 100;
+      S.earthShake = false;
+      render();
+    }, 250);
+    return;
+  }
+  render();
+  setTimeout(()=>{ S.earthShake=false; },220);
+}
+
+/* ===================== CONFETTI / POINTS FX ===================== */
+function burstConfettiAt(el, count){
+  if(!el) return;
+  const rect = el.getBoundingClientRect();
+  const deviceRect = document.querySelector('.device').getBoundingClientRect();
+  const cx = rect.left + rect.width/2 - deviceRect.left;
+  const cy = rect.top + rect.height/2 - deviceRect.top;
+  let layer = document.getElementById('confettiLayer');
+  if(!layer){
+    layer = document.createElement('div');
+    layer.id='confettiLayer';
+    layer.className='confetti-layer';
+    document.querySelector('.device').appendChild(layer);
+  }
+  const colors = ['#F2A8C4','#B9AEE8','#F4CE7E','#E9917E','#EF8C74','#7FBF8E'];
+  for(let i=0;i<(count||14);i++){
+    const piece = document.createElement('div');
+    piece.className='confetti-piece';
+    const ang = Math.random()*Math.PI*2;
+    const dist = 40+Math.random()*70;
+    piece.style.left = cx+'px';
+    piece.style.top = cy+'px';
+    piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+    piece.style.setProperty('--dx', Math.cos(ang)*dist+'px');
+    piece.style.setProperty('--dy', Math.sin(ang)*dist+'px');
+    piece.style.setProperty('--rot', (Math.random()*360)+'deg');
+    layer.appendChild(piece);
+    setTimeout(()=>piece.remove(), 950);
+  }
+}
+function showPointsPop(el, text){
+  if(!el) return;
+  const rect = el.getBoundingClientRect();
+  const deviceRect = document.querySelector('.device').getBoundingClientRect();
+  const pop = document.createElement('div');
+  pop.className='points-pop';
+  pop.textContent = text;
+  pop.style.left = (rect.left+rect.width/2-deviceRect.left-10)+'px';
+  pop.style.top = (rect.top-deviceRect.top-6)+'px';
+  document.querySelector('.device').appendChild(pop);
+  setTimeout(()=>pop.remove(), 1150);
+}
+function showToast(msg){
+  S.toast = msg;
+  render();
+  setTimeout(()=>{ S.toast=null; render(); }, 1800);
+}
+
+/* ===================== NAV ===================== */
+function switchTab(t){ S.tab=t; render(); }
+
+render();
+</script>
+</body>
+</html>

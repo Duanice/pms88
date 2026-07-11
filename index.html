@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>节律 · PMS 情绪陪伴</title>
+<title>微澜 · PMS 情绪陪伴</title>
 <style>
 :root{
   --blue:#4263eb; --blue2:#5c7cfa; --blue-deep:#25347a; --blue-ink:#1e2a5e;
@@ -141,6 +141,9 @@ body{
 .pbar{height:6px;background:#e6eaff;border-radius:4px;margin-top:7px;overflow:hidden}
 .pbar i{display:block;height:100%;background:linear-gradient(90deg,#4263eb,#5c7cfa);border-radius:4px;transition:.4s}
 .task .meta{text-align:right;font-size:12px;color:var(--gray)}
+.chkbtn{flex:0 0 auto;padding:8px 16px;border-radius:999px;border:1.5px solid var(--blue2);background:#fff;color:var(--blue);font-size:13px;font-weight:700;cursor:pointer;transition:.15s;white-space:nowrap}
+.chkbtn:active{transform:scale(.93)}
+.chkbtn.done{background:linear-gradient(90deg,#37b24d,#51cf66);border-color:transparent;color:#fff}
 .rewards{display:flex;gap:10px}
 .reward{flex:1;background:rgba(255,255,255,.6);border-radius:16px;padding:14px 8px;text-align:center;box-shadow:var(--shadow-sm);cursor:pointer}
 .reward .em{font-size:30px}
@@ -204,9 +207,92 @@ body{
 .brief-sec p{margin:0;font-size:14px;line-height:1.6;color:#54608f}
 .close-btn{width:100%;padding:13px;border:none;border-radius:16px;background:linear-gradient(90deg,#4263eb,#5c7cfa);color:#fff;font-weight:700;font-size:15px;cursor:pointer;margin-top:6px}
 .toast{position:absolute;bottom:110px;left:50%;transform:translateX(-50%);background:rgba(30,42,94,.9);color:#fff;padding:11px 20px;border-radius:20px;font-size:14px;z-index:90;animation:rise .3s}
+/* ===== 打卡奖励动效 ===== */
+.reward-layer{position:absolute;inset:0;pointer-events:none;z-index:200;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.coin-pop{font-size:66px;filter:drop-shadow(0 6px 14px rgba(245,159,0,.45));animation:coinPop 1.15s cubic-bezier(.2,.8,.3,1) forwards}
+@keyframes coinPop{0%{transform:scale(.3) rotateY(0deg);opacity:0}22%{transform:scale(1.2) rotateY(180deg);opacity:1}55%{transform:scale(1) rotateY(360deg) translateY(0);opacity:1}100%{transform:scale(1) rotateY(540deg) translateY(-46px);opacity:0}}
+.coin-label{position:absolute;top:56%;font-size:24px;font-weight:900;color:#f59f00;text-shadow:0 2px 8px rgba(245,159,0,.35);animation:coinLabel 1.25s ease forwards}
+@keyframes coinLabel{0%{transform:translateY(14px) scale(.8);opacity:0}30%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-52px) scale(1);opacity:0}}
+.confetti-piece{position:absolute;left:50%;top:50%;width:9px;height:9px;border-radius:2px;animation:confettiFly 1s ease-out forwards}
+@keyframes confettiFly{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(var(--rot));opacity:0}}
 .phase-pill{display:inline-flex;align-items:center;gap:6px;background:#eef2ff;color:var(--blue-deep);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:700;margin:0 2px 14px}
 .hidden{display:none!important}
 .sec-title{font-weight:800;font-size:16px;margin:4px 2px 10px}
+/* ===== onboarding / auth (blue-white) ===== */
+.ob{padding:34px 24px 24px;min-height:100%;display:flex;flex-direction:column}
+.ob-hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.ob-icon{width:92px;height:92px;border-radius:28px;margin:0 auto 22px;display:flex;align-items:center;justify-content:center;font-size:42px;background:linear-gradient(135deg,#5c7cfa,#4263eb);box-shadow:var(--shadow);color:#fff}
+.ob-eyebrow{text-align:center;color:var(--blue);font-weight:700;font-size:13px;letter-spacing:1px}
+.ob-title{text-align:center;font-size:24px;font-weight:800;margin:8px 0;white-space:pre-line;line-height:1.35;color:var(--blue-ink)}
+.ob-sub{text-align:center;color:var(--gray);font-size:14px;line-height:1.7;margin-top:6px}
+.ob-list{margin:20px 0 0;display:flex;flex-direction:column;gap:10px;text-align:left}
+.ob-list li{list-style:none;display:flex;gap:10px;font-size:14px;color:var(--blue-ink);background:#fff;border-radius:14px;padding:12px 14px;box-shadow:var(--shadow-sm);align-items:flex-start}
+.ob-num{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#5c7cfa,#4263eb);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:0 0 22px;margin-top:1px}
+.ob-dots{display:flex;gap:6px;justify-content:center;margin:18px 0}
+.ob-dots i{width:7px;height:7px;border-radius:4px;background:#c8d2ff;transition:.25s}
+.ob-dots i.on{width:18px;background:var(--blue2)}
+.chip{padding:10px 18px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-size:14px;font-weight:600;color:var(--gray);cursor:pointer;transition:.15s}
+.chip.sel{background:linear-gradient(90deg,#4263eb,#5c7cfa);color:#fff;border-color:transparent}
+.ob-input{width:100%;padding:13px 15px;border:1.5px solid var(--line);border-radius:14px;font-size:15px;font-family:inherit;color:var(--blue-ink);background:#fff}
+.ob-input:focus{outline:none;border-color:var(--blue2)}
+.ob-label{font-size:13px;font-weight:700;color:var(--blue-ink);margin:20px 0 8px}
+.link-btn{background:none;border:none;color:var(--blue);font-weight:700;font-size:14px;cursor:pointer}
+.ghost-btn{width:100%;padding:14px;border-radius:16px;border:1.5px solid var(--blue2);background:transparent;color:var(--blue);font-weight:700;font-size:15px;cursor:pointer}
+.backbar{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.backbtn{width:34px;height:34px;border-radius:50%;background:var(--card);box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--blue);cursor:pointer}
+.unclear{background:var(--lav);border-radius:14px;padding:12px 14px;margin-top:12px;font-size:13px;color:var(--blue-deep);display:flex;align-items:center;justify-content:space-between;gap:10px}
+/* ===== 科普 knowledge cards ===== */
+.edu-card{display:flex;align-items:center;gap:14px;padding:14px;background:var(--card);border-radius:18px;margin-bottom:12px;box-shadow:var(--shadow-sm);cursor:pointer;border:1px solid rgba(255,255,255,.6);transition:.15s}
+.edu-card:active{transform:scale(.98)}
+.edu-card .eic{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex:0 0 48px;background:linear-gradient(135deg,#eef2ff,#dbe4ff)}
+.edu-card h4{margin:0 0 3px;font-size:15px;color:var(--blue-ink)}
+.edu-card p{margin:0;font-size:12px;color:var(--gray);line-height:1.5}
+.edu-card .arw{color:var(--gray2);font-size:20px;margin-left:auto}
+.kb-hero{border-radius:18px;padding:18px;color:#fff;background:linear-gradient(135deg,#5c7cfa,#4263eb);margin-bottom:14px}
+.kb-hero .ic{font-size:32px}
+.kb-hero h2{margin:6px 0 4px;font-size:22px}
+.kb-hero p{margin:0;font-size:13px;opacity:.92;line-height:1.6}
+.kb h3{font-size:16px;color:var(--blue-deep);margin:18px 0 8px}
+.kb p{font-size:14px;line-height:1.75;color:#4b5573;margin:0 0 8px}
+.kb b{color:var(--blue-ink)}
+.kb ul{margin:6px 0 8px;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.kb ul li{font-size:13.5px;line-height:1.6;color:#4b5573;background:var(--lav);border-radius:12px;padding:10px 12px}
+.kb table{width:100%;border-collapse:collapse;margin:8px 0;font-size:12.5px}
+.kb th{background:#eef2ff;color:var(--blue-deep);font-weight:700;padding:9px 10px;text-align:left;border:1px solid var(--line)}
+.kb td{padding:9px 10px;border:1px solid var(--line);color:#4b5573;vertical-align:top}
+.kb-tip{background:#eef2ff;border-radius:14px;padding:12px 14px;font-size:13px;color:var(--blue-deep);line-height:1.65;margin:10px 0}
+.kb-danger{background:#fff0f0;border:1px solid #ffc9c9;border-radius:14px;padding:14px;margin:10px 0;color:#c0392b;font-size:13.5px;line-height:1.7}
+.kb-danger b{color:#c0392b}
+.kb-diagram{background:#f3f6ff;border-radius:16px;padding:14px;margin:10px 0;overflow-x:auto}
+.kb-diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}
+.kb-ref{margin-top:16px;font-size:11px;color:var(--gray2);line-height:1.8;border-top:1px dashed var(--line);padding-top:10px}
+.kb-ref a{color:var(--blue);word-break:break-all}
+/* ===== onboarding: intro slides + setup wizard ===== */
+.onb{display:flex;flex-direction:column;min-height:calc(100% - 12px);padding:8px 6px 6px}
+.onb-top{display:flex;justify-content:flex-end;min-height:20px}
+.skip{background:none;border:none;color:var(--gray2);font-size:14px;font-weight:600;cursor:pointer}
+.onb-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.onb-icon{width:96px;height:96px;border-radius:28px;display:flex;align-items:center;justify-content:center;font-size:46px;background:linear-gradient(135deg,#dfe6ff,#e9e4ff);box-shadow:var(--shadow);margin-bottom:22px}
+.onb-eyebrow{font-size:12px;letter-spacing:2px;font-weight:800;color:var(--blue2);text-transform:uppercase}
+.onb-title{font-size:25px;font-weight:800;line-height:1.4;margin:10px 0 0;white-space:pre-line;color:var(--blue-ink)}
+.onb-desc{color:var(--gray);font-size:15px;line-height:1.7;margin:12px 6px 0;max-width:300px}
+.onb-list{list-style:none;padding:0;margin:22px 0 0;width:100%;display:flex;flex-direction:column;gap:12px;text-align:left}
+.onb-list li{display:flex;gap:10px;align-items:flex-start;background:var(--card);border:1px solid rgba(255,255,255,.6);border-radius:16px;padding:13px 15px;font-size:14px;color:#54608f;box-shadow:var(--shadow-sm)}
+.onb-list li b{color:var(--blue-ink)}
+.onb-tag{flex:0 0 24px;width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#4263eb,#5c7cfa);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.onb-dots{display:flex;gap:6px;justify-content:center;margin:20px 0}
+.onb-dots i{width:7px;height:7px;border-radius:4px;background:#c8d2ff;transition:.25s}
+.onb-dots i.on{width:20px;background:var(--blue2)}
+/* setup wizard */
+.ob-label{font-size:14px;font-weight:700;color:var(--blue-ink);margin:20px 2px 10px}
+.ob-input{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:14px;font-size:16px;font-family:inherit;color:var(--blue-ink);background:#fff;outline:none}
+.ob-input:focus{border-color:var(--blue2)}
+.ob-chips{display:flex;flex-wrap:wrap;gap:10px}
+.ob-chip{padding:10px 18px;border-radius:20px;border:1.5px solid var(--line);background:#fff;font-size:14px;font-weight:600;color:var(--gray);cursor:pointer;transition:.15s}
+.ob-chip.on{background:linear-gradient(90deg,#4263eb,#5c7cfa);color:#fff;border-color:transparent;box-shadow:0 6px 16px rgba(66,99,235,.3)}
+.ob-hint{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--lav);border-radius:14px;padding:11px 14px;margin-top:14px;font-size:13px;color:var(--blue-deep)}
+.ob-hint button{border:none;background:#fff;color:var(--blue);font-size:13px;font-weight:700;border-radius:12px;padding:7px 12px;cursor:pointer}
+.ob-hint button.on{background:linear-gradient(90deg,#4263eb,#5c7cfa);color:#fff}
 </style>
 </head>
 <body>
@@ -285,12 +371,14 @@ const seed = {
   points:14,
   calMonth:6, // July (0-indexed)
   calYear:2025,
+  profile:{gender:null,age:null},
+  onboarded:true,
 };
 let S = {};
 window.AUTH = false;
 let _syncT=null;
 function save(){ if(!window.AUTH) return; clearTimeout(_syncT); _syncT=setTimeout(()=>{ api('PUT','/api/state',{state:collectState()}).catch(e=>console.warn('sync',e.message)); },400); }
-function collectState(){ return { nickname:S.nickname, cycle:S.cycle, tasks:S.tasks, rewards:S.rewards, points:S.points, chat:S.chat, ai:S.ai }; }
+function collectState(){ return { nickname:S.nickname, cycle:S.cycle, rewards:S.rewards, points:S.points, chat:S.chat, ai:S.ai, profile:S.profile, onboarded:S.onboarded }; }
 async function api(method,url,body){
   const r=await fetch(url,{method,headers:{'content-type':'application/json'},credentials:'include',body:body?JSON.stringify(body):undefined});
   if(!r.ok){ let t=''; try{t=await r.text()}catch(e){} throw new Error(t||('HTTP '+r.status)); }
@@ -298,14 +386,17 @@ async function api(method,url,body){
 }
 function applyServerData(data){
   const st=data.state||{};
+  window.AI_READY = !!data.aiReady;
   const timeline={};
   (data.entries||[]).forEach(e=>{ (timeline[e.date]=timeline[e.date]||[]).push({cat:e.cat,icon:e.icon,label:e.label,ind:e.ind,time:e.time}); });
   if(!timeline[TODAY]) timeline[TODAY]=[];
   S={ tab:(S&&S.tab)||'home', selectedMoods:[], draft:'', timeline, briefs:{},
       cycle:st.cycle||{last:'2025-06-18',avgLen:28,periodLen:5,conf:'低'},
       chat:st.chat||[], nickname:st.nickname||'小X', goalTab:'today',
-      tasks:st.tasks||[], rewards:st.rewards||[], points:st.points||0,
-      calMonth:6, calYear:2025, ai:st.ai||{}, user:data.user };
+      tasks:(data.tasks||[]), rewards:st.rewards||[], points:st.points||0,
+      calMonth:6, calYear:2025, ai:st.ai||{},
+      profile:st.profile||{gender:null,age:null}, onboarded:st.onboarded!==false,
+      user:data.user };
 }
 
 /* ================= MASCOT (SVG placeholder for 桃子IP) ================= */
@@ -348,12 +439,16 @@ const RULES = [
   {ind:"情绪", cat:"mood", icon:"😮‍💨", test:/烦躁|烦|急躁/, label:()=>"情绪烦躁"},
   {ind:"情绪", cat:"mood", icon:"😰", test:/焦虑|紧张|不安|慌/, label:()=>"焦虑"},
   {ind:"情绪", cat:"mood", icon:"😢", test:/难过|想哭|低落|郁闷|郁结|丧|沮丧/, label:()=>"情绪低落"},
-  {ind:"情绪", cat:"mood", icon:"😌", test:/平静|放松|还行|不错|开心|高兴/, label:()=>"情绪平稳"},
+  {ind:"情绪", cat:"mood", icon:"😄", test:/开心|高兴|愉快|快乐|挺好|不错/, label:()=>"心情不错"},
+  {ind:"情绪", cat:"mood", icon:"🤩", test:/亢奋|兴奋|来劲|有干劲|精神满满/, label:()=>"情绪高涨"},
+  {ind:"情绪", cat:"mood", icon:"😐", test:/无聊|没意思|提不起兴趣|没劲儿/, label:()=>"有点无聊"},
+  {ind:"情绪", cat:"mood", icon:"😌", test:/平静|放松|还行|还好|平和|松弛/, label:()=>"情绪平稳"},
   {ind:"精力", cat:"energy", icon:"🪫", test:/累|疲惫|没力气|没劲|乏|困|想睡|不想动|什么都不想干|没心力|干不动/, label:()=>"精力低 / 低动力"},
   {ind:"睡眠", cat:"sleep", icon:"🌙", test:/失眠|睡不着|没睡好|熬夜|睡得少|睡不好/, label:()=>"睡眠不佳"},
   {ind:"睡眠", cat:"sleep", icon:"😴", test:/睡了|睡得好|早睡|睡够/, label:()=>"睡眠良好"},
   {ind:"皮肤", cat:"skin", icon:"🌵", test:/痘|爆痘|皮肤|出油|长闭口/, label:()=>"皮肤状态变化"},
-  {ind:"生活事件", cat:"relationship", icon:"💔", test:/吵架|发火|生气|冲突|吵|翻脸|闹|伴侣|男朋友|女朋友|对象|老公|老婆/, label:t=>/吵|发火|冲突|生气|翻脸/.test(t)?"伴侣冲突":"关系互动"},
+  {ind:"生活事件", cat:"relationship", icon:"💔", test:/吵架|吵了|大吵|吵起来|发火|冲突|翻脸|冷战|闹掰|争执|生气|发脾气/, label:t=>/伴侣|男朋友|女朋友|对象|老公|老婆|男友|女友/.test(t)?"伴侣冲突":"与人起冲突"},
+  {ind:"情绪", cat:"mood", icon:"🥰", test:/想念|想他|想她|想你|思念|贴贴|抱抱|甜蜜|恩爱|好幸福|被爱/, label:()=>"温柔想念"},
   {ind:"生活事件", cat:"life", icon:"📌", test:/加班|ddl|deadline|工作|开会|考试|论文|due/i, label:()=>"工作/学业压力"},
   {ind:"生活事件", cat:"physical", icon:"👀", test:/眼睛酸|眼酸|眼干|眼睛干|眼睛疼/, label:()=>"眼睛酸涩"},
   {ind:"生活事件", cat:"physical", icon:"🤕", test:/头疼|头痛|腹痛|肚子疼|痛经|腰疼|胸胀|乳房胀/, label:()=>"身体不适"},
@@ -439,8 +534,9 @@ function ringSVG(pct){
 /* ================= TOP BAR ================= */
 function topBar(){
   const on = AI.on();
-  return `<div class="topbar"><div class="logo">节律<span class="sp">✦</span></div>
+  return `<div class="topbar"><div class="logo">微澜<span class="sp">✦</span></div>
   <div style="display:flex;gap:10px;align-items:center">
+    <div class="bell" onclick="openAccount()" title="我的" style="font-size:17px">👤</div>
     <div class="bell" onclick="openSettings()" title="AI 设置" style="font-size:17px;position:relative">⚙️${on?'<span style="position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%;background:#37b24d;border:2px solid #fff"></span>':''}</div>
     <div class="bell"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4263eb" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg></div>
   </div></div>`;
@@ -450,14 +546,22 @@ function topBar(){
 const AI = {
   cfg(){ return (typeof S!=='undefined' && S && S.ai) ? S.ai : {}; },
   saveCfg(c){ S.ai=c; save(); },
-  on(){ const c=this.cfg(); return !!(c.enabled && c.key); },
+  userConfigured(){ const c=this.cfg(); return !!(c.enabled && c.key); },
+  on(){ return this.userConfigured() || !!window.AI_READY; },
   async call(system, userContent, {json=false, maxTokens=1024}={}){
     const c=this.cfg();
+    let text='';
+    if(!this.userConfigured() && window.AI_READY){
+      // 默认走后端代理（真实大模型），前端无需配置
+      const d=await api('POST','/api/ai',{system,user:userContent,maxTokens});
+      text=d.text||'';
+      if(json){ const m=text.match(/\{[\s\S]*\}/); return JSON.parse(m?m[0]:text); }
+      return text;
+    }
     const base=(c.base||'https://api.anthropic.com').replace(/\/+$/,'');
     const model=c.model||'claude-opus-4-8';
     const ctrl=new AbortController(); const timer=setTimeout(()=>ctrl.abort(), 25000);
     try{
-      let text='';
       if((c.proto||'anthropic')==='anthropic'){
         const r=await fetch(base+'/v1/messages',{method:'POST',signal:ctrl.signal,headers:{
           'content-type':'application/json','x-api-key':c.key,
@@ -478,31 +582,71 @@ const AI = {
     } finally { clearTimeout(timer); }
   }
 };
-const EXTRACT_SYS = `你是"节律"App的信息抽取引擎，把用户一句自然语言里的健康/情绪信号抽成结构化事件。
-只输出JSON，不要任何多余文字。格式：
-{"events":[{"category":"bowel|mood|sleep|skin|relationship|energy|physical|life|craving","icon":"一个emoji","label":"简短中文标签(≤6字)","indicator":"情绪|排便|睡眠|皮肤|生活事件|精力"}]}
-规则：便秘/排便偏硬归为bowel(指标=排便)；眼睛酸/头痛/腹痛等身体不适归physical(指标=生活事件)；和伴侣吵架归relationship(指标=生活事件)；累/不想动/没动力归energy(指标=精力)；焦虑烦躁难过平静归mood(指标=情绪)。没有可识别信号时返回{"events":[]}。`;
-function chatSystem(have){
-  return `你是"节律"，一个温柔、共情的经期PMS情绪陪伴助手。规则：
-- 先用1-2句共情确认用户此刻的感受，语气温柔、简短、口语化，不说教。
-- 然后给"一个"具体、低成本、可马上做的小动作(action)。
-- 绝不下医学诊断、不判断用户是否患PMS/PMDD、不给结论式健康断言。
-- 关键指标有6类：情绪/排便/睡眠/皮肤/生活事件/精力。目前已了解 ${have} 个。
-- 若已了解<3个：在followup里用一句温柔的话追问一个还不了解的指标；否则followup为null。
-只输出JSON：{"reply":"共情的话","action":{"t":"动作引导一句","q":"具体一句话或口令"},"followup":"追问的一句话或null"}`;
+const EXTRACT_SYS = `你是一个严格的中文信息抽取器，只输出JSON，从不闲聊、从不解释、从不说自己是谁。`;
+function extractUser(text){
+  return `从下面这句话里抽取健康/情绪信号，严格只输出一个JSON对象（不要任何解释、不要多余文字）。
+格式：{"events":[{"category":"bowel|mood|sleep|skin|relationship|energy|physical|life|craving","icon":"一个emoji","label":"≤6字中文标签","indicator":"情绪|排便|睡眠|皮肤|生活事件|精力"}]}
+规则：
+- **只有真的发生了冲突/吵架/生气/闹矛盾，才归 relationship 且判断是不是"伴侣冲突"。仅仅提到伴侣/家人/朋友（如"想念老婆""和男朋友看电影""妈妈打电话来"）不是冲突**——按当时的真实情绪或事件归类：想念/贴贴/幸福→mood(情绪)，一起做事→life(生活事件)。
+- 与人冲突：明确提到"伴侣/男朋友/女朋友/对象/老公/老婆"才label写"伴侣冲突"，否则写"与人起冲突"。
+- 便秘/排便偏硬/拉了→bowel(排便)；眼睛酸/头痛/腹痛等身体不适→physical(生活事件)；累/不想动/没动力→energy(精力)；焦虑/烦躁/难过/低落/开心/平静/亢奋/无聊/想念→mood(情绪)；想吃甜/嘴馋→craving；失眠/没睡好→sleep；爆痘/皮肤→skin。
+- label要贴合原话、别过度脑补。没有可识别信号时返回 {"events":[]}。
+用户这句话：「${text}」
+JSON：`;
 }
-function buildChatContext(){
-  const hist=S.chat.slice(-6).map(m=>(m.role==='me'?'用户：':'节律：')+String(m.text||'').replace(/\n/g,' ')).join('\n');
-  return `对话历史：\n${hist}\n\n请对用户最新的话做出回应，严格输出JSON。`;
+function chatSystem(){ return `你是"微澜"，一个温柔、共情的经期PMS情绪陪伴助手，只输出JSON，不闲聊、不说自己是AI或代码助手。`; }
+function buildChatContext(have){
+  let phase='黄体期'; try{ phase=cyclePhase().phase; }catch(e){}
+  let pool=[]; try{ const cat=classifyMsg(window._lastUserText||''); pool=(ACTION_POOL[cat||'default']||[]).concat(ACTION_POOL.default); }catch(e){}
+  const hints=[...new Set(pool.map(a=>a.t+'——'+a.q))].slice(0,6).map(s=>'  · '+s).join('\n');
+  const hist=S.chat.slice(-6).map(m=>(m.role==='me'?'用户：':'微澜：')+String(m.text||'').replace(/\n/g,' ')).join('\n');
+  return `你是温柔共情的经期PMS陪伴助手"微澜"。用户当前处于「${phase}」。请对用户最新的话回应，严格只输出一个JSON对象、不要任何多余文字。
+要求：
+- reply：1-2句共情确认此刻的感受，温柔、简短、口语化、不说教。
+- action：一个具体、低成本、可马上做的小动作，**紧扣用户这句话的情绪与内容**、**每次都不一样**，绝不总说"晚点再聊/暂停3分钟"。可参考这些贴合她当下的小动作或自创同类：
+${hints}
+- 绝不下医学诊断、不判断是否患PMS/PMDD、不给结论式健康断言。
+- 已了解关键指标 ${have} 个（共6类：情绪/排便/睡眠/皮肤/生活事件/精力）；若<3个，followup用一句温柔的话追问一个还没聊到的指标，否则followup为null。
+格式：{"reply":"共情的话","action":{"t":"动作引导一句","q":"具体一句话或口令"},"followup":"追问的话或null"}
+对话历史：
+${hist}
+JSON：`;
 }
 async function aiExtract(text){
   if(!AI.on()) return extract(text);
   try{
-    const d=await AI.call(EXTRACT_SYS, text, {json:true, maxTokens:600});
+    const d=await AI.call(EXTRACT_SYS, extractUser(text), {json:true, maxTokens:600});
     const events=(d.events||[]).map(e=>({cat:e.category||'mood', icon:e.icon||'•', label:e.label||'已记录', ind:e.indicator||'情绪'}));
     if(!events.length) return extract(text);
     return {events, indicators:[...new Set(events.map(e=>e.ind))]};
   }catch(e){ console.warn('AI extract fallback:', e.message); return extract(text); }
+}
+
+/* ================= ACCOUNT SHEET（我的 / 退出登录） ================= */
+function openAccount(){
+  const name=S.nickname||(S.user&&S.user.username)||'我';
+  const uname=(S.user&&S.user.username)||'-';
+  const g=(S.profile&&S.profile.gender)||'未设置';
+  const age=(S.profile&&S.profile.age)?S.profile.age+' 岁':'未设置';
+  const ph=cyclePhase();
+  const ov=document.createElement('div'); ov.className='overlay'; ov.onclick=(e)=>{if(e.target===ov)ov.remove();};
+  ov.innerHTML=`<div class="modal">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:6px">
+      <div style="flex:0 0 auto">${mascot(66)}</div>
+      <div><div style="font-size:19px;font-weight:800;color:var(--blue-ink)">${name}</div>
+      <div style="font-size:12px;color:var(--gray)">@${uname} · ${ph.emoji} ${ph.phase}</div></div>
+    </div>
+    <div class="card" style="box-shadow:none;background:var(--lav);margin:12px 0 6px">
+      <div class="info-row"><div class="k">性别</div><div class="v">${g}</div></div>
+      <div class="info-row"><div class="k">年龄</div><div class="v">${age}</div></div>
+      <div class="info-row"><div class="k">平均周期</div><div class="v">${(S.cycle&&S.cycle.avgLen)||28} 天</div></div>
+      <div class="info-row"><div class="k">距下次月经</div><div class="v">${ph.toNext} 天</div></div>
+    </div>
+    <button class="ghost" style="width:100%;padding:12px;margin-top:8px" onclick="this.closest('.overlay').remove();openSettings()">⚙️ AI 与设置</button>
+    <button class="close-btn" style="background:none;color:#e03131;box-shadow:none;margin-top:10px;border:1px solid #ffc9c9" onclick="doLogout()">退出登录</button>
+    <button class="close-btn" style="background:none;color:var(--gray);box-shadow:none;margin-top:6px" onclick="this.closest('.overlay').remove()">关闭</button>
+  </div>`;
+  document.querySelector('.screen').appendChild(ov);
 }
 
 /* ================= SETTINGS PANEL ================= */
@@ -510,10 +654,13 @@ function openSettings(){
   const c=AI.cfg();
   const ov=document.createElement('div'); ov.className='overlay'; ov.onclick=(e)=>{if(e.target===ov)ov.remove();};
   ov.innerHTML=`<div class="modal">
-    <div class="brief-head"><h2 style="margin:0">AI 设置</h2><div style="font-size:13px;color:var(--gray)">接入 Claude，驱动识别与对话</div></div>
+    <div class="brief-head"><h2 style="margin:0">AI 设置</h2><div style="font-size:13px;color:var(--gray)">识别与对话默认已接入真实大模型</div></div>
+    <div style="background:${window.AI_READY?'#ebfbee':'#fff4e6'};color:${window.AI_READY?'#2b8a3e':'#e8590c'};border-radius:12px;padding:10px 14px;font-size:13px;font-weight:600;margin-bottom:14px">${window.AI_READY?'✓ 已通过服务器默认接入 Claude，开箱即用':'⚠️ 服务器未配置 AI，可在下方手动填 key'}</div>
+    <div style="font-size:13px;color:var(--gray);margin-bottom:10px">如需改用你自己的 key，可在下面覆盖：</div>
     <label style="display:flex;align-items:center;gap:10px;margin-bottom:14px;font-size:15px;font-weight:600">
-      <input type="checkbox" id="ai_enabled" ${c.enabled?'checked':''} style="width:20px;height:20px"> 启用真实 AI（关闭则用本地规则兜底）
+      <input type="checkbox" id="ai_enabled" ${c.enabled?'checked':''} style="width:20px;height:20px"> 使用我自己的 key（覆盖默认）
     </label>
+    <div id="ai_note_hidden" style="display:none"></div>
     <div style="font-size:13px;color:var(--gray);margin-bottom:6px">接口协议</div>
     <div class="seg" style="margin-bottom:14px">
       <button type="button" id="proto_a" class="${(c.proto||'anthropic')==='anthropic'?'on':''}" onclick="pickProto('anthropic')">Anthropic 原生</button>
@@ -561,7 +708,7 @@ async function testAI(){
 /* ============ HOME ============ */
 function viewHome(){
   const ph = cyclePhase();
-  const today = S.timeline[TODAY]||[];
+  const today = dedupeEv(S.timeline[TODAY]||[]);
   return `
   ${topBar()}
   <div style="position:relative">
@@ -585,7 +732,7 @@ function viewHome(){
   <div id="recogArea"></div>
 
   <div class="moods">
-    ${[["😰","焦虑"],["😮‍💨","烦躁"],["🪫","疲惫"],["😢","难过"],["😌","平静"],["🩹","腹痛"]].map((m,i)=>`
+    ${[["😄","开心"],["😌","平静"],["🤩","亢奋"],["😴","放松"],["😐","无聊"],["😪","疲惫"],["😰","焦虑"],["😮‍💨","烦躁"],["😞","沮丧"],["🩹","腹痛"]].map((m,i)=>`
       <div class="mood ${S.selectedMoods.includes(m[1])?'on':''}" onclick="toggleMood('${m[1]}')"><div class="ci">${m[0]}</div><span>${m[1]}</span></div>`).join("")}
   </div>
 
@@ -599,7 +746,6 @@ function viewHome(){
       </div>
       ${ringSVG(ph.prog)}
     </div>
-    <div class="conf">🛡️ 周期置信度：${S.cycle.conf} ⓘ<div class="dots"><i class="on"></i><i></i><i></i><i></i><i></i></div></div>
   </div>
 
   ${today.length? `<div class="card">
@@ -631,7 +777,7 @@ function submitRecord(){
   if(!full){ toast("先写一句此刻的感受吧～"); return; }
   S.draft = text; save();
   const area=document.getElementById('recogArea');
-  area.innerHTML=`<div class="card recog"><div class="thinking"><span>✨ 节律正在识别</span><span class="d"></span><span class="d"></span><span class="d"></span></div></div>`;
+  area.innerHTML=`<div class="card recog"><div class="thinking"><span>✨ 微澜正在识别</span><span class="d"></span><span class="d"></span><span class="d"></span></div></div>`;
   const minDelay=new Promise(r=>setTimeout(r, 500));
   Promise.all([aiExtract(full), minDelay]).then(([res])=>{
     const {events, indicators}=res;
@@ -651,13 +797,18 @@ function clearRecog(){ document.getElementById('recogArea').innerHTML=""; }
 function confirmRecord(){
   const p=window._pending; if(!p)return;
   const now=new Date(); const time=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
-  const evs=p.events.map(e=>({cat:e.cat,icon:e.icon,label:e.label,ind:e.ind,time}));
   if(!S.timeline[TODAY]) S.timeline[TODAY]=[];
-  evs.forEach(e=>S.timeline[TODAY].push(e));
-  api('POST','/api/entries',{date:TODAY,events:evs}).catch(e=>console.warn('save entries',e.message));
+  // 同一天内，同类型+同字段的记录不重复保存
+  const seen=new Set(S.timeline[TODAY].map(e=>e.cat+'|'+e.label));
+  const evs=[];
+  for(const e of p.events){ const k=e.cat+'|'+e.label; if(seen.has(k)) continue; seen.add(k); evs.push({cat:e.cat,icon:e.icon,label:e.label,ind:e.ind,time}); }
+  if(evs.length){
+    evs.forEach(e=>S.timeline[TODAY].push(e));
+    api('POST','/api/entries',{date:TODAY,events:evs}).catch(e=>console.warn('save entries',e.message));
+  }
   S.draft=""; S.selectedMoods=[]; window._pending=null;
   save(); render();
-  toast("✓ 已保存到你的时间线");
+  toast(evs.length? "✓ 已保存到你的时间线" : "今天已经记录过这些啦～");
   // if indicators <=1, nudge multi-turn dialogue
   if(p.indicators.length<=1){
     setTimeout(()=> nudgeDialogue(p.indicators), 700);
@@ -676,16 +827,84 @@ function nudgeDialogue(inds){
 }
 
 /* ============ SUPPORT (chat) + GOALS ============ */
-const EMPATHY=[
-  "你现在可能已经很过载了。",
-  "先给自己一点空间，不必马上把问题解决。",
-  "这种感觉是真实的，也会过去。你已经做得很好了。",
-];
-const ACTIONS=[
-  {t:"先暂停 3 分钟，然后发出这句话：", q:"「我现在有点过载，晚一点再聊可以吗？」"},
-  {t:"给自己倒杯温水，做 4 次深呼吸。", q:"吸气 4 秒 · 屏住 4 秒 · 呼气 6 秒"},
-  {t:"出门慢走 10 分钟，不带手机。", q:"让身体先松一松，情绪会跟上来。"},
-];
+const EMPATHY={
+  anger:["被点着的那一下，是真的很难忍。","气头上说什么都正常，先照顾好自己。","这种烦躁不是你的错，是激素在推你一把。"],
+  anxiety:["心里悬着、静不下来，我懂。","焦虑像潮水，会涨，也会退。","你不用一个人扛着这份紧张。"],
+  low:["难过的时候不用假装没事。","眼泪也是一种释放，我陪着你。","低落会过去的，你已经很努力了。"],
+  tired:["累到没力气，是身体在喊停。","不用硬撑，慢一点也完全可以。","今天能撑到现在，已经很棒了。"],
+  craving:["想吃东西是激素在说话，不怪你。","嘴馋很正常，我们温柔应对就好。"],
+  bowel:["黄体期身体会变慢，多担待自己一点。","肚子不舒服的时候，先照顾它。"],
+  sleep:["没睡好，整个人都会更敏感。","休息不够时，情绪更需要被温柔对待。"],
+  calm:["能感到平静，真好呀。","这份松弛，值得好好珍惜。"],
+  default:["你现在可能已经有点过载了。","先给自己一点空间，不必马上解决问题。","这种感觉是真实的，也会过去。"]
+};
+const ACTION_POOL={
+  anger:[
+    {t:"感觉要吵起来了？先按下暂停键", q:"「我需要冷静 10 分钟，等下我们再好好说。」"},
+    {t:"换个环境，火气会小一点", q:"出门随便走 10 分钟，不带任何目的。"},
+    {t:"给关系留个缓冲", q:"跟对方说：「我这几天情绪不稳，说冲了先跟你说声抱歉。」"},
+    {t:"把火写下来，别对着人发", q:"拿张纸，想到什么写什么，写完可以撕掉。"}
+  ],
+  anxiety:[
+    {t:"跟我做一次 4-7-8 呼吸", q:"吸气 4 秒 · 憋 7 秒 · 呼气 8 秒，重复 5 次。"},
+    {t:"焦虑时试试 5 分钟冥想", q:"找个安静角落坐下，只跟着呼吸就好。"},
+    {t:"让身体动一动，带走一点紧张", q:"出门走 10 分钟，或原地拉伸 3 分钟。"},
+    {t:"把担心倒出来", q:"写下现在最担心的 3 件事，先不用解决。"}
+  ],
+  low:[
+    {t:"想哭就哭吧，真的没关系", q:"抱着抱枕，听一首会让你流泪的歌。"},
+    {t:"给自己一件小小的好事", q:"点一杯爱喝的，或听最喜欢的那首歌。"},
+    {t:"要不要找个人说说？", q:"给信任的人发：「我想吐槽一下，你听我说就好～」"},
+    {t:"来个 20 秒的拥抱", q:"抱抱伴侣 / 抱枕 / 自己，催产素是天然镇静剂。"}
+  ],
+  tired:[
+    {t:"今天不用硬撑", q:"从待办里划掉一件，允许自己摸鱼一下。"},
+    {t:"照顾自己 > 取悦别人", q:"取消一个不重要的约，今晚就宅着。"},
+    {t:"让身体先休息", q:"躺平 15 分钟，什么都不做也可以。"}
+  ],
+  craving:[
+    {t:"嘴馋是激素在说话，温柔应对", q:"来点黑巧或一根香蕉，比蛋糕更稳血糖。"},
+    {t:"少一点血糖过山车", q:"把奶茶换成温热的花茶或温水。"}
+  ],
+  bowel:[
+    {t:"黄体期肠道会变慢，帮它一把", q:"喝一大杯温水，午餐加点绿叶菜或水果。"},
+    {t:"给小腹一点暖意", q:"暖水袋敷 10 分钟，顺便放松一下。"}
+  ],
+  sleep:[
+    {t:"今晚早一点关灯", q:"泡个脚、放下手机，11 点前躺下。"},
+    {t:"给大脑一个降速仪式", q:"睡前拉伸 5 分钟 + 一段白噪音。"}
+  ],
+  calm:[
+    {t:"趁状态好，做件小而美的事", q:"记下今天一件让你开心的小事。"},
+    {t:"把好状态存起来", q:"出门晒 10 分钟太阳，顺便走一走。"}
+  ],
+  default:[
+    {t:"先暂停一下，给自己 3 分钟", q:"倒杯温水，慢慢做 4 次深呼吸。"},
+    {t:"出门慢走 10 分钟，不带手机", q:"让身体先松一松，情绪会跟上来。"},
+    {t:"给自己一件小确幸", q:"听最喜欢的一首歌，或点一杯爱喝的。"}
+  ]
+};
+function classifyMsg(text){
+  const t=text||'';
+  if(/吵|发火|生气|冲突|翻脸|烦躁|烦死|好烦|急躁|易怒|想骂/.test(t)) return 'anger';
+  if(/焦虑|紧张|不安|慌|心慌|担心|压力/.test(t)) return 'anxiety';
+  if(/难过|想哭|哭|低落|郁|丧|沮丧|委屈|难受|不开心|emo/i.test(t)) return 'low';
+  if(/累|疲惫|没力气|没劲|乏|好困|不想动|没动力|干不动|提不起/.test(t)) return 'tired';
+  if(/甜|馋|想吃/.test(t)) return 'craving';
+  if(/便秘|拉不出|没拉|拉屎|排便|便便|肚子疼|腹/.test(t)) return 'bowel';
+  if(/失眠|睡不着|没睡好|睡不好|熬夜|睡得少/.test(t)) return 'sleep';
+  if(/平静|还行|还好|不错|开心|挺好|舒服|放松/.test(t)) return 'calm';
+  return '';
+}
+function pickEmpathy(cat){ const arr=EMPATHY[cat]||EMPATHY.default; return arr[Math.floor(Math.random()*arr.length)]; }
+function pickAction(text){
+  const cat=classifyMsg(text)||'default';
+  const pool=(ACTION_POOL[cat]||ACTION_POOL.default);
+  let cands=pool.filter(a=>a.q!==window._lastActionQ); if(!cands.length) cands=pool;
+  const a=cands[Math.floor(Math.random()*cands.length)];
+  window._lastActionQ=a.q;
+  return a;
+}
 function startGuidedChat(haveInds){
   window._chatInds = new Set(haveInds||[]);
   window._guided=true;
@@ -723,12 +942,12 @@ function viewSupport(){
   </div>`;
 }
 function renderChat(){
-  return S.chat.map(m=>{
-    if(m.typing) return `<div class="msg"><div class="who">✦ 节律</div><div class="bub"><div class="thinking"><span class="d"></span><span class="d"></span><span class="d"></span></div></div></div>`;
+  return S.chat.map((m,idx)=>{
+    if(m.typing) return `<div class="msg"><div class="who">✦ 微澜</div><div class="bub"><div class="thinking"><span class="d"></span><span class="d"></span><span class="d"></span></div></div></div>`;
     if(m.role==="me") return `<div class="msg me"><div class="who">你 <span style="width:22px;height:22px;border-radius:50%;background:#c3ccf5;display:inline-flex;align-items:center;justify-content:center;font-size:12px">🙂</span></div><div class="bub">${m.text}</div></div>`;
-    let inner=`<div class="who">✦ 节律</div><div class="bub">${m.text.replace(/\n/g,"<br>")}`;
+    let inner=`<div class="who">✦ 微澜</div><div class="bub">${m.text.replace(/\n/g,"<br>")}`;
     if(m.action) inner+=`<div class="action-card"><div class="lbl">✨ 试一个小动作</div><div style="font-size:14px;color:#54608f;margin-bottom:6px">${m.action.t}</div><div class="q">${m.action.q}</div></div>
-      <div class="chat-actions"><button class="chip-btn" onclick="chatBtn('try')">✓ 试试看</button><button class="chip-btn" onclick="chatBtn('another')">↻ 换一个建议</button><button class="chip-btn" onclick="chatBtn('nah')">✗ 不太有帮助</button></div>`;
+      <div class="chat-actions"><button class="chip-btn" onclick="chatBtn('try',${idx})">✅ 接受·打卡</button><button class="chip-btn" onclick="chatBtn('another',${idx})">↻ 换一个</button><button class="chip-btn" onclick="chatBtn('nah',${idx})">✗ 不太有帮助</button></div>`;
     if(m.followBtns) inner+=`<div class="chat-actions">${m.followBtns.map(b=>`<button class="chip-btn" onclick="quickReply('${b}')">${b}</button>`).join("")}</div>`;
     inner+=`</div>`;
     return `<div class="msg">${inner}</div>`;
@@ -736,12 +955,13 @@ function renderChat(){
 }
 function scrollChat(){ const f=$body; setTimeout(()=>f.scrollTop=f.scrollHeight,50); }
 async function aiRespond(userText){
+  window._lastUserText=userText;
   if(!AI.on()){ localRespond(userText); return; }
   if(!window._chatInds) window._chatInds=new Set();
   extract(userText).indicators.forEach(i=>window._chatInds.add(i));
   S.chat.push({role:'ai', text:'', typing:true}); render(); scrollChat();
   let result=null;
-  try{ result=await AI.call(chatSystem(window._chatInds.size), buildChatContext(), {json:true, maxTokens:700}); }
+  try{ result=await AI.call(chatSystem(), buildChatContext(window._chatInds.size), {json:true, maxTokens:700}); }
   catch(e){ console.warn('AI chat fallback:', e.message); }
   S.chat=S.chat.filter(m=>!m.typing);
   if(!result){ localRespond(userText); return; }
@@ -751,13 +971,15 @@ async function aiRespond(userText){
   save();
 }
 function localRespond(userText){
+  window._lastUserText=userText;
   const {indicators}=extract(userText);
   if(!window._chatInds) window._chatInds=new Set();
   indicators.forEach(i=>window._chatInds.add(i));
   const have=window._chatInds.size;
-  // empathy + action
-  const emp = EMPATHY[Math.min(S.chat.length%EMPATHY.length, EMPATHY.length-1)];
-  const act = ACTIONS[0];
+  // 根据用户这句话的情绪/内容，从任务库随机挑一个贴切的小动作
+  const cat=classifyMsg(userText);
+  const emp = pickEmpathy(cat);
+  const act = pickAction(userText);
   let text = emp + "\n" ;
   const msg={role:"ai", text, action:act};
   S.chat.push(msg);
@@ -793,13 +1015,102 @@ function quickReply(t){
   S.chat.push({role:"me", text:t}); save(); render(); scrollChat();
   aiRespond(t).then(()=>{ render(); scrollChat(); });
 }
-function chatBtn(kind){
-  if(kind==="try"){ toast("💙 记得你为自己做的这件小事"); S.chat.push({role:"me",text:"好，我试试。"}); S.chat.push({role:"ai",text:"我在这里陪着你。做完可以回来告诉我感觉。"}); }
-  if(kind==="another"){ const a=ACTIONS[Math.floor(Math.abs(S.chat.length)%ACTIONS.length)]; S.chat.push({role:"ai",text:"换一个试试：",action:a}); }
+function chatBtn(kind, idx){
+  if(kind==="try"){
+    let act=(idx!=null&&S.chat[idx])?S.chat[idx].action:null;
+    if(!act){ for(let i=S.chat.length-1;i>=0;i--){ if(S.chat[i].action){ act=S.chat[i].action; break; } } }
+    if(act) acceptChatAction(act);
+    return;
+  }
+  if(kind==="another"){ const a=pickAction(window._lastUserText||''); S.chat.push({role:"ai",text:"换一个试试：",action:a}); }
   if(kind==="nah"){ S.chat.push({role:"ai",text:"没关系，不是每个建议都合适。你愿意多说说是什么让你觉得难吗？", followBtns:["我就是很累","不想说"]}); }
   save(); render(); scrollChat();
 }
+async function acceptChatAction(act){
+  const title=(act.t||'温柔小动作').replace(/[：:，,。.\s]+$/,'');
+  try{ const row=await api('POST','/api/tasks',{date:TODAY,emoji:taskEmoji(title),title}); S.tasks.unshift(row); }
+  catch(e){ toast('保存失败：'+e.message); return; }
+  S.chat.push({role:"me",text:"好，我试试。"});
+  S.chat.push({role:"ai",text:"已经帮你记进今天的打卡啦，做完回来打个勾就好 💙\n（在「温柔目标」页可以看到哦）"});
+  save(); render(); scrollChat();
+  toast("已加入今日打卡 ✓");
+}
+/* ============ 温柔任务库（来自 /knowledge，按周期分组）============ */
+const TASK_LIB={
+  "月经期":[
+    {id:'m1',emoji:'☀️',title:'温柔的早安',body:'早餐吃点温热的（热粥 / 热牛奶），再喝杯温水让肚子暖暖的。'},
+    {id:'m2',emoji:'🌡️',title:'15 分钟热敷时光',body:'暖水袋敷小腹，闭眼听点舒缓音乐，缓解痛经也给自己放个小假。'},
+    {id:'m3',emoji:'💤',title:'今晚早点睡',body:'月经期多睡 1 小时很正常，11 点前躺下——早睡不是偷懒，是爱自己。'},
+    {id:'m4',emoji:'💭',title:'允许自己不完美',body:'暂停健身、工作摸鱼一下、不回不想回的消息，今天的你已经很棒。'},
+    {id:'m5',emoji:'🤗',title:'向 ta 索要一个抱抱',body:'发消息："我今天不太舒服，能抱我一会儿吗？"拥抱会释放催产素。'}
+  ],
+  "卵泡期":[
+    {id:'f1',emoji:'🌞',title:'晨间元气运动',body:'能量回来了！快走 30 分钟 / 跳操 20 分钟 / 瑜伽，动完超爽。'},
+    {id:'f2',emoji:'🌳',title:'出门晒太阳散步',body:'找个有阳光的地方走 10–15 分钟，晒太阳 = 补维D = 好心情。'},
+    {id:'f3',emoji:'💌',title:'联系一个好久没见的朋友',body:'发个消息、约个饭、打个电话，人际连接也是情绪的良药。'},
+    {id:'f4',emoji:'🥗',title:'给营养加满',body:'深绿蔬菜 + 坚果 + 优质蛋白，为下半个周期储备能量。'},
+    {id:'f5',emoji:'🗺️',title:'和朋友/ta 去探个店',body:'新咖啡店 / 公园 / 展览，趁状态好一起制造点新鲜记忆。'}
+  ],
+  "排卵期":[
+    {id:'o1',emoji:'✨',title:'做一件勇敢的事',body:'谈项目、做演讲、表达爱意——排卵期是自信巅峰，勇敢一次。'},
+    {id:'o2',emoji:'💪',title:'挑战一次高强度运动',body:'HIIT 20 分钟 / 跑 5 公里 / 力量训练，多巴胺爆棚。'},
+    {id:'o3',emoji:'⚡',title:'攻克一件难事',body:'专注力满分，用番茄钟处理最难的报告 / 学习 / 复杂事务。'},
+    {id:'o4',emoji:'💬',title:'和 ta 来场深夜谈心',body:'聊聊最近的开心与烦恼、感谢对方的小事，表达欲强时沟通超加分。'}
+  ],
+  "黄体期":[
+    {id:'l1',emoji:'🫁',title:'3 分钟 4-7-8 呼吸',body:'吸气 4 秒 · 憋 7 秒 · 呼气 8 秒，重复 5 次，感觉要爆炸时先暂停。'},
+    {id:'l2',emoji:'🚶‍♀️',title:'出门走 10 分钟',body:'不用想太多，出门随便走走，大脑需要氧气，情绪会好一点。'},
+    {id:'l3',emoji:'🛑',title:'启动吵架熔断机制',body:'说出伤人的话前，先说"我需要冷静 10 分钟"，离开、深呼吸再沟通。'},
+    {id:'l4',emoji:'💜',title:'提醒自己：这不是你的错',body:'情绪波动 = 激素波动，不是性格缺陷。理解自己，接纳自己。'},
+    {id:'l5',emoji:'🌼',title:'做一件小确幸的事',body:'买束花、点爱吃的、听最爱的歌单、穿最舒服的衣服，小奖励大治愈。'},
+    {id:'l6',emoji:'🗑️',title:'找 ta 当情绪垃圾桶',body:'说："我想吐槽一下，你不用给建议，听我说就好～"说完抱一下。'},
+    {id:'l7',emoji:'🥺',title:'理直气壮地撒娇',body:'"抱我！""陪我！""我想吃 __ 你去买好不好～"脆弱也是被爱的时刻。'},
+    {id:'l8',emoji:'😴',title:'10 点预警，早点睡',body:'PMS 期多睡 1 小时很重要，泡个脚、放下手机、11 点躺下。'}
+  ]
+};
+function recentSignals(){
+  const days=Object.keys(S.timeline||{}).sort().slice(-4);
+  const labels=[]; days.forEach(d=>(S.timeline[d]||[]).forEach(e=>labels.push(e.label)));
+  return [...new Set(labels)].slice(0,8).join('、')||'暂无记录';
+}
+function defaultIntro(key){ return ({'月经期':'今天不用勉强，先照顾好身体～','卵泡期':'能量回来了，试试这件小事？','排卵期':'状态正好，做点让自己发光的事～','黄体期':'这几天更敏感，温柔待自己一点。'})[key]||'为你选了一件今天能帮到你的事。'; }
+async function loadRecommendedTask(exceptId){
+  const key=cyclePhase().phase; const list=TASK_LIB[key]||TASK_LIB['黄体期'];
+  const cands=list.filter(t=>t.id!==exceptId); if(!cands.length){ cands.push(...list); }
+  let chosen=cands[(window._recIdx||0)%cands.length]||cands[0];
+  let intro='';
+  if(AI.on()){
+    try{
+      const sys=`你是一个只输出JSON的推荐器，从不闲聊、从不解释。`;
+      const uc=`用户当前处于「${key}」，最近记录到的状态：${recentSignals()}。
+从下面候选任务里挑最适合她今天的一个，并写一句温柔、个性化、口语化的推荐语（≤28字）。严格只输出一个JSON对象：{"id":"任务id","intro":"推荐语"}
+候选任务：
+${cands.map(t=>`- ${t.id}: ${t.title} —— ${t.body}`).join('\n')}
+JSON：`;
+      const d=await AI.call(sys, uc, {json:true, maxTokens:220});
+      const found=cands.find(t=>t.id===d.id); if(found) chosen=found; if(d.intro) intro=d.intro;
+    }catch(e){ console.warn('task rec fallback:',e.message); }
+  }
+  window._rec={ key, task:chosen, intro:intro||defaultIntro(key), byAI:AI.on()&&!!intro };
+  render();
+}
+async function acceptRecTask(){
+  const t=window._rec&&window._rec.task; if(!t)return;
+  try{ const row=await api('POST','/api/tasks',{date:TODAY,emoji:t.emoji,title:t.title}); S.tasks.unshift(row); }
+  catch(e){ toast('保存失败：'+e.message); return; }
+  toast('已加入今日任务 ✓ 明天也能看到'); swapRecTask();
+}
+function swapRecTask(){
+  const cur=window._rec&&window._rec.task&&window._rec.task.id;
+  window._recIdx=(window._recIdx||0)+1; window._rec=null; window._recLoading=true; render();
+  loadRecommendedTask(cur).finally(()=>{window._recLoading=false;});
+}
+function skipRecTask(){ toast('跳过了，没关系'); swapRecTask(); }
+
 function viewGoals(){
+  const ph=cyclePhase();
+  if((!window._rec || window._rec.key!==ph.phase) && !window._recLoading){ window._recLoading=true; setTimeout(()=>{ loadRecommendedTask().finally(()=>{window._recLoading=false;}); },0); }
+  const rec=window._rec;
   return `
   ${topBar()}
   <div style="position:relative">
@@ -809,28 +1120,80 @@ function viewGoals(){
   </div>
   <div class="seg"><button onclick="go('support')">对话陪伴</button><button class="on">温柔目标</button></div>
   <div class="card">
-    <div class="card-title"><span class="ic">✨</span> 今日建议任务</div>
-    <p style="margin:0 0 14px;font-size:15px;line-height:1.5;color:#54608f">当情绪强度超过 7 分时，先暂停 20 分钟，再继续困难对话。</p>
-    <div class="row" style="display:flex;gap:10px"><button class="fill" onclick="acceptTask()">接受</button><button class="ghost" onclick="toast('可以改成更适合你的版本')">修改</button><button class="ghost" onclick="toast('跳过了，没关系')">跳过</button></div>
+    <div class="card-title"><span class="ic">✨</span> 今日建议任务 <span style="margin-left:auto;font-size:12px;font-weight:700;color:var(--blue)">${ph.emoji} ${ph.phase}</span></div>
+    ${rec ? `
+      <div style="font-size:13px;color:var(--blue);margin:-2px 0 8px;line-height:1.5">${rec.byAI?'🤖 ':'✨ '}${rec.intro}</div>
+      <div style="font-size:16px;font-weight:800;color:var(--blue-ink);margin-bottom:4px">${rec.task.title}</div>
+      <p style="margin:0 0 14px;font-size:14px;line-height:1.65;color:#54608f">${rec.task.body}</p>
+      <div class="row" style="display:flex;gap:10px"><button class="fill" onclick="acceptRecTask()">接受</button><button class="ghost" onclick="swapRecTask()">换一个</button><button class="ghost" onclick="skipRecTask()">跳过</button></div>
+    ` : `<div class="thinking" style="padding:8px 0"><span>正在按你的周期挑选</span><span class="d"></span><span class="d"></span><span class="d"></span></div>`}
   </div>
   <div class="card">
-    <div class="card-title"><span class="ic">📋</span> 我的自定义任务</div>
-    ${S.tasks.map(t=>`<div class="task ${t.done>=t.total?'done':''}">
-      <div class="chk ${t.done>=t.total?'done':''}" onclick="toggleTask(${t.id})">${t.done>=t.total?'✓':''}</div>
-      <div class="info"><div class="nm">${t.name}</div><div class="pbar"><i style="width:${t.total?Math.round(t.done/t.total*100):0}%"></i></div></div>
-      <div class="meta">${t.done}/${t.total}<br>${t.done>=t.total?'已完成':(t.done>0?'进行中':'未开始')}</div>
-    </div>`).join("")}
+    <div class="card-title"><span class="ic">📋</span> 我的任务与打卡 <span style="margin-left:auto;font-size:12px;font-weight:700;color:var(--coral-deep,#e8590c)">🔥 连续 ${streakDays()} 天</span></div>
+    <div style="font-size:12px;color:var(--gray);margin:-4px 0 8px">今天 · ${TODAY.slice(5).replace('-','/')}</div>
+    ${(()=>{ const today=S.tasks.filter(t=>t.date===TODAY); return today.length? today.map(taskRow).join('') : '<p style="font-size:13px;color:var(--gray2);margin:2px 0 6px">今天还没有任务，去上面「今日建议任务」领一个吧～</p>'; })()}
+    ${(()=>{ const past=S.tasks.filter(t=>t.date!==TODAY); const dates=[...new Set(past.map(t=>t.date))].sort().reverse().slice(0,6); if(!dates.length) return ''; return `<div style="font-size:12px;color:var(--gray);margin:16px 0 8px">往日打卡记录</div>`+dates.map(d=>{ const items=past.filter(t=>t.date===d); const done=items.filter(t=>t.done).length; const full=items.length&&done>=items.length; return `<div class="task" style="cursor:default"><div class="tl-dot" style="width:34px;height:34px;font-size:15px">${full?'✅':'📌'}</div><div class="info"><div class="nm" style="font-size:14px">${d.slice(5).replace('-','/')}</div><div style="font-size:13px;letter-spacing:2px;margin-top:2px">${items.map(t=>t.done?'<span style="color:#37b24d">●</span>':'<span style="color:#c8d2ff">○</span>').join(' ')}</div></div><div class="meta">${done}/${items.length}<br>${full?'全部完成':'完成'+done+'项'}</div></div>`; }).join(''); })()}
   </div>
   <div class="card">
-    <div class="card-title"><span class="ic">🎁</span> 我设置的奖励 <span style="margin-left:auto;font-size:13px;color:var(--blue)">当前 ${S.points} 分</span></div>
-    <div class="rewards">${S.rewards.map(r=>`<div class="reward" onclick="claim(${r.pt},'${r.name}')"><div class="em">${r.em}</div><div class="rn">${r.name}</div><div class="pt">${r.pt} 分</div></div>`).join("")}</div>
+    <div class="card-title"><span class="ic">🎁</span> 我设置的奖励 <span style="margin-left:auto;font-size:13px;color:#f59f00;font-weight:700">🪙 ${S.points} 乐币</span></div>
+    <div class="rewards">${S.rewards.map(r=>`<div class="reward" onclick="claim(${r.pt},'${r.name}')"><div class="em">${r.em}</div><div class="rn">${r.name}</div><div class="pt">${r.pt} 乐币</div></div>`).join("")}</div>
   </div>
   <div class="banner"><span style="font-size:24px">✨</span><div><h3 style="font-size:15px">没有连续打卡压力，也没有羞耻感。</h3><p>你随时都可以重新开始。</p></div><span class="fl">🌸</span></div>
   `;
 }
-function toggleTask(id){ const t=S.tasks.find(x=>x.id===id); if(!t)return; if(t.done<t.total){t.done=t.total; S.points+=2; toast("+2 分 · 你为自己做了一件事");} else {t.done=0;} save(); render(); }
+function toggleTask(id){
+  const t=S.tasks.find(x=>x.id===id); if(!t)return;
+  const nd=t.done?0:1; t.done=nd; t.done_at=nd?new Date().toISOString():null;
+  if(nd){ S.points+=10; rewardPop(10); } else { S.points=Math.max(0,S.points-10); }
+  api('POST','/api/tasks/toggle',{id}).catch(e=>console.warn('toggle',e.message));
+  save(); render();
+  if(window._openDay){ const el=document.getElementById('dayModalBody'); if(el) el.innerHTML=dayModalHTML(window._openDay); }
+}
+function rewardPop(amount){
+  const layer=document.createElement('div'); layer.className='reward-layer';
+  const colors=['#4263eb','#5c7cfa','#ffd43b','#ffa94d','#ff8fab','#37b24d'];
+  let conf='';
+  for(let i=0;i<16;i++){
+    const dx=(Math.random()*240-120).toFixed(0), dy=(Math.random()*-180-30).toFixed(0), rot=(Math.random()*640-320).toFixed(0);
+    conf+=`<span class="confetti-piece" style="background:${colors[i%colors.length]};--dx:${dx}px;--dy:${dy}px;--rot:${rot}deg"></span>`;
+  }
+  layer.innerHTML=`<div class="coin-pop">🪙</div><div class="coin-label">+${amount} 乐币</div>${conf}`;
+  const scr=document.querySelector('.screen'); scr.appendChild(layer);
+  setTimeout(()=>layer.remove(),1300);
+}
+function taskEmoji(title, fallback){
+  const t=title||'';
+  const map=[
+    [/走|散步|慢走|快走|徒步|跑步|运动|动一动/,'🚶'],
+    [/睡|早睡|休息|躺|作息/,'😴'],
+    [/呼吸|冥想|正念|放松/,'🧘'],
+    [/哭|眼泪|流泪/,'🫂'],
+    [/小确幸|喜欢|买花|花|电影|奖励|好事|开心|歌单|音乐/,'🌸'],
+    [/吵架|冲突|熔断|暂停|冷静|争执/,'🕊️'],
+    [/喝水|温水|喝/,'💧'],
+    [/甜|吃|零食|营养|巧克力|香蕉|饮食/,'🍫'],
+    [/抱|拥抱|撒娇/,'🤗'],
+    [/写|记录|日记|列出/,'✍️'],
+    [/倾诉|聊|说说|沟通|谈心/,'💬'],
+    [/太阳|晒/,'☀️'],
+    [/拉伸|瑜伽/,'🤸'],
+    [/联系|朋友|闺蜜|家人|电话/,'📱'],
+  ];
+  for(const [re,em] of map) if(re.test(t)) return em;
+  return (fallback && fallback!=='💙') ? fallback : '🌿';
+}
+function taskRow(t){
+  return `<div class="task ${t.done?'done':''}"><div class="info"><div class="nm">${t.title}</div></div><button class="chkbtn ${t.done?'done':''}" onclick="toggleTask(${t.id})">${t.done?'✓ 已完成':'打卡'}</button></div>`;
+}
+function streakDays(){
+  const done=new Set((S.tasks||[]).filter(t=>t.done).map(t=>t.date));
+  let n=0, d=new Date(TODAY);
+  if(!done.has(TODAY)) d.setDate(d.getDate()-1);
+  while(done.has(d.toISOString().slice(0,10))){ n++; d.setDate(d.getDate()-1); }
+  return n;
+}
 function acceptTask(){ S.tasks.push({id:Date.now(),name:"情绪超7分先暂停20分钟",done:0,total:1}); save(); render(); toast("已加入今日任务"); }
-function claim(pt,name){ if(S.points>=pt){S.points-=pt; toast("🎉 已兑换："+name);} else {toast("再攒 "+(pt-S.points)+" 分就可以啦");} save(); render(); }
+function claim(pt,name){ if(S.points>=pt){S.points-=pt; toast("🎉 已兑换："+name);} else {toast("再攒 "+(pt-S.points)+" 乐币就可以啦");} save(); render(); }
 
 /* ============ CYCLE ============ */
 function viewCycle(){
@@ -856,7 +1219,7 @@ function viewCycle(){
   const pd=periodDates(); const ph=cyclePhase();
   return `
   ${topBar()}
-  <div style="position:relative"><div class="h1">周期</div><div class="sub">轻柔查看你的节律</div><div class="mascot" style="right:0;top:2px">${mascot(104)}</div></div>
+  <div style="position:relative"><div class="h1">周期</div><div class="sub">轻柔查看你的微澜</div><div class="mascot" style="right:0;top:2px">${mascot(104)}</div></div>
   <div class="phase-pill">${ph.emoji} 当前 · ${ph.phase} · 距月经约 ${ph.toNext} 天</div>
   <div class="card">
     <div class="cal-head"><button class="nav" onclick="calMove(-1)">‹</button><div class="m">${y}年${m+1}月</div><button class="nav" onclick="calMove(1)">›</button></div>
@@ -867,9 +1230,8 @@ function viewCycle(){
     <div class="info-row"><div class="k">🩸 上次月经开始</div><div class="v">${fmtMD(pd.last)}</div></div>
     <div class="info-row"><div class="k">📅 预计下次月经</div><div class="v">${fmtMD(pd.next)}</div></div>
     <div class="info-row"><div class="k">🕐 平均周期</div><div class="v">${S.cycle.avgLen}天</div></div>
-    <div class="info-row"><div class="k">🛡️ 置信度</div><div class="v">${S.cycle.conf} ⓘ</div></div>
   </div>
-  <div class="two-btn"><button onclick="toast('已标记：周期不太确定')">❓ 我不太确定</button><button onclick="toast('已标记：周期不规律')">〰️ 我的周期不规律</button></div>
+  <div class="two-btn"><button onclick="openDay(TODAY)">✅ 打卡任务</button><button onclick="openBrief(TODAY)">📄 当日简报</button></div>
   <div class="card">
     <div class="sec-title" style="margin:0 0 10px">这段时间我常出现</div>
     <div class="symp"><span>💭 焦虑</span><span>🍰 想吃甜食</span><span>🫃 腹胀</span><span>💗 胸部胀痛</span><span>🪫 精力低</span></div>
@@ -877,9 +1239,36 @@ function viewCycle(){
   </div>`;
 }
 function calMove(d){ S.calMonth+=d; if(S.calMonth<0){S.calMonth=11;S.calYear--;} if(S.calMonth>11){S.calMonth=0;S.calYear++;} save(); render(); }
-function dayTap(ds,d){
-  if(S.timeline[ds]&&S.timeline[ds].length){ openBrief(ds); }
-  else toast(d+"日 · 暂无记录");
+function dayTap(ds,d){ openBrief(ds); }
+function phaseOn(ds){
+  const len=(S.cycle&&S.cycle.avgLen)||28;
+  let d=((daysBetween(S.cycle.last, ds)%len)+len)%len;
+  let phase='卵泡期',emoji='🌱';
+  if(d<=4){phase='月经期';emoji='🩸';}
+  else if(d<=11){phase='卵泡期';emoji='🌱';}
+  else if(d<=15){phase='排卵期';emoji='💗';}
+  else {phase='黄体期';emoji='🌗';}
+  return {d,phase,emoji};
+}
+function dayModalHTML(ds){
+  const ph=phaseOn(ds);
+  const tasks=(S.tasks||[]).filter(t=>t.date===ds);
+  const done=tasks.filter(t=>t.done).length;
+  const md=ds.slice(5).replace('-','/');
+  return `
+  <div style="margin-bottom:16px">
+    <div style="font-size:22px;font-weight:800;color:var(--blue-ink)">${md} 打卡任务</div>
+    <div style="font-size:13px;color:var(--gray);margin-top:3px">${ds.replace(/-/g,'.')} · ${ph.emoji} ${ph.phase}${tasks.length?` · 已完成 ${done}/${tasks.length}`:''}</div>
+  </div>
+  ${tasks.length? tasks.map(taskRow).join('') : '<p style="font-size:14px;color:var(--gray2);line-height:1.7;margin:8px 0 4px">这一天还没有任务～<br>可以去「温柔目标」领一个，或在「支持」的对话里接受一个小动作。</p>'}
+  <button class="close-btn" style="margin-top:18px" onclick="this.closest('.overlay').remove();window._openDay=null;">关闭</button>`;
+}
+function openDay(ds){
+  window._openDay=ds;
+  const ov=document.createElement('div'); ov.className='overlay'; ov.style.alignItems='flex-start';
+  ov.onclick=(e)=>{ if(e.target===ov){ ov.remove(); window._openDay=null; } };
+  ov.innerHTML=`<div class="modal" style="margin-top:60px"><div id="dayModalBody">${dayModalHTML(ds)}</div></div>`;
+  document.querySelector('.screen').appendChild(ov);
 }
 
 /* ============ INSIGHTS ============ */
@@ -935,6 +1324,140 @@ function viewInsights(){
 }
 
 /* ============ SCIENCE ============ */
+/* ============ 科普知识库（来自 /knowledge） ============ */
+const KB=[
+{id:'emo',icon:'🧠',title:'为什么月经前情绪会波动',sub:'了解激素变化如何影响你的情绪、睡眠和注意力',html:`<div class="kb">
+<p><b>一句话理解：</b>月经前几天，体内的<b>雌激素</b>和<b>孕酮</b>会自然"退潮"，牵动大脑里的<b>血清素、多巴胺、去甲肾上腺素</b>等情绪化学信号，于是你可能感到低落、焦虑或易怒。</p>
+<div class="kb-tip">这不是你脆弱，也不是矫情——是身体的正常微澜在起作用。</div>
+<div class="kb-diagram"><svg viewBox="0 0 320 128"><circle cx="46" cy="58" r="28" fill="#c8d4ff"/><text x="46" y="66" font-size="24" text-anchor="middle">🩸</text><text x="46" y="110" font-size="11" text-anchor="middle" fill="#6b7599">雌/孕酮↓</text><text x="112" y="64" font-size="20" text-anchor="middle" fill="#5c7cfa">➜</text><circle cx="160" cy="58" r="28" fill="#dbe4ff"/><text x="160" y="66" font-size="24" text-anchor="middle">🧠</text><text x="160" y="110" font-size="10.5" text-anchor="middle" fill="#6b7599">血清素/多巴胺↓</text><text x="226" y="64" font-size="20" text-anchor="middle" fill="#5c7cfa">➜</text><circle cx="274" cy="58" r="28" fill="#b7c6ff"/><text x="274" y="66" font-size="24" text-anchor="middle">🌧️</text><text x="274" y="110" font-size="11" text-anchor="middle" fill="#6b7599">低落/焦虑</text></svg></div>
+<h3>🔬 发生了什么</h3>
+<table><tr><th>化学信号</th><th>经前变化</th><th>你可能感觉到</th></tr>
+<tr><td>雌激素</td><td>排卵后下降</td><td>情绪敏感、精力下降</td></tr>
+<tr><td>孕酮</td><td>经前迅速回落</td><td>烦躁、睡眠变浅</td></tr>
+<tr><td>血清素</td><td>随雌激素下降</td><td>低落、想吃甜食、疲惫</td></tr>
+<tr><td>多巴胺</td><td>下降</td><td>提不起劲、快乐感减弱</td></tr>
+<tr><td>去甲肾上腺素</td><td>相对升高</td><td>更焦虑、更易怒</td></tr></table>
+<div class="kb-tip">💡 关键：问题往往不在激素"量"是否异常，而在于大脑对正常波动的<b>敏感度因人而异</b>。研究发现 PMS 女性激素水平其实和别人差不多，差别在于对波动的反应——这也解释了为什么调节血清素的药物(SSRI)对部分人有效。</div>
+<h3>🌙 不只是情绪</h3>
+<ul><li>😴 <b>睡眠</b>：孕酮下降 + 褪黑素受抑制 → 入睡难、睡得浅</li><li>🎯 <b>注意力</b>：容易走神、记性差、脑子"发懵"</li><li>🍫 <b>食欲</b>：血清素下降 → 更想吃甜食和碳水</li></ul>
+<h3>✅ 可以怎么做</h3>
+<ul><li>📅 提前预判："这几天我会更敏感"，就更容易善待自己</li><li>🚶 规律运动 + 晒太阳，帮助提升血清素</li><li>🥗 稳定血糖：复合碳水 + 蛋白质，少咖啡因和酒精</li><li>😴 保证睡眠，把重要决定尽量避开这个窗口</li><li>🤝 允许自己慢一点，情绪通常在月经开始后就会好转</li></ul>
+<div class="disclaimer" style="margin:12px 0 0">⚠️ 科普帮助你理解自己，但不能替代医疗建议。</div>
+<div class="kb-ref">参考：默沙东诊疗手册·经前综合征(PMS)；《心理学报》经前期综合征与奖赏进程失调。</div></div>`},
+
+{id:'track',icon:'📝',title:'如何记录规律，但不过度紧张',sub:'简单记录，帮助你更好地看见趋势，而不是焦虑',html:`<div class="kb">
+<h3>为什么记录有用</h3>
+<ul><li>🧭 <b>建立"你的正常"</b>：知道平时什么样，才能发现异常</li><li>💪 <b>带来掌控感</b>：明白"我为什么这样"本身就是一种缓解</li><li>🩺 <b>辅助就医</b>：带记录看医生，比反复搜索、自我诊断可靠</li><li>🔁 <b>看见周期性</b>：经前出现、来潮后缓解，通常是周期相关</li></ul>
+<div class="kb-diagram"><svg viewBox="0 0 320 128"><rect x="16" y="58" width="32" height="50" rx="4" fill="#dbe4ff"/><rect x="56" y="72" width="32" height="36" rx="4" fill="#dbe4ff"/><rect x="96" y="50" width="32" height="58" rx="4" fill="#b7c6ff"/><rect x="136" y="42" width="32" height="66" rx="4" fill="#8fa8ff"/><rect x="176" y="80" width="32" height="28" rx="4" fill="#dbe4ff"/><text x="32" y="122" font-size="10" text-anchor="middle" fill="#6b7599">第1周</text><text x="112" y="122" font-size="10" text-anchor="middle" fill="#6b7599">经前</text><text x="192" y="122" font-size="10" text-anchor="middle" fill="#6b7599">月经</text><text x="232" y="60" font-size="12" fill="#4263eb">📈 几个周期</text><text x="232" y="80" font-size="12" fill="#4263eb">后才看规律，</text><text x="232" y="100" font-size="12" fill="#4263eb">单次别当真</text></svg></div>
+<div class="kb-tip">⚖️ 一个重要权衡：<b>过度详尽地记录症状，反而会让你更容易"注意到"更多不适。</b>而健康焦虑本身在经前就会自然升高。所以关键不是"记多少"，而是"怎么记"。</div>
+<h3>✅ 轻松记录 6 原则</h3>
+<table><tr><th>原则</th><th>做法</th></tr>
+<tr><td>记趋势</td><td>目标是发现模式，不是每个症状都去查病</td></tr>
+<tr><td>给足窗口</td><td>至少看 2~3 个周期再下结论</td></tr>
+<tr><td>用时间判断</td><td>经前出现、来潮缓解=周期性；持续不变=就医</td></tr>
+<tr><td>保持简洁</td><td>每天点几下就好，别每天"全身扫描"</td></tr>
+<tr><td>当沟通工具</td><td>有担心带给医生，而不是问搜索引擎</td></tr>
+<tr><td>预留敏感期</td><td>提醒自己"这周可能更敏感"</td></tr></table>
+<h3>🖊️ 每天记什么就够了</h3>
+<ul><li>🩸 <b>周期日</b>：来了/走了、量的多少</li><li>😊 <b>心情</b>：1~5 分，或一个表情</li><li>⚡ <b>精力</b>：满 / 一般 / 很累</li><li>🤕 <b>身体</b>：腹痛、乳房胀、头痛、睡眠（有就标一下）</li></ul>
+<div class="disclaimer" style="margin:12px 0 0">⚠️ 科普帮助你理解自己，但不能替代医疗建议。</div>
+<div class="kb-ref">参考：UW Medicine 周期记录建议；PubMed 症状追踪 App 对症状报告的影响。</div></div>`},
+
+{id:'help',icon:'💗',title:'什么时候可以考虑寻求专业帮助',sub:'识别需要关注的信号，知道何时向专业人士求助',html:`<div class="kb">
+<p>大多数经前不适会随月经开始缓解，属正常范围。但当症状<b>严重、持续恶化，或影响到正常生活</b>时，寻求专业帮助是明智且值得的——这不是小题大做，而是照顾自己。</p>
+<div class="kb-danger"><b>🆘 出现以下情况，请不要等到下次月经：</b><br>• 有伤害自己或自杀的念头<br>• 情绪失控到无法工作、社交或维持关系<br>• 感到绝望、无价值，且程度越来越重</div>
+<div class="kb-danger">如果你或身边的人正经历自杀念头，请立即求助：<br>📞 全国心理援助热线 <b>12356</b><br>📞 北京心理危机干预中心 <b>010-82951332</b><br>🚑 紧急情况拨打 <b>120</b> 或前往就近急诊</div>
+<h3>⚠️ 建议就医的信号</h3>
+<table><tr><th>信号</th><th>说明</th></tr>
+<tr><td>📉 影响生活</td><td>干扰工作、学习、社交或家庭关系</td></tr>
+<tr><td>📈 逐月加重</td><td>越来越严重，而不是保持稳定</td></tr>
+<tr><td>😔 情绪很重</td><td>显著抑郁/焦虑/易怒，难以自行调节</td></tr>
+<tr><td>🔁 规律但强烈</td><td>每次经前都被严重情绪困扰（可能是 PMDD）</td></tr>
+<tr><td>🤕 躯体难忍</td><td>腹痛/头痛严重到药物无效或需请假</td></tr></table>
+<h3>🏥 应该看哪个科</h3>
+<div class="kb-diagram"><svg viewBox="0 0 320 118"><rect x="16" y="14" width="130" height="44" rx="10" fill="#dbe4ff"/><text x="81" y="34" font-size="12" text-anchor="middle" fill="#2b3560">🩺 身体为主</text><text x="81" y="50" font-size="10" text-anchor="middle" fill="#6b7599">腹痛/乳房胀</text><rect x="174" y="14" width="130" height="44" rx="10" fill="#c9d6ff"/><text x="239" y="34" font-size="12" text-anchor="middle" fill="#2b3560">🧠 情绪为主</text><text x="239" y="50" font-size="10" text-anchor="middle" fill="#6b7599">抑郁/焦虑/易怒</text><text x="81" y="76" font-size="16" text-anchor="middle" fill="#5c7cfa">↓</text><rect x="16" y="82" width="130" height="30" rx="10" fill="#b7c6ff"/><text x="81" y="101" font-size="12" text-anchor="middle" fill="#2b3560">妇科（首诊）</text><rect x="174" y="82" width="130" height="30" rx="10" fill="#8fa8ff"/><text x="239" y="101" font-size="11" text-anchor="middle" fill="#1e2a5e">精神科/心理科</text><text x="160" y="102" font-size="14" fill="#5c7cfa">→</text></svg></div>
+<div class="kb-tip">🎒 就医前带上你的<b>症状记录（至少 2 个月经周期）</b>。医生常通过"症状出现和消退的时间点"判断：经前出现、来潮后消退 → 更可能是 PMS/PMDD；全程持续 → 可能是独立的抑郁或焦虑。</div>
+<p>🌱 <b>求助不是软弱。</b>PMDD 等是被正式承认、可以识别和管理的疾病，也常被漏诊。主动求助，是把"判断严重性"交给专业人士——你值得被认真对待。</p>
+<div class="disclaimer" style="margin:12px 0 0">⚠️ 科普帮助你理解自己，但不能替代医疗建议。</div>
+<div class="kb-ref">参考：默沙东诊疗手册·PMS；NCBI/PMC 经前自杀意念研究。</div></div>`},
+
+{id:'pms',icon:'💧',title:'PMS（经前综合征）',sub:'经前几天到一两周内出现的一组身体和情绪变化',html:`<div class="kb">
+<p>PMS 指在<b>月经来临前 5~11 天</b>出现、并在<b>月经开始前后消失</b>的一组症状。它很常见，也<b>不代表你有问题</b>。约 <b>13%~18%</b> 的育龄女性有明显 PMS。</p>
+<div class="kb-diagram"><svg viewBox="0 0 320 108"><line x1="20" y1="58" x2="300" y2="58" stroke="#b7c6ff" stroke-width="3"/><rect x="196" y="44" width="74" height="28" rx="6" fill="#ffd0e0"/><text x="233" y="63" font-size="11" text-anchor="middle" fill="#c0396a">😣 症状期</text><circle cx="280" cy="58" r="9" fill="#ff8fab"/><text x="280" y="88" font-size="10" text-anchor="middle" fill="#6b7599">月经开始</text><text x="233" y="36" font-size="10" text-anchor="middle" fill="#6b7599">经前 1~2 周</text><text x="108" y="88" font-size="10" text-anchor="middle" fill="#6b7599">通常无明显症状</text></svg></div>
+<h3>常见表现</h3>
+<table><tr><th>🧠 情绪</th><th>🩺 身体</th></tr>
+<tr><td>情绪波动、易怒</td><td>乳房胀痛</td></tr>
+<tr><td>低落、爱哭</td><td>腹胀、水肿感</td></tr>
+<tr><td>焦虑、紧张</td><td>腹痛（痛经）</td></tr>
+<tr><td>注意力下降</td><td>头痛、疲惫</td></tr>
+<tr><td>想吃甜食</td><td>睡眠变化</td></tr></table>
+<p><b>为什么会这样：</b>经前雌激素、孕酮自然回落，牵动血清素、多巴胺等，从而带来情绪与身体变化。关键不在激素"量"异常，而在于对波动的敏感度因人而异。</p>
+<h3>🌿 自我照护</h3>
+<ul><li>🥗 稳定血糖：复合碳水+蛋白质，少咖啡因/酒精/高盐</li><li>🚶 规律运动、晒太阳</li><li>😴 保证睡眠</li><li>🧘 减压：呼吸、正念、允许自己慢下来</li><li>📅 记录趋势，提前预判</li></ul>
+<div class="kb-tip">🚩 当症状<b>严重、逐月加重或影响生活</b>时，请寻求专业帮助（更严重的一种叫 PMDD）。</div>
+<div class="disclaimer" style="margin:12px 0 0">⚠️ 科普帮助你理解自己，但不能替代医疗建议。</div>
+<div class="kb-ref">参考：默沙东诊疗手册·经前综合征(PMS)。</div></div>`},
+
+{id:'pmdd',icon:'☁️',title:'PMDD（经前烦躁障碍）',sub:'PMS 的一种严重形式，以强烈情绪症状为主',html:`<div class="kb">
+<p>PMDD 是 PMS 中<b>较为严重</b>的一类，在月经前 1 周周期性出现强烈的情绪、行为和躯体症状，来潮后自然缓解。它已被 DSM-5 正式列为一种心境障碍——<b>是一种真实的疾病，不是"矫情"。</b>约 <b>1.2%~6.4%</b> 的育龄女性受其影响。</p>
+<div class="kb-diagram"><svg viewBox="0 0 320 120"><rect x="14" y="14" width="140" height="92" rx="12" fill="#dbe4ff"/><text x="84" y="40" font-size="14" font-weight="bold" text-anchor="middle" fill="#3b6bd6">💧 PMS</text><text x="84" y="62" font-size="10" text-anchor="middle" fill="#6b7599">轻~中度 · 更"烦人"</text><text x="84" y="80" font-size="10" text-anchor="middle" fill="#6b7599">以身体不适为主</text><text x="84" y="97" font-size="10" text-anchor="middle" fill="#6b7599">影响相对较小</text><rect x="166" y="14" width="140" height="92" rx="12" fill="#aebfff"/><text x="236" y="40" font-size="14" font-weight="bold" text-anchor="middle" fill="#26348a">☁️ PMDD</text><text x="236" y="62" font-size="10" text-anchor="middle" fill="#3a4680">严重 · 更"失控"</text><text x="236" y="80" font-size="10" text-anchor="middle" fill="#3a4680">以强烈情绪为主</text><text x="236" y="97" font-size="10" text-anchor="middle" fill="#3a4680">严重影响生活</text></svg></div>
+<table><tr><th>维度</th><th>PMS</th><th>PMDD</th></tr>
+<tr><td>严重程度</td><td>轻~中度</td><td>严重</td></tr>
+<tr><td>症状数量</td><td>≤4 种</td><td>≥5 种</td></tr>
+<tr><td>症状类型</td><td>身体为主</td><td>情绪为主</td></tr>
+<tr><td>功能影响</td><td>较小</td><td>明显干扰</td></tr></table>
+<h3>核心症状</h3>
+<ul><li>😢 显著情绪低落、无望、自我否定</li><li>😡 明显易怒、人际冲突增多</li><li>😰 焦虑、紧张、情绪不稳、易哭</li><li>😴 兴趣减退、乏力、食欲与睡眠改变</li></ul>
+<div class="kb-tip">🩺 <b>如何确诊：记录是关键。</b>经前 ≥5 种症状、至少 1 种是情绪症状、来潮后几天内缓解。医生通常需要你每天记录、持续至少 2 个周期，才能把 PMDD 与普通抑郁/焦虑区分开。</div>
+<h3>💊 治疗方向（需遵医嘱）</h3>
+<ul><li>🧠 SSRI 类药物：一线治疗（舍曲林、氟西汀等）</li><li>💊 口服避孕药：抑制排卵稳定激素</li><li>🧘 认知行为疗法(CBT) 与生活方式调整</li></ul>
+<div class="kb-danger">如果你每个月经前都被严重情绪困扰，尤其出现<b>自杀念头</b>，请立即寻求专业帮助（12356 / 120）。</div>
+<div class="disclaimer" style="margin:12px 0 0">⚠️ 科普帮助你理解自己，但不能替代医疗建议。</div>
+<div class="kb-ref">参考：维基百科·经前焦虑症；MSD 诊疗手册专业版。</div></div>`},
+
+{id:'sleep',icon:'🌙',title:'睡眠',sub:'为什么经前更容易睡不好，以及可以怎么做',html:`<div class="kb">
+<p>经前，<b>雌激素和孕酮双双下跌</b>，这波激素退潮会从多个方面打扰你的睡眠。</p>
+<div class="kb-diagram"><svg viewBox="0 0 320 132"><circle cx="55" cy="52" r="30" fill="#dbe4ff"/><text x="55" y="60" font-size="22" text-anchor="middle">📉</text><text x="55" y="100" font-size="11" text-anchor="middle" fill="#6b7599">孕酮下降</text><text x="55" y="115" font-size="9" text-anchor="middle" fill="#9aa3c0">困倦感消失</text><circle cx="160" cy="52" r="30" fill="#cdd8ff"/><text x="160" y="60" font-size="22" text-anchor="middle">🌗</text><text x="160" y="100" font-size="11" text-anchor="middle" fill="#6b7599">褪黑素受抑制</text><text x="160" y="115" font-size="9" text-anchor="middle" fill="#9aa3c0">入睡难/浅眠</text><circle cx="265" cy="52" r="30" fill="#c0ccff"/><text x="265" y="60" font-size="22" text-anchor="middle">🌡️</text><text x="265" y="100" font-size="11" text-anchor="middle" fill="#6b7599">体温偏高</text><text x="265" y="115" font-size="9" text-anchor="middle" fill="#9aa3c0">难以入睡</text></svg></div>
+<ul><li>📉 <b>孕酮下降</b>：让人犯困的孕酮一回落，困意也随之消失</li><li>🌗 <b>褪黑素受抑制</b>：压低"助眠激素"，入睡难、睡得浅</li><li>🌡️ <b>体温偏高</b>：入睡需要体温下降，因此更难睡着</li><li>💗 <b>血清素波动</b>：带来情绪低落、疲劳与睡眠问题</li></ul>
+<div class="kb-tip">⏰ 睡眠和情绪最糟的窗口，通常在<b>月经来潮前 4~5 天到来潮前 2 天</b>。</div>
+<h3>✅ 改善睡眠</h3>
+<table><tr><th>做法</th><th>说明</th></tr>
+<tr><td>☕ 控制刺激物</td><td>避免咖啡因、酒精、高糖，尤其下午后</td></tr>
+<tr><td>🍗 吃对食物</td><td>蛋白质+复合碳水，帮助情绪与睡眠稳定</td></tr>
+<tr><td>🏃 注意运动时机</td><td>白天运动好，睡前别剧烈运动</td></tr>
+<tr><td>🌡️ 营造凉爽</td><td>卧室偏凉、温水澡后让体温自然下降</td></tr>
+<tr><td>🧘 减压</td><td>长期压力升高皮质醇→抑制褪黑素</td></tr>
+<tr><td>🌙 固定作息</td><td>规律上床/起床，稳定生物钟</td></tr></table>
+<div class="kb-tip">🚩 若失眠严重或持续，建议就医，可能需排查甲状腺功能、多囊卵巢综合征(PCOS)等。</div>
+<div class="disclaimer" style="margin:12px 0 0">⚠️ 科普帮助你理解自己，但不能替代医疗建议。</div>
+<div class="kb-ref">参考：MSD 诊疗手册专业版·PMS；澎湃新闻·如何改善女性睡眠。</div></div>`},
+
+{id:'cramps',icon:'🩹',title:'腹痛（痛经）',sub:'为什么经期会腹痛，以及可以怎么缓解',html:`<div class="kb">
+<p>最常见的是<b>原发性痛经</b>——没有器官病变的经期腹痛。罪魁祸首是一种叫 <b>前列腺素</b> 的物质。</p>
+<div class="kb-diagram"><svg viewBox="0 0 320 118"><circle cx="42" cy="52" r="24" fill="#c8d4ff"/><text x="42" y="60" font-size="19" text-anchor="middle">🧪</text><text x="42" y="94" font-size="9.5" text-anchor="middle" fill="#6b7599">前列腺素↑</text><text x="82" y="58" font-size="15" text-anchor="middle" fill="#5c7cfa">➜</text><circle cx="120" cy="52" r="24" fill="#d0dbff"/><text x="120" y="60" font-size="19" text-anchor="middle">🤰</text><text x="120" y="94" font-size="9.5" text-anchor="middle" fill="#6b7599">子宫收缩</text><text x="160" y="58" font-size="15" text-anchor="middle" fill="#5c7cfa">➜</text><circle cx="198" cy="52" r="24" fill="#bcccff"/><text x="198" y="60" font-size="19" text-anchor="middle">🩸</text><text x="198" y="94" font-size="9.5" text-anchor="middle" fill="#6b7599">供血减少</text><text x="238" y="58" font-size="15" text-anchor="middle" fill="#5c7cfa">➜</text><circle cx="276" cy="52" r="24" fill="#aebfff"/><text x="276" y="60" font-size="19" text-anchor="middle">😣</text><text x="276" y="94" font-size="9.5" text-anchor="middle" fill="#6b7599">疼痛</text></svg></div>
+<p>经期子宫内膜释放前列腺素 → 引起子宫强烈收缩 → 流向子宫的血流减少、缺血 → 产生疼痛，前列腺素还会让神经末梢更敏感。前列腺素越多，通常越痛。</p>
+<h3>✅ 如何缓解</h3>
+<table><tr><th>方法</th><th>要点</th></tr>
+<tr><td>💊 布洛芬等 NSAIDs</td><td>一线止痛，从源头减少前列腺素</td></tr>
+<tr><td>⏰ 趁早服药</td><td>痛经开始前或刚开始就吃效果最好</td></tr>
+<tr><td>🔥 热敷</td><td>暖水袋敷小腹，促循环、缓痉挛</td></tr>
+<tr><td>🚶 运动+休息</td><td>保证睡眠、适度活动有助缓解</td></tr>
+<tr><td>💊 口服避孕药</td><td>需避孕或难治时的选择（遵医嘱）</td></tr></table>
+<div class="kb-tip">💡 <b>服药时机是关键：</b>布洛芬要在痛之前或刚开始就用——它需约 2 小时起效，等痛得厉害再吃往往效果打折。用药注意胃肠道副作用，遵说明书或医嘱。</div>
+<div class="kb-tip">🚩 若痛经<b>进行性加重、药物无效、伴异常出血或非经期腹痛</b>，可能是继发性痛经（如子宫内膜异位症），应就医排查。</div>
+<div class="disclaimer" style="margin:12px 0 0">⚠️ 科普帮助你理解自己，但不能替代医疗建议。</div>
+<div class="kb-ref">参考：默沙东诊疗手册·痛经；北京市中医药管理局·原发性痛经。</div></div>`}
+];
+function openEdu(id){
+  const a=KB.find(k=>k.id===id); if(!a) return;
+  const ov=document.createElement('div'); ov.className='overlay'; ov.onclick=(e)=>{if(e.target===ov)ov.remove();};
+  ov.innerHTML=`<div class="modal">
+    <div class="kb-hero"><div class="ic">${a.icon}</div><h2>${a.title}</h2><p>${a.sub}</p></div>
+    ${a.html}
+    <button class="close-btn" style="margin-top:14px" onclick="this.closest('.overlay').remove()">读完了，收起</button>
+  </div>`;
+  document.querySelector('.screen').appendChild(ov);
+}
 function viewScience(){
   return `
   ${topBar()}
@@ -942,22 +1465,21 @@ function viewScience(){
   <div class="card pms-card">
     <h2>什么是 PMS？</h2>
     <p>PMS 是指月经来临前几天到一两周内，可能出现的一组身体和情绪变化。它很常见，也并不代表你有问题。</p>
-    <button class="read-btn" onclick="toast('展开阅读全文…')">继续阅读</button>
+    <button class="read-btn" onclick="openEdu('pms')">继续阅读</button>
   </div>
-  ${[["🧠","为什么月经前情绪会波动","了解激素变化如何影响你的情绪、睡眠和注意力。"],
-     ["📝","如何记录规律，但不过度紧张","简单记录，帮助你更好地看见趋势，而不是焦虑。"],
-     ["💗","什么时候可以考虑寻求专业帮助","识别需要关注的信号，知道何时向专业人士求助。"]].map(a=>`
-    <div class="art" onclick="toast('打开文章：${a[1]}')"><div class="ai">${a[0]}</div><div style="flex:1"><h4>${a[1]}</h4><p>${a[2]}</p></div><div class="arw">›</div></div>`).join("")}
+  <div class="sec-title">深入了解</div>
+  ${KB.filter(a=>['emo','track','help'].includes(a.id)).map(a=>`<div class="edu-card" onclick="openEdu('${a.id}')"><div class="eic">${a.icon}</div><div style="flex:1"><h4>${a.title}</h4><p>${a.sub}</p></div><div class="arw">›</div></div>`).join("")}
   <div class="disclaimer" style="margin:4px 0 14px">ⓘ 科普帮助你理解自己，但不能替代医疗建议。</div>
   <div class="sec-title">快速查看</div>
-  <div class="quick"><span>💧 PMS</span><span>☁️ PMDD</span><span>🌙 睡眠</span><span>🩹 腹痛</span><span>💭 焦虑</span></div>
+  <div class="quick"><span onclick="openEdu('pms')">💧 PMS</span><span onclick="openEdu('pmdd')">☁️ PMDD</span><span onclick="openEdu('sleep')">🌙 睡眠</span><span onclick="openEdu('cramps')">🩹 腹痛</span><span onclick="openEdu('emo')">💭 情绪</span></div>
   <div style="height:12px"></div>
   `;
 }
 
 /* ============ BRIEF (简报) ============ */
+function dedupeEv(list){ const seen=new Set(); return (list||[]).filter(e=>{ const k=e.cat+'|'+e.label; if(seen.has(k)) return false; seen.add(k); return true; }); }
 function buildBrief(date){
-  const ev=S.timeline[date]||[];
+  const ev=dedupeEv(S.timeline[date]||[]);
   const ph=cyclePhase();
   const cats=ev.map(e=>e.label);
   const list = cats.length? cats.join("、") : "今天还没有记录";
@@ -1009,66 +1531,202 @@ function renderTabs(){
     </div>`).join("");
 }
 
-/* ============ AUTH (注册/登录) ============ */
-function viewAuth(){
-  const mode=window._authMode||'login';
-  return `
-  <div style="padding:34px 6px 6px;text-align:center">
-    <div>${mascot(130)}</div>
-    <div class="logo" style="font-size:34px;margin-top:2px">节律<span class="sp">✦</span></div>
-    <div class="sub" style="margin:8px 0 22px">温柔地陪你走过每一个周期</div>
-  </div>
-  <div class="card" style="margin:0 6px">
-    <div class="seg" style="margin-bottom:18px">
-      <button type="button" class="${mode==='login'?'on':''}" onclick="setAuthMode('login')">登录</button>
-      <button type="button" class="${mode==='register'?'on':''}" onclick="setAuthMode('register')">注册</button>
+/* ============ AUTH + ONBOARDING（注册 / 登录 / 引导） ============ */
+// window.SCREEN: welcome | register | login | welcomeBack | onboarding | profileSetup | cycleSetup | app
+function ob(){ if(!window._onb) window._onb={step:0,nickname:'',gender:'女性',age:'',lastPeriod:'2025-06-18',cycleLen:28,periodUnknown:false}; return window._onb; }
+function authErr(msg,ok){ const e=document.getElementById('au_err'); if(e){ e.style.color=ok?'var(--blue)':'#e03131'; e.textContent=msg; } }
+function cleanErr(m){ try{ return (JSON.parse(m).error)||m; }catch(e){ return m; } }
+
+function viewWelcome(){
+  return `<div class="ob">
+    <div class="ob-hero">
+      <div>${mascot(150)}</div>
+      <div class="logo" style="font-size:36px;margin-top:4px">微澜<span class="sp">✦</span></div>
+      <div style="font-size:14px;letter-spacing:3px;color:var(--blue2);font-weight:700;margin-top:2px">WeLan</div>
+      <div class="ob-sub" style="max-width:250px;margin-top:14px">懂你的 PMS 陪伴助手<br>每天 10 秒，让身体被看见、被理解</div>
     </div>
-    <div style="font-size:13px;color:var(--gray);margin:0 0 4px">用户名</div>
-    <input id="au_user" autocomplete="username" placeholder="给自己起个名字" style="width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;font-size:15px;margin-bottom:12px;font-family:inherit">
-    <div style="font-size:13px;color:var(--gray);margin:0 0 4px">密码</div>
-    <input id="au_pass" type="password" autocomplete="${mode==='login'?'current-password':'new-password'}" placeholder="至少 4 位" onkeydown="if(event.key==='Enter')doAuth()" style="width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;font-size:15px;margin-bottom:6px;font-family:inherit">
-    <div id="au_err" style="font-size:13px;color:#e03131;min-height:18px;margin:2px 0 8px"></div>
-    <button class="send-btn" onclick="doAuth()">${mode==='login'?'登录':'注册并进入'}</button>
-    <div style="text-align:center;font-size:12px;color:var(--gray2);margin-top:14px">🔒 数据存储在 SQLite 数据库中，非本地缓存</div>
+    <button class="send-btn" onclick="goRegister()">注册，开启陪伴</button>
+    <button class="ghost-btn" style="margin-top:12px" onclick="goLogin()">我已有账号，登录</button>
+    <p style="text-align:center;font-size:11px;color:var(--gray2);margin-top:16px;line-height:1.6">注册即代表同意《用户协议》与《隐私政策》</p>
   </div>`;
 }
-function setAuthMode(m){ window._authMode=m; render(); }
-async function doAuth(){
-  const u=document.getElementById('au_user').value.trim();
-  const p=document.getElementById('au_pass').value;
-  const err=document.getElementById('au_err');
-  if(u.length<2){ err.style.color='#e03131'; err.textContent='用户名至少 2 位'; return; }
-  if(p.length<4){ err.style.color='#e03131'; err.textContent='密码至少 4 位'; return; }
-  const mode=window._authMode||'login';
-  err.style.color='var(--blue)'; err.textContent='请稍候…';
-  try{
-    const data=await api('POST', mode==='login'?'/api/login':'/api/register', {username:u,password:p});
-    applyServerData(data); window.AUTH=true; S.tab='home'; render();
-  }catch(e){ err.style.color='#e03131'; err.textContent=cleanErr(e.message); }
+function viewAuthForm(){
+  const mode=window.SCREEN==='register'?'register':'login';
+  return `<div class="ob" style="padding-top:40px">
+    <div class="backbar"><div class="backbtn" onclick="goWelcome()">‹</div><div style="font-weight:700;color:var(--blue-ink)">${mode==='register'?'注册账号':'登录'}</div></div>
+    <div style="text-align:center;margin:14px 0 6px">${mascot(96)}</div>
+    <div class="ob-title" style="font-size:22px">${mode==='register'?'创建你的微澜账号':'欢迎回来'}</div>
+    <div class="ob-sub">${mode==='register'?'设置账号与密码即可开始，我们不会分享你的信息。':'登录以继续你的微澜。'}</div>
+    <div class="ob-label">邮箱 / 手机号</div>
+    <input id="au_user" class="ob-input" autocomplete="username" placeholder="请输入邮箱或手机号" value="${(window._authUser||'')}" oninput="window._authUser=this.value">
+    ${mode==='register'?`
+    <div class="ob-label">验证码</div>
+    <div style="display:flex;gap:10px;align-items:stretch">
+      <input id="au_code" class="ob-input" inputmode="numeric" placeholder="6 位验证码" style="flex:1;min-width:0">
+      <button id="code_btn" type="button" class="ghost-btn" style="width:auto;padding:0 14px;white-space:nowrap;font-size:13.5px;flex:0 0 auto" onclick="sendCode()">获取验证码</button>
+    </div>`:''}
+    <div class="ob-label">密码</div>
+    <input id="au_pass" class="ob-input" type="password" autocomplete="${mode==='register'?'new-password':'current-password'}" placeholder="至少 4 位" onkeydown="if(event.key==='Enter')doAuth()">
+    <div id="au_err" style="font-size:13px;color:#e03131;min-height:18px;margin:10px 0 4px"></div>
+    <div style="flex:1;min-height:10px"></div>
+    <button class="send-btn" onclick="doAuth()">${mode==='register'?'注册并开始设置':'登录'}</button>
+    <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--gray2)">${mode==='register'?'已有账号？<button class="link-btn" onclick="goLogin()">直接登录</button>':'还没有账号？<button class="link-btn" onclick="goRegister()">立即注册</button>'}</div>
+    <div style="text-align:center;font-size:11px;color:var(--gray2);margin-top:14px">🔒 数据存储在 SQLite 数据库中，非本地缓存</div>
+  </div>`;
 }
-function cleanErr(m){ try{ return (JSON.parse(m).error)||m; }catch(e){ return m; } }
+function validAccount(a){ return /^1[3-9]\d{9}$/.test(a) || /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(a); }
+function sendCode(){
+  const acc=(document.getElementById('au_user').value||'').trim();
+  if(!validAccount(acc)){ authErr('请输入正确的邮箱或手机号'); return; }
+  window._codeSent=true;
+  const isPhone=/^1[3-9]\d{9}$/.test(acc);
+  authErr('验证码已发送至你的'+(isPhone?'手机':'邮箱')+'，请注意查收', true);
+  toast('验证码已发送，请查收');
+  const btn=document.getElementById('code_btn'); if(!btn) return;
+  clearTimeout(window._codeTimer); let n=60; btn.disabled=true; btn.style.opacity='.55';
+  (function tick(){ if(n<=0){ btn.disabled=false; btn.style.opacity=''; btn.textContent='重新获取'; return; } btn.textContent=n+' s'; n--; window._codeTimer=setTimeout(tick,1000); })();
+}
+function goWelcome(){ window.SCREEN='welcome'; render(); }
+function goRegister(){ window.SCREEN='register'; render(); }
+function goLogin(){ window.SCREEN='login'; render(); }
+async function doAuth(){
+  const u=(document.getElementById('au_user').value||'').trim();
+  const p=document.getElementById('au_pass').value||'';
+  const mode=window.SCREEN==='register'?'register':'login';
+  if(!validAccount(u)){ authErr('请输入正确的邮箱或手机号'); return; }
+  if(mode==='register'){
+    const code=(document.getElementById('au_code').value||'').trim();
+    if(!window._codeSent){ authErr('请先获取验证码'); return; }
+    if(!/^\d{6}$/.test(code)){ authErr('请输入 6 位验证码'); return; }
+  }
+  if(p.length<4){ authErr('密码至少 4 位'); return; }
+  authErr('请稍候…', true);
+  try{
+    const data=await api('POST', mode==='register'?'/api/register':'/api/login', {username:u,password:p});
+    applyServerData(data); window.AUTH=true; window._authUser=''; window._codeSent=false;
+    if(mode==='register'){ window._onb={step:0,nickname:'',gender:'女性',age:'',lastPeriod:S.cycle.last||'2025-06-18',cycleLen:S.cycle.avgLen||28,periodUnknown:false}; window.SCREEN='welcomeBack'; }
+    else { window.SCREEN='app'; S.tab='home'; }
+    render();
+  }catch(e){ authErr(cleanErr(e.message)); }
+}
 function doLogout(){
   const ov=document.querySelector('.overlay'); if(ov) ov.remove();
-  api('POST','/api/logout').catch(()=>{}).finally(()=>{ window.AUTH=false; S={}; window._authMode='login'; render(); });
+  api('POST','/api/logout').catch(()=>{}).finally(()=>{ window.AUTH=false; S={}; window.SCREEN='welcome'; render(); });
+}
+
+/* ---- 注册成功 ---- */
+function viewWelcomeBack(){
+  return `<div class="ob">
+    <div class="ob-hero">
+      <div class="ob-icon" style="font-size:46px">🎉</div>
+      <div class="ob-title">注册成功！</div>
+      <div class="ob-sub" style="max-width:250px">欢迎加入微澜 ✨<br>接下来花 1 分钟，让微澜更懂你。</div>
+    </div>
+    <button class="send-btn" onclick="startOnboarding()">开始设置</button>
+    <div style="height:4px"></div>
+  </div>`;
+}
+function startOnboarding(){ ob().step=0; window.SCREEN='onboarding'; render(); }
+
+/* ---- 3 张 PMS 科普引导 ---- */
+const onbSlides=[
+  {icon:'🌙', eyebrow:'什么是 PMS', title:'经前综合征\n是身体在提前打招呼', body:'PMS 指月经前 1–2 周，因激素波动出现的一系列身体和情绪变化。超过 90% 的女性都经历过，是很正常的生理现象。'},
+  {icon:'💭', eyebrow:'常见表现', title:'不只是"情绪化"\n是真实的生理反应', list:['情绪：烦躁、低落、易哭、敏感','身体：胀痛、头痛、疲惫、便秘、爆痘','行为：想吃甜食、嗜睡或失眠']},
+  {icon:'✨', eyebrow:'微澜能做什么', title:'记录感受\n让身体被看见、被理解', body:'每天花 10 秒说说感受，微澜会自动识别情绪、身体和生活事件，慢慢画出属于你的周期地图。'}
+];
+function viewOnboarding(){
+  const i=ob().step, s=onbSlides[i];
+  return `<div class="ob">
+    <div style="display:flex;justify-content:flex-end"><button class="link-btn" style="color:var(--gray2)" onclick="skipOnboarding()">跳过</button></div>
+    <div style="flex:1;display:flex;flex-direction:column">
+      <div style="text-align:center">
+        <div class="ob-icon">${s.icon}</div>
+        <div class="ob-eyebrow">${s.eyebrow}</div>
+        <div class="ob-title">${s.title}</div>
+        ${s.body?`<div class="ob-sub">${s.body}</div>`:''}
+      </div>
+      ${s.list?`<ul class="ob-list">${s.list.map((t,k)=>`<li><span class="ob-num">${k+1}</span><span>${t}</span></li>`).join('')}</ul>`:''}
+    </div>
+    <div class="ob-dots">${onbSlides.map((_,k)=>`<i class="${k===i?'on':''}"></i>`).join('')}</div>
+    <button class="send-btn" onclick="nextOnboarding()">${i===onbSlides.length-1?'开始设置':'下一步'}</button>
+  </div>`;
+}
+function nextOnboarding(){ if(ob().step<onbSlides.length-1) ob().step++; else window.SCREEN='profileSetup'; render(); }
+function skipOnboarding(){ window.SCREEN='profileSetup'; render(); }
+
+/* ---- 认识你：昵称 / 性别 / 年龄 ---- */
+function viewProfileSetup(){
+  const o=ob();
+  return `<div class="ob" style="padding-top:46px">
+    <div class="ob-eyebrow" style="text-align:left">开始之前</div>
+    <div class="ob-title" style="text-align:left;margin:6px 0">先认识一下你</div>
+    <div class="ob-sub" style="text-align:left">这些信息帮助微澜更准确地理解你的周期与状态，只用于个性化建议。</div>
+    <div class="ob-label">你的昵称</div>
+    <input class="ob-input" placeholder="微澜怎么称呼你？" value="${o.nickname||''}" oninput="ob().nickname=this.value">
+    <div class="ob-label">你的性别</div>
+    <div class="moods" style="overflow:visible"><div style="display:flex;gap:10px;flex-wrap:wrap">${['女性','男性','其他/不透露'].map(g=>`<div class="chip ${o.gender===g?'sel':''}" onclick="setOb('gender','${g}')">${g}</div>`).join('')}</div></div>
+    <div class="ob-label">你的年龄</div>
+    <input class="ob-input" type="number" placeholder="例如 25" value="${o.age||''}" oninput="ob().age=this.value">
+    <div style="flex:1"></div>
+    <button class="send-btn" style="margin-top:24px" onclick="window.SCREEN='cycleSetup';render()">下一步</button>
+  </div>`;
+}
+function setOb(k,v){ ob()[k]=v; render(); }
+
+/* ---- 经期设置：上次月经 / 平均周期 ---- */
+function viewCycleSetup(){
+  const o=ob();
+  return `<div class="ob" style="padding-top:46px">
+    <div class="ob-eyebrow" style="text-align:left">经期信息</div>
+    <div class="ob-title" style="text-align:left;margin:6px 0">最近一次月经\n从哪天开始？</div>
+    <div class="ob-sub" style="text-align:left">帮助微澜估算你现在所处的周期阶段，随时可在设置里修改。</div>
+    <div class="ob-label">选择日期</div>
+    <input class="ob-input" type="date" ${o.periodUnknown?'disabled':''} value="${o.lastPeriod||''}" onchange="setPeriodDate(this.value)">
+    <div class="unclear"><span>记不清具体日期也没关系</span>
+      <button class="chip ${o.periodUnknown?'sel':''}" style="padding:8px 14px;font-size:12px" onclick="toggleUnclear()">${o.periodUnknown?'已选择"不清楚"':'写不清楚'}</button>
+    </div>
+    <div class="ob-label">平均周期长度</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">${[24,26,28,30,32].map(n=>`<div class="chip ${o.cycleLen===n?'sel':''}" onclick="setOb('cycleLen',${n})">${n} 天</div>`).join('')}</div>
+    <div style="flex:1"></div>
+    <button class="send-btn" style="margin-top:24px" onclick="finishOnboarding()">完成，进入微澜</button>
+  </div>`;
+}
+function setPeriodDate(v){ ob().lastPeriod=v; if(v) ob().periodUnknown=false; render(); }
+function toggleUnclear(){ const o=ob(); o.periodUnknown=!o.periodUnknown; render(); }
+function finishOnboarding(){
+  const o=ob();
+  S.nickname=(o.nickname||'').trim()||S.user.username;
+  S.profile={gender:o.gender, age:o.age?Number(o.age):null}; S.onboarded=true;
+  S.cycle=S.cycle||{}; S.cycle.avgLen=o.cycleLen;
+  if(!o.periodUnknown && o.lastPeriod){ S.cycle.last=o.lastPeriod; S.cycle.conf="中"; }
+  else { S.cycle.conf="低"; }
+  S.cycle.periodLen=S.cycle.periodLen||5;
+  save();
+  window.SCREEN='app'; S.tab='home'; render();
+  toast('欢迎来到微澜，'+S.nickname+' ✨');
 }
 
 /* ============ MAIN RENDER ============ */
 function render(){
-  if(!window.AUTH){ $body.innerHTML=viewAuth(); document.getElementById('tabbar').innerHTML=''; return; }
+  const scr=window.SCREEN||'welcome';
+  const gate={welcome:viewWelcome,register:viewAuthForm,login:viewAuthForm,welcomeBack:viewWelcomeBack,onboarding:viewOnboarding,profileSetup:viewProfileSetup,cycleSetup:viewCycleSetup};
+  if(gate[scr]){ document.getElementById('tabbar').innerHTML=''; $body.innerHTML=gate[scr](); $body.scrollTop=0; return; }
   const v={home:viewHome,cycle:viewCycle,support:viewSupport,goals:viewGoals,insights:viewInsights,science:viewScience}[S.tab]||viewHome;
   $body.innerHTML=v();
   renderTabs();
-  // keep draft synced
   const d=document.getElementById('draft'); if(d){ d.addEventListener('input',e=>{S.draft=e.target.value;}); }
   if(S.tab==="support") scrollChat();
 }
 async function boot(){
-  try{ const data=await api('GET','/api/me'); applyServerData(data); window.AUTH=true; }
-  catch(e){ window.AUTH=false; }
+  try{
+    const data=await api('GET','/api/me'); applyServerData(data); window.AUTH=true;
+    if(S.onboarded===false){ window._onb={step:0,nickname:S.nickname,gender:(S.profile&&S.profile.gender)||'女性',age:(S.profile&&S.profile.age)||'',lastPeriod:S.cycle.last||'2025-06-18',cycleLen:S.cycle.avgLen||28,periodUnknown:false}; window.SCREEN='onboarding'; }
+    else window.SCREEN='app';
+  }
+  catch(e){ window.AUTH=false; window.SCREEN='welcome'; }
   render();
 }
 boot();
-window.go=go;window.toggleMood=toggleMood;window.demoFill=demoFill;window.submitRecord=submitRecord;window.clearRecog=clearRecog;window.confirmRecord=confirmRecord;window.openBrief=openBrief;window.sendChat=sendChat;window.quickReply=quickReply;window.chatBtn=chatBtn;window.toggleTask=toggleTask;window.acceptTask=acceptTask;window.claim=claim;window.calMove=calMove;window.dayTap=dayTap;
 </script>
 </body>
 </html>

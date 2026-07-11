@@ -1,4 +1,4 @@
-// 节律 · 后端：Node 内置 http + node:sqlite + crypto，零外部依赖。
+// 微澜 · 后端：Node 内置 http + node:sqlite + crypto，零外部依赖。
 // 运行： node server.js  然后打开 http://localhost:3000
 import { createServer } from 'node:http';
 import { readFileSync } from 'node:fs';
@@ -27,6 +27,16 @@ CREATE TABLE IF NOT EXISTS entries(
   cat TEXT, icon TEXT, label TEXT, ind TEXT, time TEXT,
   FOREIGN KEY(user_id) REFERENCES users(id)
 );
+CREATE TABLE IF NOT EXISTS tasks(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  date TEXT NOT NULL,
+  emoji TEXT, title TEXT,
+  done INTEGER NOT NULL DEFAULT 0,
+  done_at TEXT,
+  created_at TEXT NOT NULL,
+  FOREIGN KEY(user_id) REFERENCES users(id)
+);
 CREATE TABLE IF NOT EXISTS sessions(
   token TEXT PRIMARY KEY,
   user_id INTEGER NOT NULL,
@@ -50,7 +60,7 @@ function defaultState(nickname){
       {em:"💐",name:"买一束花",pt:12},
       {em:"🌙",name:"给自己一个安静晚上",pt:6}
     ],
-    points:14, chat:[], ai:{}
+    points:14, chat:[], ai:{}, onboarded:false
   };
 }
 // 黄体期 PMS 逐渐加重的历史；注意：不含今天(2025-07-11)，今天从空开始
@@ -77,6 +87,26 @@ function seedEntries(userId){
   for(const [date, evs] of Object.entries(SEED))
     for(const [cat,icon,label,ind,time] of evs) ins.run(userId,date,cat,icon,label,ind,time);
 }
+// 播种几天的打卡历史（含"昨天"），演示连续打卡
+const SEED_TASKS=[
+  ['2025-07-09','😴','10 点预警，早点睡',1],
+  ['2025-07-10','🚶‍♀️','出门走 10 分钟',1],
+  ['2025-07-10','🫁','3 分钟 4-7-8 呼吸',1],
+  ['2025-07-10','🌼','做一件小确幸的事',0]
+];
+function seedTasks(userId){
+  const ins=db.prepare('INSERT INTO tasks(user_id,date,emoji,title,done,done_at,created_at) VALUES(?,?,?,?,?,?,?)');
+  const now=new Date().toISOString();
+  for(const [date,emoji,title,done] of SEED_TASKS) ins.run(userId,date,emoji,title,done,done?date+'T20:00:00Z':null,now);
+}
+
+/* ---------- AI 配置（默认接入真实大模型；密钥从环境或用户 Claude 配置读取，不写进源码） ---------- */
+function aiConfig(){
+  let base=process.env.ANTHROPIC_BASE_URL, token=process.env.ANTHROPIC_AUTH_TOKEN||process.env.ANTHROPIC_API_KEY, model=process.env.AI_MODEL;
+  try{ const c=JSON.parse(readFileSync(join(__dirname,'ai.config.json'),'utf8')); base=c.base||base; token=c.token||token; model=c.model||model; }catch(e){}
+  if(!token){ try{ const s=JSON.parse(readFileSync(join(process.env.HOME||'','.claude','settings.json'),'utf8')); base=base||(s.env&&s.env.ANTHROPIC_BASE_URL); token=token||(s.env&&(s.env.ANTHROPIC_AUTH_TOKEN||s.env.ANTHROPIC_API_KEY)); }catch(e){} }
+  return { base:(base||'https://api.anthropic.com').replace(/\/+$/,''), token, model:model||'claude-sonnet-4-20250514' };
+}
 
 /* ---------- 认证工具 ---------- */
 const hashPw=(pw,salt)=>scryptSync(pw,salt,64).toString('hex');
@@ -95,7 +125,8 @@ function userFromReq(req){
 }
 function payload(user){
   const rows=db.prepare('SELECT date,cat,icon,label,ind,time FROM entries WHERE user_id=? ORDER BY date,time').all(user.id);
-  return { user:{ username:user.username }, state:JSON.parse(user.state_json), entries:rows };
+  const tasks=db.prepare('SELECT id,date,emoji,title,done,done_at FROM tasks WHERE user_id=? ORDER BY date DESC, id').all(user.id);
+  return { user:{ username:user.username }, state:JSON.parse(user.state_json), entries:rows, tasks, aiReady: !!aiConfig().token };
 }
 
 /* ---------- HTTP 辅助 ---------- */
@@ -125,6 +156,7 @@ const server=createServer(async (req,res)=>{
         .run(username,hashPw(password,salt),salt,state,new Date().toISOString());
       const userId=Number(info.lastInsertRowid);
       seedEntries(userId);
+      seedTasks(userId);
       const user=db.prepare('SELECT id,username,state_json FROM users WHERE id=?').get(userId);
       return send(res,200,payload(user),{'set-cookie':cookieHeader(newSession(userId))});
     }
@@ -172,9 +204,44 @@ const server=createServer(async (req,res)=>{
       db.prepare('UPDATE users SET state_json=? WHERE id=?').run(JSON.stringify(state),user.id);
       return send(res,200,{ok:true});
     }
+    if(path==='/api/tasks' && req.method==='POST'){
+      const {date,emoji,title}=await readBody(req);
+      if(!date||!title) return send(res,400,{error:'参数错误'});
+      const info=db.prepare('INSERT INTO tasks(user_id,date,emoji,title,done,done_at,created_at) VALUES(?,?,?,?,0,NULL,?)')
+        .run(user.id,date,emoji||'',title,new Date().toISOString());
+      const row=db.prepare('SELECT id,date,emoji,title,done,done_at FROM tasks WHERE id=?').get(Number(info.lastInsertRowid));
+      return send(res,200,row);
+    }
+    if(path==='/api/tasks/toggle' && req.method==='POST'){
+      const {id}=await readBody(req);
+      const t=db.prepare('SELECT id,done FROM tasks WHERE id=? AND user_id=?').get(id,user.id);
+      if(!t) return send(res,404,{error:'任务不存在'});
+      const nd=t.done?0:1;
+      db.prepare('UPDATE tasks SET done=?, done_at=? WHERE id=?').run(nd, nd?new Date().toISOString():null, id);
+      return send(res,200,{id,done:nd});
+    }
+    if(path==='/api/tasks' && req.method==='DELETE'){
+      const id=url.searchParams.get('id');
+      db.prepare('DELETE FROM tasks WHERE id=? AND user_id=?').run(id,user.id);
+      return send(res,200,{ok:true});
+    }
+    if(path==='/api/ai' && req.method==='POST'){
+      const cfg=aiConfig();
+      if(!cfg.token) return send(res,400,{error:'AI 未配置'});
+      const {system,user:uc,maxTokens}=await readBody(req);
+      try{
+        const r=await fetch(cfg.base+'/v1/messages',{method:'POST',headers:{
+          'content-type':'application/json','x-api-key':cfg.token,'authorization':'Bearer '+cfg.token,'anthropic-version':'2023-06-01'
+        },body:JSON.stringify({model:cfg.model,max_tokens:maxTokens||1024,system:system||'',messages:[{role:'user',content:uc||''}]})});
+        const d=await r.json().catch(()=>({}));
+        if(!r.ok) return send(res,502,{error:(d.error&&(d.error.message||d.error.type))||('HTTP '+r.status)});
+        const text=(d.content||[]).map(b=>b.text||'').join('');
+        return send(res,200,{text});
+      }catch(e){ return send(res,502,{error:String(e.message||e)}); }
+    }
 
     send(res,404,{error:'not found'});
   }catch(e){ console.error(e); send(res,500,{error:String(e.message||e)}); }
 });
 
-server.listen(PORT,()=>console.log(`节律 running → http://localhost:${PORT}`));
+server.listen(PORT,()=>console.log(`微澜 running → http://localhost:${PORT}`));
