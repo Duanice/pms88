@@ -144,6 +144,16 @@ const server=createServer(async (req,res)=>{
     catch(e){ res.writeHead(500); res.end('index.html not found'); }
     return;
   }
+  // 静态：IP 图片等资源
+  if(req.method==='GET' && /^\/assets\/[A-Za-z0-9_\/.-]+$/.test(path) && !path.includes('..')){
+    try{
+      const buf=readFileSync(join(__dirname, path));
+      const ext=path.split('.').pop().toLowerCase();
+      const mime={jpg:'image/jpeg',jpeg:'image/jpeg',png:'image/png',webp:'image/webp',svg:'image/svg+xml',gif:'image/gif'}[ext]||'application/octet-stream';
+      res.writeHead(200,{'content-type':mime,'cache-control':'public, max-age=86400'}); res.end(buf);
+    }catch(e){ res.writeHead(404); res.end('not found'); }
+    return;
+  }
 
   try{
     if(path==='/api/register' && req.method==='POST'){

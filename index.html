@@ -6,34 +6,45 @@
 <title>微澜 · PMS 情绪陪伴</title>
 <style>
 :root{
-  --blue:#4263eb; --blue2:#5c7cfa; --blue-deep:#25347a; --blue-ink:#1e2a5e;
-  --lav:#eef1ff; --lav2:#f6f4ff;
-  --pink:#ff9bb3; --pink-soft:#ffd7e0;
-  --card:rgba(255,255,255,.72); --card-solid:#ffffff;
-  --gray:#8a93b8; --gray2:#a9b0cf; --line:rgba(120,140,200,.14);
-  --shadow:0 10px 30px rgba(80,110,220,.12);
-  --shadow-sm:0 4px 14px rgba(80,110,220,.10);
+  /* 色板系统 */
+  --blue:#29a9e1;         /* 主蓝 · 天空蓝 */
+  --blue2:#52bce8;        /* 主蓝浅调（渐变/边框） */
+  --blue-deep:#2e64c1;    /* 辅助深蓝 · 皇家蓝 */
+  --blue-ink:#31282e;     /* 文字色 · 暖黑 */
+  --sun:#fed32d; --sun-deep:#f2be00;      /* 主黄 · 明亮蛋黄 */
+  --tomato:#d33030; --tomato-deep:#b52626;/* 主红 · 番茄红 */
+  --orange:#f5871f; --orange-deep:#e0730c;  /* 橙 · 首页 */
+  --royal:#2e64c1;        /* 辅助深蓝 · 皇家蓝 */
+  --pink:#e6a9c2; --pink-soft:#f4dbe6;    /* 辅助粉 · 柔和粉 */
+  --lightblue:#78becc;    /* 浅蓝 · 灰调浅蓝 */
+  --lav:#eef7fb; --lav2:#f5fbfd;          /* 极浅天蓝底 */
+  --card:#ffffff; --card-solid:#ffffff;
+  --gray:#8a8188; --gray2:#b3aab0; --line:rgba(49,40,46,.12);
+  --shadow:0 10px 30px rgba(49,40,46,.12);
+  --shadow-sm:0 4px 14px rgba(49,40,46,.09);
   --radius:22px;
+  --bg:#efeadf;           /* 背景色 · 暖白 */
+  --ink:#31282e;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%}
 body{
   font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
-  background:radial-gradient(1200px 800px at 30% 0%, #dfe6ff 0%, #e9ecff 40%, #eef0fb 100%);
+  background:#e4ddce;
   display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px;
   color:var(--blue-ink);
 }
 /* ===== phone frame ===== */
 .phone{
   position:relative;width:390px;height:844px;border-radius:54px;
-  background:#0b0e1a;padding:13px;box-shadow:0 40px 90px rgba(40,60,140,.35),0 8px 20px rgba(0,0,0,.25);
+  background:#20180f;padding:13px;box-shadow:0 40px 90px rgba(90,60,20,.35),0 8px 20px rgba(0,0,0,.25);
 }
 .screen{
   position:relative;width:100%;height:100%;border-radius:42px;overflow:hidden;
-  background:linear-gradient(180deg,#e8ecff 0%,#eef0ff 30%,#f4f2ff 100%);
+  background:#80c101;
   display:flex;flex-direction:column;
 }
-.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:126px;height:33px;background:#0b0e1a;border-radius:0 0 20px 20px;z-index:60}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:126px;height:33px;background:#20180f;border-radius:0 0 20px 20px;z-index:60}
 /* status bar */
 .statusbar{display:flex;justify-content:space-between;align-items:center;padding:14px 26px 4px;font-weight:600;font-size:15px;z-index:50}
 .statusbar .r{display:flex;gap:6px;align-items:center}
@@ -42,12 +53,23 @@ body{
 .body{flex:1;overflow-y:auto;overflow-x:hidden;padding:6px 18px 96px;scroll-behavior:smooth}
 .body::-webkit-scrollbar{display:none}
 /* header */
-.logo{font-size:26px;font-weight:800;letter-spacing:2px;background:linear-gradient(90deg,#2b3f9e,#5c7cfa);-webkit-background-clip:text;background-clip:text;color:transparent;position:relative;display:inline-block}
+.logo{font-size:26px;font-weight:800;letter-spacing:2px;background:linear-gradient(90deg,#2b3f9e,#52bce8);-webkit-background-clip:text;background-clip:text;color:transparent;position:relative;display:inline-block}
 .logo .sp{position:absolute;right:-16px;top:-6px;color:#7c93ff;font-size:14px}
 .topbar{display:flex;justify-content:space-between;align-items:flex-start;padding:6px 2px 0}
 .bell{width:38px;height:38px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm);position:relative}
 .bell::after{content:"";position:absolute;top:9px;right:10px;width:7px;height:7px;background:var(--blue2);border-radius:50%;border:2px solid #fff}
 .h1{font-size:31px;font-weight:800;margin:14px 2px 4px;letter-spacing:1px}
+/* ===== 三原色撞色头图 hero ===== */
+.hero-block{position:relative;border-radius:24px;padding:20px 18px;margin:6px 0 16px;overflow:hidden;box-shadow:var(--shadow)}
+.hero-block .hb-title{font-size:26px;font-weight:900;line-height:1.25;position:relative;z-index:2}
+.hero-block .hb-sub{font-size:14px;font-weight:600;margin-top:6px;position:relative;z-index:2;opacity:.9}
+.hero-block .blob{position:absolute;border-radius:50%;z-index:1}
+.hero-block .blob.b1{width:120px;height:120px;right:-28px;top:-34px}
+.hero-block .blob.b2{width:66px;height:66px;right:56px;bottom:-26px}
+.hero-block .blob.b3{width:34px;height:34px;right:120px;top:22px}
+.hero-yellow{background:var(--sun);color:var(--ink)}
+.hero-blue{background:var(--blue);color:#fff}
+.hero-red{background:var(--tomato);color:#fff}
 .sub{color:var(--gray);font-size:15px;margin:0 2px 14px}
 /* mascot */
 .mascot{position:absolute;pointer-events:none}
@@ -60,7 +82,7 @@ body{
 .rec-actions{display:flex;justify-content:flex-end;gap:12px;margin-top:6px}
 .rbtn{width:46px;height:46px;border-radius:50%;background:#fff;box-shadow:var(--shadow-sm);border:none;display:flex;align-items:center;justify-content:center;color:var(--blue);font-size:18px;cursor:pointer;transition:.15s}
 .rbtn:active{transform:scale(.9)}
-.send-btn{margin-top:10px;width:100%;padding:13px;border:none;border-radius:16px;background:linear-gradient(90deg,#4263eb,#5c7cfa);color:#fff;font-size:15px;font-weight:700;box-shadow:0 8px 20px rgba(66,99,235,.35);cursor:pointer;transition:.15s}
+.send-btn{margin-top:10px;width:100%;padding:13px;border:none;border-radius:16px;background:linear-gradient(90deg,#29a9e1,#52bce8);color:#fff;font-size:15px;font-weight:700;box-shadow:0 8px 20px rgba(66,99,235,.35);cursor:pointer;transition:.15s}
 .send-btn:active{transform:scale(.97)}
 .send-btn[disabled]{opacity:.45;box-shadow:none}
 /* mood chips row */
@@ -68,7 +90,7 @@ body{
 .moods::-webkit-scrollbar{display:none}
 .mood{flex:0 0 auto;width:58px;text-align:center;cursor:pointer}
 .mood .ci{width:58px;height:58px;border-radius:50%;background:#fff;box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:5px;transition:.15s;border:2px solid transparent}
-.mood.on .ci{border-color:var(--blue2);background:#eef2ff;transform:translateY(-3px)}
+.mood.on .ci{border-color:var(--blue2);background:#e7f5fb;transform:translateY(-3px)}
 .mood span{font-size:12px;color:var(--gray)}
 /* cycle status card */
 .cycle-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
@@ -89,11 +111,11 @@ body{
 /* recognition card */
 .recog{border:1.5px dashed rgba(92,124,250,.5);background:rgba(255,255,255,.75)}
 .recog .tags{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
-.tag{background:#eef2ff;color:var(--blue-deep);border-radius:12px;padding:7px 12px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;animation:pop .3s ease}
+.tag{background:#e7f5fb;color:var(--blue-deep);border-radius:12px;padding:7px 12px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;animation:pop .3s ease}
 @keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
 .recog .row{display:flex;gap:10px}
 .ghost{flex:1;padding:11px;border-radius:14px;border:1.5px solid var(--blue2);background:transparent;color:var(--blue);font-weight:700;font-size:14px;cursor:pointer}
-.fill{flex:1;padding:11px;border-radius:14px;border:none;background:linear-gradient(90deg,#4263eb,#5c7cfa);color:#fff;font-weight:700;font-size:14px;cursor:pointer}
+.fill{flex:1;padding:11px;border-radius:14px;border:none;background:linear-gradient(90deg,#29a9e1,#52bce8);color:#fff;font-weight:700;font-size:14px;cursor:pointer}
 .thinking{display:flex;align-items:center;gap:8px;color:var(--blue);font-size:14px;font-weight:600}
 .thinking .d{width:7px;height:7px;border-radius:50%;background:var(--blue2);animation:bl 1s infinite}
 .thinking .d:nth-child(2){animation-delay:.2s}.thinking .d:nth-child(3){animation-delay:.4s}
@@ -101,15 +123,18 @@ body{
 /* timeline */
 .tl-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
 .tl-item:last-child{border:none}
-.tl-dot{flex:0 0 auto;width:36px;height:36px;border-radius:50%;background:#eef2ff;display:flex;align-items:center;justify-content:center;font-size:17px}
+.tl-dot{flex:0 0 auto;width:36px;height:36px;border-radius:50%;background:#e7f5fb;display:flex;align-items:center;justify-content:center;font-size:17px}
 .tl-item .t{font-size:11px;color:var(--gray2)}
 .tl-item .c{font-size:14px;color:var(--blue-ink);margin-top:2px}
-/* tabbar */
-.tabbar{position:absolute;bottom:0;left:0;right:0;height:82px;background:rgba(255,255,255,.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(120,140,200,.12);display:flex;padding-bottom:14px;z-index:40}
-.tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--gray2);font-size:11px;cursor:pointer;transition:.15s}
+/* tabbar 三原色撞色 */
+.tabbar{position:absolute;bottom:0;left:0;right:0;height:82px;background:#fff;border-top:1px solid var(--line);display:flex;padding-bottom:14px;z-index:40}
+.tabbar::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--orange) 0 20%,var(--sun) 20% 40%,var(--blue) 40% 60%,var(--royal) 60% 80%,var(--lightblue) 80% 100%)}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--gray2);font-size:11px;cursor:pointer;transition:.15s;position:relative}
 .tab svg{width:24px;height:24px}
-.tab.on{color:var(--blue)}
-.tab.on span{font-weight:700}
+.tab .tico{width:38px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:12px;transition:.18s}
+.tab.on{font-weight:700}
+.tab.on .tico{transform:translateY(-2px)}
+.tab.on span{font-weight:800}
 /* chat */
 .msg{max-width:82%;margin-bottom:14px;animation:rise .35s ease}
 @keyframes rise{from{transform:translateY(10px);opacity:0}to{transform:translateY(0);opacity:1}}
@@ -117,20 +142,20 @@ body{
 .msg .bub{background:#fff;border-radius:16px;padding:14px 16px;font-size:15px;line-height:1.55;box-shadow:var(--shadow-sm)}
 .msg.me{margin-left:auto}
 .msg.me .who{justify-content:flex-end}
-.msg.me .bub{background:#eef2ff}
+.msg.me .bub{background:#e7f5fb}
 .action-card{background:linear-gradient(120deg,#e6ecff,#eee7ff);border-radius:16px;padding:14px 16px;margin-top:10px}
 .action-card .lbl{display:flex;align-items:center;gap:6px;color:var(--blue);font-weight:700;font-size:14px;margin-bottom:8px}
 .action-card .q{font-size:16px;font-weight:700;color:var(--blue-deep);line-height:1.5}
 .chat-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .chip-btn{background:#fff;border:1px solid var(--line);border-radius:14px;padding:9px 12px;font-size:13px;font-weight:600;color:var(--blue-deep);cursor:pointer;display:flex;align-items:center;gap:5px}
-.chip-btn:active{background:#eef2ff}
+.chip-btn:active{background:#e7f5fb}
 .chat-input{position:absolute;bottom:96px;left:14px;right:14px;display:flex;gap:8px;align-items:center;background:#fff;border-radius:22px;padding:6px 6px 6px 16px;box-shadow:var(--shadow)}
 .chat-input input{flex:1;border:none;outline:none;font-size:15px;font-family:inherit;background:transparent}
-.chat-send{width:40px;height:40px;border-radius:50%;border:none;background:linear-gradient(90deg,#4263eb,#5c7cfa);color:#fff;font-size:18px;cursor:pointer;flex:0 0 auto}
+.chat-send{width:40px;height:40px;border-radius:50%;border:none;background:linear-gradient(90deg,#29a9e1,#52bce8);color:#fff;font-size:18px;cursor:pointer;flex:0 0 auto}
 /* goals */
 .seg{display:flex;gap:8px;margin-bottom:16px}
 .seg button{flex:1;padding:9px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.6);font-weight:700;font-size:13px;color:var(--gray);cursor:pointer}
-.seg button.on{background:linear-gradient(90deg,#4263eb,#5c7cfa);color:#fff;border-color:transparent}
+.seg button.on{background:linear-gradient(90deg,#29a9e1,#52bce8);color:#fff;border-color:transparent}
 .task{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
 .task:last-child{border:none}
 .chk{width:26px;height:26px;border-radius:50%;border:2px solid #c8d2ff;flex:0 0 auto;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;cursor:pointer;transition:.15s}
@@ -139,7 +164,7 @@ body{
 .task .nm{font-size:15px;font-weight:600}
 .task.done .nm{color:var(--gray2);text-decoration:line-through}
 .pbar{height:6px;background:#e6eaff;border-radius:4px;margin-top:7px;overflow:hidden}
-.pbar i{display:block;height:100%;background:linear-gradient(90deg,#4263eb,#5c7cfa);border-radius:4px;transition:.4s}
+.pbar i{display:block;height:100%;background:linear-gradient(90deg,#29a9e1,#52bce8);border-radius:4px;transition:.4s}
 .task .meta{text-align:right;font-size:12px;color:var(--gray)}
 .chkbtn{flex:0 0 auto;padding:8px 16px;border-radius:999px;border:1.5px solid var(--blue2);background:#fff;color:var(--blue);font-size:13px;font-weight:700;cursor:pointer;transition:.15s;white-space:nowrap}
 .chkbtn:active{transform:scale(.93)}
@@ -181,12 +206,12 @@ body{
 .flow .node .em{font-size:22px;display:block;margin-bottom:4px}
 .flow .arr{color:var(--blue2);font-size:16px;flex:0 0 auto}
 /* science */
-.pms-card{background:linear-gradient(120deg,#e3e9ff,#efe9ff);position:relative;overflow:hidden}
+.pms-card{background:linear-gradient(120deg,#fff6d6,#e7f5fb);position:relative;overflow:hidden}
 .pms-card h2{margin:0 0 10px;font-size:24px;color:var(--blue-deep)}
-.pms-card p{margin:0;font-size:14px;line-height:1.6;color:#54608f;max-width:78%}
-.read-btn{margin-top:14px;padding:10px 20px;border:none;border-radius:14px;background:linear-gradient(90deg,#4263eb,#5c7cfa);color:#fff;font-weight:700;font-size:14px;cursor:pointer}
+.pms-card p{margin:0;font-size:14px;line-height:1.6;color:#5a5560;max-width:78%}
+.read-btn{margin-top:14px;padding:10px 20px;border:none;border-radius:14px;background:linear-gradient(90deg,#29a9e1,#52bce8);color:#fff;font-weight:700;font-size:14px;cursor:pointer}
 .art{display:flex;align-items:center;gap:14px;padding:14px;background:var(--card);border-radius:18px;margin-bottom:12px;box-shadow:var(--shadow-sm);cursor:pointer}
-.art .ai{width:44px;height:44px;border-radius:50%;background:#eef2ff;display:flex;align-items:center;justify-content:center;font-size:22px;flex:0 0 auto}
+.art .ai{width:44px;height:44px;border-radius:50%;background:#e7f5fb;display:flex;align-items:center;justify-content:center;font-size:22px;flex:0 0 auto}
 .art h4{margin:0 0 3px;font-size:15px}
 .art p{margin:0;font-size:12px;color:var(--gray)}
 .art .arw{color:var(--gray2);font-size:18px}
@@ -205,7 +230,7 @@ body{
 .brief-sec{margin-bottom:16px}
 .brief-sec .st{font-weight:700;font-size:14px;color:var(--blue);margin-bottom:8px;display:flex;align-items:center;gap:6px}
 .brief-sec p{margin:0;font-size:14px;line-height:1.6;color:#54608f}
-.close-btn{width:100%;padding:13px;border:none;border-radius:16px;background:linear-gradient(90deg,#4263eb,#5c7cfa);color:#fff;font-weight:700;font-size:15px;cursor:pointer;margin-top:6px}
+.close-btn{width:100%;padding:13px;border:none;border-radius:16px;background:linear-gradient(90deg,#29a9e1,#52bce8);color:#fff;font-weight:700;font-size:15px;cursor:pointer;margin-top:6px}
 .toast{position:absolute;bottom:110px;left:50%;transform:translateX(-50%);background:rgba(30,42,94,.9);color:#fff;padding:11px 20px;border-radius:20px;font-size:14px;z-index:90;animation:rise .3s}
 /* ===== 打卡奖励动效 ===== */
 .reward-layer{position:absolute;inset:0;pointer-events:none;z-index:200;display:flex;align-items:center;justify-content:center;overflow:hidden}
@@ -215,24 +240,24 @@ body{
 @keyframes coinLabel{0%{transform:translateY(14px) scale(.8);opacity:0}30%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-52px) scale(1);opacity:0}}
 .confetti-piece{position:absolute;left:50%;top:50%;width:9px;height:9px;border-radius:2px;animation:confettiFly 1s ease-out forwards}
 @keyframes confettiFly{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx),var(--dy)) rotate(var(--rot));opacity:0}}
-.phase-pill{display:inline-flex;align-items:center;gap:6px;background:#eef2ff;color:var(--blue-deep);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:700;margin:0 2px 14px}
+.phase-pill{display:inline-flex;align-items:center;gap:6px;background:#e7f5fb;color:var(--blue-deep);border-radius:20px;padding:6px 14px;font-size:13px;font-weight:700;margin:0 2px 14px}
 .hidden{display:none!important}
 .sec-title{font-weight:800;font-size:16px;margin:4px 2px 10px}
 /* ===== onboarding / auth (blue-white) ===== */
 .ob{padding:34px 24px 24px;min-height:100%;display:flex;flex-direction:column}
 .ob-hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.ob-icon{width:92px;height:92px;border-radius:28px;margin:0 auto 22px;display:flex;align-items:center;justify-content:center;font-size:42px;background:linear-gradient(135deg,#5c7cfa,#4263eb);box-shadow:var(--shadow);color:#fff}
+.ob-icon{width:92px;height:92px;border-radius:28px;margin:0 auto 22px;display:flex;align-items:center;justify-content:center;font-size:42px;background:linear-gradient(135deg,#52bce8,#29a9e1);box-shadow:var(--shadow);color:#fff}
 .ob-eyebrow{text-align:center;color:var(--blue);font-weight:700;font-size:13px;letter-spacing:1px}
 .ob-title{text-align:center;font-size:24px;font-weight:800;margin:8px 0;white-space:pre-line;line-height:1.35;color:var(--blue-ink)}
 .ob-sub{text-align:center;color:var(--gray);font-size:14px;line-height:1.7;margin-top:6px}
 .ob-list{margin:20px 0 0;display:flex;flex-direction:column;gap:10px;text-align:left}
 .ob-list li{list-style:none;display:flex;gap:10px;font-size:14px;color:var(--blue-ink);background:#fff;border-radius:14px;padding:12px 14px;box-shadow:var(--shadow-sm);align-items:flex-start}
-.ob-num{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#5c7cfa,#4263eb);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:0 0 22px;margin-top:1px}
+.ob-num{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#52bce8,#29a9e1);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:0 0 22px;margin-top:1px}
 .ob-dots{display:flex;gap:6px;justify-content:center;margin:18px 0}
 .ob-dots i{width:7px;height:7px;border-radius:4px;background:#c8d2ff;transition:.25s}
 .ob-dots i.on{width:18px;background:var(--blue2)}
 .chip{padding:10px 18px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-size:14px;font-weight:600;color:var(--gray);cursor:pointer;transition:.15s}
-.chip.sel{background:linear-gradient(90deg,#4263eb,#5c7cfa);color:#fff;border-color:transparent}
+.chip.sel{background:linear-gradient(90deg,#29a9e1,#52bce8);color:#fff;border-color:transparent}
 .ob-input{width:100%;padding:13px 15px;border:1.5px solid var(--line);border-radius:14px;font-size:15px;font-family:inherit;color:var(--blue-ink);background:#fff}
 .ob-input:focus{outline:none;border-color:var(--blue2)}
 .ob-label{font-size:13px;font-weight:700;color:var(--blue-ink);margin:20px 0 8px}
@@ -244,11 +269,11 @@ body{
 /* ===== 科普 knowledge cards ===== */
 .edu-card{display:flex;align-items:center;gap:14px;padding:14px;background:var(--card);border-radius:18px;margin-bottom:12px;box-shadow:var(--shadow-sm);cursor:pointer;border:1px solid rgba(255,255,255,.6);transition:.15s}
 .edu-card:active{transform:scale(.98)}
-.edu-card .eic{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex:0 0 48px;background:linear-gradient(135deg,#eef2ff,#dbe4ff)}
+.edu-card .eic{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex:0 0 48px;background:linear-gradient(135deg,#e7f5fb,#cfeaf6)}
 .edu-card h4{margin:0 0 3px;font-size:15px;color:var(--blue-ink)}
 .edu-card p{margin:0;font-size:12px;color:var(--gray);line-height:1.5}
 .edu-card .arw{color:var(--gray2);font-size:20px;margin-left:auto}
-.kb-hero{border-radius:18px;padding:18px;color:#fff;background:linear-gradient(135deg,#5c7cfa,#4263eb);margin-bottom:14px}
+.kb-hero{border-radius:18px;padding:18px;color:#fff;background:linear-gradient(135deg,#52bce8,#29a9e1);margin-bottom:14px}
 .kb-hero .ic{font-size:32px}
 .kb-hero h2{margin:6px 0 4px;font-size:22px}
 .kb-hero p{margin:0;font-size:13px;opacity:.92;line-height:1.6}
@@ -258,9 +283,9 @@ body{
 .kb ul{margin:6px 0 8px;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
 .kb ul li{font-size:13.5px;line-height:1.6;color:#4b5573;background:var(--lav);border-radius:12px;padding:10px 12px}
 .kb table{width:100%;border-collapse:collapse;margin:8px 0;font-size:12.5px}
-.kb th{background:#eef2ff;color:var(--blue-deep);font-weight:700;padding:9px 10px;text-align:left;border:1px solid var(--line)}
+.kb th{background:#e7f5fb;color:var(--blue-deep);font-weight:700;padding:9px 10px;text-align:left;border:1px solid var(--line)}
 .kb td{padding:9px 10px;border:1px solid var(--line);color:#4b5573;vertical-align:top}
-.kb-tip{background:#eef2ff;border-radius:14px;padding:12px 14px;font-size:13px;color:var(--blue-deep);line-height:1.65;margin:10px 0}
+.kb-tip{background:#e7f5fb;border-radius:14px;padding:12px 14px;font-size:13px;color:var(--blue-deep);line-height:1.65;margin:10px 0}
 .kb-danger{background:#fff0f0;border:1px solid #ffc9c9;border-radius:14px;padding:14px;margin:10px 0;color:#c0392b;font-size:13.5px;line-height:1.7}
 .kb-danger b{color:#c0392b}
 .kb-diagram{background:#f3f6ff;border-radius:16px;padding:14px;margin:10px 0;overflow-x:auto}
@@ -279,7 +304,7 @@ body{
 .onb-list{list-style:none;padding:0;margin:22px 0 0;width:100%;display:flex;flex-direction:column;gap:12px;text-align:left}
 .onb-list li{display:flex;gap:10px;align-items:flex-start;background:var(--card);border:1px solid rgba(255,255,255,.6);border-radius:16px;padding:13px 15px;font-size:14px;color:#54608f;box-shadow:var(--shadow-sm)}
 .onb-list li b{color:var(--blue-ink)}
-.onb-tag{flex:0 0 24px;width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#4263eb,#5c7cfa);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.onb-tag{flex:0 0 24px;width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#29a9e1,#52bce8);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center}
 .onb-dots{display:flex;gap:6px;justify-content:center;margin:20px 0}
 .onb-dots i{width:7px;height:7px;border-radius:4px;background:#c8d2ff;transition:.25s}
 .onb-dots i.on{width:20px;background:var(--blue2)}
@@ -289,10 +314,10 @@ body{
 .ob-input:focus{border-color:var(--blue2)}
 .ob-chips{display:flex;flex-wrap:wrap;gap:10px}
 .ob-chip{padding:10px 18px;border-radius:20px;border:1.5px solid var(--line);background:#fff;font-size:14px;font-weight:600;color:var(--gray);cursor:pointer;transition:.15s}
-.ob-chip.on{background:linear-gradient(90deg,#4263eb,#5c7cfa);color:#fff;border-color:transparent;box-shadow:0 6px 16px rgba(66,99,235,.3)}
+.ob-chip.on{background:linear-gradient(90deg,#29a9e1,#52bce8);color:#fff;border-color:transparent;box-shadow:0 6px 16px rgba(66,99,235,.3)}
 .ob-hint{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--lav);border-radius:14px;padding:11px 14px;margin-top:14px;font-size:13px;color:var(--blue-deep)}
 .ob-hint button{border:none;background:#fff;color:var(--blue);font-size:13px;font-weight:700;border-radius:12px;padding:7px 12px;cursor:pointer}
-.ob-hint button.on{background:linear-gradient(90deg,#4263eb,#5c7cfa);color:#fff}
+.ob-hint button.on{background:linear-gradient(90deg,#29a9e1,#52bce8);color:#fff}
 </style>
 </head>
 <body>
@@ -402,7 +427,7 @@ function applyServerData(data){
 /* ================= MASCOT (SVG placeholder for 桃子IP) ================= */
 function mascot(size=120, mood="star"){
   const extra = mood==="read"
-    ? `<g transform="translate(72,86)"><rect x="-30" y="-4" width="60" height="34" rx="4" fill="#5c7cfa"/><rect x="-27" y="-2" width="54" height="30" rx="3" fill="#eef3ff"/><line x1="0" y1="-2" x2="0" y2="28" stroke="#c3ccf5" stroke-width="1.5"/></g>
+    ? `<g transform="translate(72,86)"><rect x="-30" y="-4" width="60" height="34" rx="4" fill="#52bce8"/><rect x="-27" y="-2" width="54" height="30" rx="3" fill="#eef3ff"/><line x1="0" y1="-2" x2="0" y2="28" stroke="#c3ccf5" stroke-width="1.5"/></g>
        <ellipse cx="62" cy="60" rx="15" ry="13" fill="none" stroke="#3f56c9" stroke-width="3"/><ellipse cx="98" cy="60" rx="15" ry="13" fill="none" stroke="#3f56c9" stroke-width="3"/><line x1="77" y1="60" x2="83" y2="60" stroke="#3f56c9" stroke-width="3"/>`
     : mood==="search"
     ? `<g transform="translate(104,84) rotate(35)"><circle r="13" fill="none" stroke="#4c66d6" stroke-width="4"/><rect x="-2" y="12" width="4" height="16" rx="2" fill="#4c66d6"/></g>`
@@ -525,7 +550,7 @@ function ringSVG(pct){
     <circle cx="48" cy="48" r="${r}" fill="none" stroke="#e2e8ff" stroke-width="10"/>
     <circle cx="48" cy="48" r="${r}" fill="none" stroke="url(#rg)" stroke-width="10" stroke-linecap="round"
       stroke-dasharray="${c}" stroke-dashoffset="${off}" transform="rotate(-90 48 48)"/>
-    <defs><linearGradient id="rg" x1="0" x2="1"><stop offset="0" stop-color="#5c7cfa"/><stop offset="1" stop-color="#4263eb"/></linearGradient></defs>
+    <defs><linearGradient id="rg" x1="0" x2="1"><stop offset="0" stop-color="#52bce8"/><stop offset="1" stop-color="#29a9e1"/></linearGradient></defs>
     <text x="48" y="44" text-anchor="middle" font-size="10" fill="#8a93b8">周期进度</text>
     <text x="48" y="62" text-anchor="middle" font-size="18" font-weight="800" fill="#25347a">${pct}%</text>
   </svg>`;
@@ -533,13 +558,13 @@ function ringSVG(pct){
 
 /* ================= TOP BAR ================= */
 function topBar(){
-  const on = AI.on();
-  return `<div class="topbar"><div class="logo">微澜<span class="sp">✦</span></div>
-  <div style="display:flex;gap:10px;align-items:center">
-    <div class="bell" onclick="openAccount()" title="我的" style="font-size:17px">👤</div>
-    <div class="bell" onclick="openSettings()" title="AI 设置" style="font-size:17px;position:relative">⚙️${on?'<span style="position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%;background:#37b24d;border:2px solid #fff"></span>':''}</div>
-    <div class="bell"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4263eb" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg></div>
-  </div></div>`;
+  return `<div class="topbar" style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+    <img src="/assets/ip/logo.png?v=2" alt="WeLan" style="height:32px;width:auto;display:block;flex:0 0 auto">
+    <div style="display:flex;gap:8px;align-items:center;flex:0 0 auto">
+      <div class="bell" onclick="openAccount()" title="我的" style="font-size:17px">👤</div>
+      <div class="bell"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#29a9e1" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg></div>
+    </div>
+  </div>`;
 }
 
 /* ================= AI (Claude / Anthropic) ================= */
@@ -711,10 +736,12 @@ function viewHome(){
   const today = dedupeEv(S.timeline[TODAY]||[]);
   return `
   ${topBar()}
-  <div style="position:relative">
-    <div class="h1">你今天感觉怎么样？</div>
-    <div class="sub">记录此刻的你，温柔看见自己。</div>
-    <div class="mascot" style="right:-6px;top:-6px">${mascot(120)}</div>
+  <div class="hero-block hero-blue">
+    <div class="blob b1" style="background:var(--sun)"></div>
+    <div class="blob b2" style="background:var(--tomato)"></div>
+    <div class="blob b3" style="background:#fff;opacity:.35"></div>
+    <div class="hb-title">你今天<br>感觉怎么样？</div>
+    <div class="hb-sub">记录此刻的你，温柔看见自己</div>
   </div>
   <div class="phase-pill">${ph.emoji} 当前 · ${ph.phase}</div>
 
@@ -1151,7 +1178,7 @@ function toggleTask(id){
 }
 function rewardPop(amount){
   const layer=document.createElement('div'); layer.className='reward-layer';
-  const colors=['#4263eb','#5c7cfa','#ffd43b','#ffa94d','#ff8fab','#37b24d'];
+  const colors=['#29a9e1','#52bce8','#ffd43b','#ffa94d','#ff8fab','#37b24d'];
   let conf='';
   for(let i=0;i<16;i++){
     const dx=(Math.random()*240-120).toFixed(0), dy=(Math.random()*-180-30).toFixed(0), rot=(Math.random()*640-320).toFixed(0);
@@ -1286,13 +1313,13 @@ function viewInsights(){
     <div class="card-title" style="font-size:17px">📈 你经常在月经前 4–6 天记录焦虑。</div>
     <div style="font-size:12px;color:var(--gray);margin-bottom:2px">情绪强度（平均）</div>
     <svg class="chart" viewBox="0 0 ${W} ${H}">
-      <rect x="${hlX1}" y="${pad}" width="${hlX2-hlX1}" height="${H-2*pad}" fill="#5c7cfa" opacity=".1"/>
+      <rect x="${hlX1}" y="${pad}" width="${hlX2-hlX1}" height="${H-2*pad}" fill="#52bce8" opacity=".1"/>
       <line x1="${hlX1}" y1="${pad}" x2="${hlX1}" y2="${H-pad}" stroke="#9db2ff" stroke-dasharray="3" opacity=".6"/>
       <line x1="${hlX2}" y1="${pad}" x2="${hlX2}" y2="${H-pad}" stroke="#9db2ff" stroke-dasharray="3" opacity=".6"/>
       <path d="${area}" fill="url(#ag)" opacity=".5"/>
-      <path d="${line}" fill="none" stroke="#4263eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-      ${pts.filter((_,i)=>i%2===0).map(p=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.5" fill="#4263eb"/>`).join("")}
-      <text x="${(hlX1+hlX2)/2}" y="${pad-6}" text-anchor="middle" font-size="10" fill="#4263eb" font-weight="700">月经前 4-6 天</text>
+      <path d="${line}" fill="none" stroke="#29a9e1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      ${pts.filter((_,i)=>i%2===0).map(p=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.5" fill="#29a9e1"/>`).join("")}
+      <text x="${(hlX1+hlX2)/2}" y="${pad-6}" text-anchor="middle" font-size="10" fill="#29a9e1" font-weight="700">月经前 4-6 天</text>
       <text x="4" y="${pad+4}" font-size="9" fill="#8a93b8">强</text>
       <text x="4" y="${H-pad}" font-size="9" fill="#8a93b8">弱</text>
       <defs><linearGradient id="ag" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#9db2ff"/><stop offset="1" stop-color="#9db2ff" stop-opacity="0"/></linearGradient></defs>
@@ -1329,7 +1356,7 @@ const KB=[
 {id:'emo',icon:'🧠',title:'为什么月经前情绪会波动',sub:'了解激素变化如何影响你的情绪、睡眠和注意力',html:`<div class="kb">
 <p><b>一句话理解：</b>月经前几天，体内的<b>雌激素</b>和<b>孕酮</b>会自然"退潮"，牵动大脑里的<b>血清素、多巴胺、去甲肾上腺素</b>等情绪化学信号，于是你可能感到低落、焦虑或易怒。</p>
 <div class="kb-tip">这不是你脆弱，也不是矫情——是身体的正常微澜在起作用。</div>
-<div class="kb-diagram"><svg viewBox="0 0 320 128"><circle cx="46" cy="58" r="28" fill="#c8d4ff"/><text x="46" y="66" font-size="24" text-anchor="middle">🩸</text><text x="46" y="110" font-size="11" text-anchor="middle" fill="#6b7599">雌/孕酮↓</text><text x="112" y="64" font-size="20" text-anchor="middle" fill="#5c7cfa">➜</text><circle cx="160" cy="58" r="28" fill="#dbe4ff"/><text x="160" y="66" font-size="24" text-anchor="middle">🧠</text><text x="160" y="110" font-size="10.5" text-anchor="middle" fill="#6b7599">血清素/多巴胺↓</text><text x="226" y="64" font-size="20" text-anchor="middle" fill="#5c7cfa">➜</text><circle cx="274" cy="58" r="28" fill="#b7c6ff"/><text x="274" y="66" font-size="24" text-anchor="middle">🌧️</text><text x="274" y="110" font-size="11" text-anchor="middle" fill="#6b7599">低落/焦虑</text></svg></div>
+<div class="kb-diagram"><svg viewBox="0 0 320 128"><circle cx="46" cy="58" r="28" fill="#c8d4ff"/><text x="46" y="66" font-size="24" text-anchor="middle">🩸</text><text x="46" y="110" font-size="11" text-anchor="middle" fill="#6b7599">雌/孕酮↓</text><text x="112" y="64" font-size="20" text-anchor="middle" fill="#52bce8">➜</text><circle cx="160" cy="58" r="28" fill="#cfeaf6"/><text x="160" y="66" font-size="24" text-anchor="middle">🧠</text><text x="160" y="110" font-size="10.5" text-anchor="middle" fill="#6b7599">血清素/多巴胺↓</text><text x="226" y="64" font-size="20" text-anchor="middle" fill="#52bce8">➜</text><circle cx="274" cy="58" r="28" fill="#b7c6ff"/><text x="274" y="66" font-size="24" text-anchor="middle">🌧️</text><text x="274" y="110" font-size="11" text-anchor="middle" fill="#6b7599">低落/焦虑</text></svg></div>
 <h3>🔬 发生了什么</h3>
 <table><tr><th>化学信号</th><th>经前变化</th><th>你可能感觉到</th></tr>
 <tr><td>雌激素</td><td>排卵后下降</td><td>情绪敏感、精力下降</td></tr>
@@ -1348,7 +1375,7 @@ const KB=[
 {id:'track',icon:'📝',title:'如何记录规律，但不过度紧张',sub:'简单记录，帮助你更好地看见趋势，而不是焦虑',html:`<div class="kb">
 <h3>为什么记录有用</h3>
 <ul><li>🧭 <b>建立"你的正常"</b>：知道平时什么样，才能发现异常</li><li>💪 <b>带来掌控感</b>：明白"我为什么这样"本身就是一种缓解</li><li>🩺 <b>辅助就医</b>：带记录看医生，比反复搜索、自我诊断可靠</li><li>🔁 <b>看见周期性</b>：经前出现、来潮后缓解，通常是周期相关</li></ul>
-<div class="kb-diagram"><svg viewBox="0 0 320 128"><rect x="16" y="58" width="32" height="50" rx="4" fill="#dbe4ff"/><rect x="56" y="72" width="32" height="36" rx="4" fill="#dbe4ff"/><rect x="96" y="50" width="32" height="58" rx="4" fill="#b7c6ff"/><rect x="136" y="42" width="32" height="66" rx="4" fill="#8fa8ff"/><rect x="176" y="80" width="32" height="28" rx="4" fill="#dbe4ff"/><text x="32" y="122" font-size="10" text-anchor="middle" fill="#6b7599">第1周</text><text x="112" y="122" font-size="10" text-anchor="middle" fill="#6b7599">经前</text><text x="192" y="122" font-size="10" text-anchor="middle" fill="#6b7599">月经</text><text x="232" y="60" font-size="12" fill="#4263eb">📈 几个周期</text><text x="232" y="80" font-size="12" fill="#4263eb">后才看规律，</text><text x="232" y="100" font-size="12" fill="#4263eb">单次别当真</text></svg></div>
+<div class="kb-diagram"><svg viewBox="0 0 320 128"><rect x="16" y="58" width="32" height="50" rx="4" fill="#cfeaf6"/><rect x="56" y="72" width="32" height="36" rx="4" fill="#cfeaf6"/><rect x="96" y="50" width="32" height="58" rx="4" fill="#b7c6ff"/><rect x="136" y="42" width="32" height="66" rx="4" fill="#8fa8ff"/><rect x="176" y="80" width="32" height="28" rx="4" fill="#cfeaf6"/><text x="32" y="122" font-size="10" text-anchor="middle" fill="#6b7599">第1周</text><text x="112" y="122" font-size="10" text-anchor="middle" fill="#6b7599">经前</text><text x="192" y="122" font-size="10" text-anchor="middle" fill="#6b7599">月经</text><text x="232" y="60" font-size="12" fill="#29a9e1">📈 几个周期</text><text x="232" y="80" font-size="12" fill="#29a9e1">后才看规律，</text><text x="232" y="100" font-size="12" fill="#29a9e1">单次别当真</text></svg></div>
 <div class="kb-tip">⚖️ 一个重要权衡：<b>过度详尽地记录症状，反而会让你更容易"注意到"更多不适。</b>而健康焦虑本身在经前就会自然升高。所以关键不是"记多少"，而是"怎么记"。</div>
 <h3>✅ 轻松记录 6 原则</h3>
 <table><tr><th>原则</th><th>做法</th></tr>
@@ -1375,7 +1402,7 @@ const KB=[
 <tr><td>🔁 规律但强烈</td><td>每次经前都被严重情绪困扰（可能是 PMDD）</td></tr>
 <tr><td>🤕 躯体难忍</td><td>腹痛/头痛严重到药物无效或需请假</td></tr></table>
 <h3>🏥 应该看哪个科</h3>
-<div class="kb-diagram"><svg viewBox="0 0 320 118"><rect x="16" y="14" width="130" height="44" rx="10" fill="#dbe4ff"/><text x="81" y="34" font-size="12" text-anchor="middle" fill="#2b3560">🩺 身体为主</text><text x="81" y="50" font-size="10" text-anchor="middle" fill="#6b7599">腹痛/乳房胀</text><rect x="174" y="14" width="130" height="44" rx="10" fill="#c9d6ff"/><text x="239" y="34" font-size="12" text-anchor="middle" fill="#2b3560">🧠 情绪为主</text><text x="239" y="50" font-size="10" text-anchor="middle" fill="#6b7599">抑郁/焦虑/易怒</text><text x="81" y="76" font-size="16" text-anchor="middle" fill="#5c7cfa">↓</text><rect x="16" y="82" width="130" height="30" rx="10" fill="#b7c6ff"/><text x="81" y="101" font-size="12" text-anchor="middle" fill="#2b3560">妇科（首诊）</text><rect x="174" y="82" width="130" height="30" rx="10" fill="#8fa8ff"/><text x="239" y="101" font-size="11" text-anchor="middle" fill="#1e2a5e">精神科/心理科</text><text x="160" y="102" font-size="14" fill="#5c7cfa">→</text></svg></div>
+<div class="kb-diagram"><svg viewBox="0 0 320 118"><rect x="16" y="14" width="130" height="44" rx="10" fill="#cfeaf6"/><text x="81" y="34" font-size="12" text-anchor="middle" fill="#2b3560">🩺 身体为主</text><text x="81" y="50" font-size="10" text-anchor="middle" fill="#6b7599">腹痛/乳房胀</text><rect x="174" y="14" width="130" height="44" rx="10" fill="#c9d6ff"/><text x="239" y="34" font-size="12" text-anchor="middle" fill="#2b3560">🧠 情绪为主</text><text x="239" y="50" font-size="10" text-anchor="middle" fill="#6b7599">抑郁/焦虑/易怒</text><text x="81" y="76" font-size="16" text-anchor="middle" fill="#52bce8">↓</text><rect x="16" y="82" width="130" height="30" rx="10" fill="#b7c6ff"/><text x="81" y="101" font-size="12" text-anchor="middle" fill="#2b3560">妇科（首诊）</text><rect x="174" y="82" width="130" height="30" rx="10" fill="#8fa8ff"/><text x="239" y="101" font-size="11" text-anchor="middle" fill="#1e2a5e">精神科/心理科</text><text x="160" y="102" font-size="14" fill="#52bce8">→</text></svg></div>
 <div class="kb-tip">🎒 就医前带上你的<b>症状记录（至少 2 个月经周期）</b>。医生常通过"症状出现和消退的时间点"判断：经前出现、来潮后消退 → 更可能是 PMS/PMDD；全程持续 → 可能是独立的抑郁或焦虑。</div>
 <p>🌱 <b>求助不是软弱。</b>PMDD 等是被正式承认、可以识别和管理的疾病，也常被漏诊。主动求助，是把"判断严重性"交给专业人士——你值得被认真对待。</p>
 <div class="disclaimer" style="margin:12px 0 0">⚠️ 科普帮助你理解自己，但不能替代医疗建议。</div>
@@ -1400,7 +1427,7 @@ const KB=[
 
 {id:'pmdd',icon:'☁️',title:'PMDD（经前烦躁障碍）',sub:'PMS 的一种严重形式，以强烈情绪症状为主',html:`<div class="kb">
 <p>PMDD 是 PMS 中<b>较为严重</b>的一类，在月经前 1 周周期性出现强烈的情绪、行为和躯体症状，来潮后自然缓解。它已被 DSM-5 正式列为一种心境障碍——<b>是一种真实的疾病，不是"矫情"。</b>约 <b>1.2%~6.4%</b> 的育龄女性受其影响。</p>
-<div class="kb-diagram"><svg viewBox="0 0 320 120"><rect x="14" y="14" width="140" height="92" rx="12" fill="#dbe4ff"/><text x="84" y="40" font-size="14" font-weight="bold" text-anchor="middle" fill="#3b6bd6">💧 PMS</text><text x="84" y="62" font-size="10" text-anchor="middle" fill="#6b7599">轻~中度 · 更"烦人"</text><text x="84" y="80" font-size="10" text-anchor="middle" fill="#6b7599">以身体不适为主</text><text x="84" y="97" font-size="10" text-anchor="middle" fill="#6b7599">影响相对较小</text><rect x="166" y="14" width="140" height="92" rx="12" fill="#aebfff"/><text x="236" y="40" font-size="14" font-weight="bold" text-anchor="middle" fill="#26348a">☁️ PMDD</text><text x="236" y="62" font-size="10" text-anchor="middle" fill="#3a4680">严重 · 更"失控"</text><text x="236" y="80" font-size="10" text-anchor="middle" fill="#3a4680">以强烈情绪为主</text><text x="236" y="97" font-size="10" text-anchor="middle" fill="#3a4680">严重影响生活</text></svg></div>
+<div class="kb-diagram"><svg viewBox="0 0 320 120"><rect x="14" y="14" width="140" height="92" rx="12" fill="#cfeaf6"/><text x="84" y="40" font-size="14" font-weight="bold" text-anchor="middle" fill="#3b6bd6">💧 PMS</text><text x="84" y="62" font-size="10" text-anchor="middle" fill="#6b7599">轻~中度 · 更"烦人"</text><text x="84" y="80" font-size="10" text-anchor="middle" fill="#6b7599">以身体不适为主</text><text x="84" y="97" font-size="10" text-anchor="middle" fill="#6b7599">影响相对较小</text><rect x="166" y="14" width="140" height="92" rx="12" fill="#aebfff"/><text x="236" y="40" font-size="14" font-weight="bold" text-anchor="middle" fill="#26348a">☁️ PMDD</text><text x="236" y="62" font-size="10" text-anchor="middle" fill="#3a4680">严重 · 更"失控"</text><text x="236" y="80" font-size="10" text-anchor="middle" fill="#3a4680">以强烈情绪为主</text><text x="236" y="97" font-size="10" text-anchor="middle" fill="#3a4680">严重影响生活</text></svg></div>
 <table><tr><th>维度</th><th>PMS</th><th>PMDD</th></tr>
 <tr><td>严重程度</td><td>轻~中度</td><td>严重</td></tr>
 <tr><td>症状数量</td><td>≤4 种</td><td>≥5 种</td></tr>
@@ -1417,7 +1444,7 @@ const KB=[
 
 {id:'sleep',icon:'🌙',title:'睡眠',sub:'为什么经前更容易睡不好，以及可以怎么做',html:`<div class="kb">
 <p>经前，<b>雌激素和孕酮双双下跌</b>，这波激素退潮会从多个方面打扰你的睡眠。</p>
-<div class="kb-diagram"><svg viewBox="0 0 320 132"><circle cx="55" cy="52" r="30" fill="#dbe4ff"/><text x="55" y="60" font-size="22" text-anchor="middle">📉</text><text x="55" y="100" font-size="11" text-anchor="middle" fill="#6b7599">孕酮下降</text><text x="55" y="115" font-size="9" text-anchor="middle" fill="#9aa3c0">困倦感消失</text><circle cx="160" cy="52" r="30" fill="#cdd8ff"/><text x="160" y="60" font-size="22" text-anchor="middle">🌗</text><text x="160" y="100" font-size="11" text-anchor="middle" fill="#6b7599">褪黑素受抑制</text><text x="160" y="115" font-size="9" text-anchor="middle" fill="#9aa3c0">入睡难/浅眠</text><circle cx="265" cy="52" r="30" fill="#c0ccff"/><text x="265" y="60" font-size="22" text-anchor="middle">🌡️</text><text x="265" y="100" font-size="11" text-anchor="middle" fill="#6b7599">体温偏高</text><text x="265" y="115" font-size="9" text-anchor="middle" fill="#9aa3c0">难以入睡</text></svg></div>
+<div class="kb-diagram"><svg viewBox="0 0 320 132"><circle cx="55" cy="52" r="30" fill="#cfeaf6"/><text x="55" y="60" font-size="22" text-anchor="middle">📉</text><text x="55" y="100" font-size="11" text-anchor="middle" fill="#6b7599">孕酮下降</text><text x="55" y="115" font-size="9" text-anchor="middle" fill="#9aa3c0">困倦感消失</text><circle cx="160" cy="52" r="30" fill="#cdd8ff"/><text x="160" y="60" font-size="22" text-anchor="middle">🌗</text><text x="160" y="100" font-size="11" text-anchor="middle" fill="#6b7599">褪黑素受抑制</text><text x="160" y="115" font-size="9" text-anchor="middle" fill="#9aa3c0">入睡难/浅眠</text><circle cx="265" cy="52" r="30" fill="#c0ccff"/><text x="265" y="60" font-size="22" text-anchor="middle">🌡️</text><text x="265" y="100" font-size="11" text-anchor="middle" fill="#6b7599">体温偏高</text><text x="265" y="115" font-size="9" text-anchor="middle" fill="#9aa3c0">难以入睡</text></svg></div>
 <ul><li>📉 <b>孕酮下降</b>：让人犯困的孕酮一回落，困意也随之消失</li><li>🌗 <b>褪黑素受抑制</b>：压低"助眠激素"，入睡难、睡得浅</li><li>🌡️ <b>体温偏高</b>：入睡需要体温下降，因此更难睡着</li><li>💗 <b>血清素波动</b>：带来情绪低落、疲劳与睡眠问题</li></ul>
 <div class="kb-tip">⏰ 睡眠和情绪最糟的窗口，通常在<b>月经来潮前 4~5 天到来潮前 2 天</b>。</div>
 <h3>✅ 改善睡眠</h3>
@@ -1434,7 +1461,7 @@ const KB=[
 
 {id:'cramps',icon:'🩹',title:'腹痛（痛经）',sub:'为什么经期会腹痛，以及可以怎么缓解',html:`<div class="kb">
 <p>最常见的是<b>原发性痛经</b>——没有器官病变的经期腹痛。罪魁祸首是一种叫 <b>前列腺素</b> 的物质。</p>
-<div class="kb-diagram"><svg viewBox="0 0 320 118"><circle cx="42" cy="52" r="24" fill="#c8d4ff"/><text x="42" y="60" font-size="19" text-anchor="middle">🧪</text><text x="42" y="94" font-size="9.5" text-anchor="middle" fill="#6b7599">前列腺素↑</text><text x="82" y="58" font-size="15" text-anchor="middle" fill="#5c7cfa">➜</text><circle cx="120" cy="52" r="24" fill="#d0dbff"/><text x="120" y="60" font-size="19" text-anchor="middle">🤰</text><text x="120" y="94" font-size="9.5" text-anchor="middle" fill="#6b7599">子宫收缩</text><text x="160" y="58" font-size="15" text-anchor="middle" fill="#5c7cfa">➜</text><circle cx="198" cy="52" r="24" fill="#bcccff"/><text x="198" y="60" font-size="19" text-anchor="middle">🩸</text><text x="198" y="94" font-size="9.5" text-anchor="middle" fill="#6b7599">供血减少</text><text x="238" y="58" font-size="15" text-anchor="middle" fill="#5c7cfa">➜</text><circle cx="276" cy="52" r="24" fill="#aebfff"/><text x="276" y="60" font-size="19" text-anchor="middle">😣</text><text x="276" y="94" font-size="9.5" text-anchor="middle" fill="#6b7599">疼痛</text></svg></div>
+<div class="kb-diagram"><svg viewBox="0 0 320 118"><circle cx="42" cy="52" r="24" fill="#c8d4ff"/><text x="42" y="60" font-size="19" text-anchor="middle">🧪</text><text x="42" y="94" font-size="9.5" text-anchor="middle" fill="#6b7599">前列腺素↑</text><text x="82" y="58" font-size="15" text-anchor="middle" fill="#52bce8">➜</text><circle cx="120" cy="52" r="24" fill="#d0dbff"/><text x="120" y="60" font-size="19" text-anchor="middle">🤰</text><text x="120" y="94" font-size="9.5" text-anchor="middle" fill="#6b7599">子宫收缩</text><text x="160" y="58" font-size="15" text-anchor="middle" fill="#52bce8">➜</text><circle cx="198" cy="52" r="24" fill="#bcccff"/><text x="198" y="60" font-size="19" text-anchor="middle">🩸</text><text x="198" y="94" font-size="9.5" text-anchor="middle" fill="#6b7599">供血减少</text><text x="238" y="58" font-size="15" text-anchor="middle" fill="#52bce8">➜</text><circle cx="276" cy="52" r="24" fill="#aebfff"/><text x="276" y="60" font-size="19" text-anchor="middle">😣</text><text x="276" y="94" font-size="9.5" text-anchor="middle" fill="#6b7599">疼痛</text></svg></div>
 <p>经期子宫内膜释放前列腺素 → 引起子宫强烈收缩 → 流向子宫的血流减少、缺血 → 产生疼痛，前列腺素还会让神经末梢更敏感。前列腺素越多，通常越痛。</p>
 <h3>✅ 如何缓解</h3>
 <table><tr><th>方法</th><th>要点</th></tr>
@@ -1461,7 +1488,13 @@ function openEdu(id){
 function viewScience(){
   return `
   ${topBar()}
-  <div style="position:relative"><div class="h1">科普</div><div class="sub">一点点理解自己。</div><div class="mascot" style="right:-2px;top:0">${mascot(104,'read')}</div></div>
+  <div class="hero-block hero-yellow">
+    <div class="blob b1" style="background:var(--tomato)"></div>
+    <div class="blob b2" style="background:var(--blue)"></div>
+    <div class="blob b3" style="background:#fff;opacity:.5"></div>
+    <div class="hb-title">科普</div>
+    <div class="hb-sub">一点点理解自己</div>
+  </div>
   <div class="card pms-card">
     <h2>什么是 PMS？</h2>
     <p>PMS 是指月经来临前几天到一两周内，可能出现的一组身体和情绪变化。它很常见，也并不代表你有问题。</p>
@@ -1478,6 +1511,18 @@ function viewScience(){
 
 /* ============ BRIEF (简报) ============ */
 function dedupeEv(list){ const seen=new Set(); return (list||[]).filter(e=>{ const k=e.cat+'|'+e.label; if(seen.has(k)) return false; seen.add(k); return true; }); }
+const MOOD_IP=[
+  {key:'anger',   img:'/assets/ip/anger.jpg',   name:'愤怒',  bg:'#f24b3d', test:/愤怒|生气|发火|吵|冲突|翻脸|暴躁/},
+  {key:'anxiety', img:'/assets/ip/anxiety.jpg', name:'焦虑',  bg:'#52bce8', test:/焦虑|紧张|不安|慌|担心|压力/},
+  {key:'blue',    img:'/assets/ip/blue.jpg',    name:'忧郁',  bg:'#5b76c9', test:/低落|难过|想哭|郁|丧|沮丧|忧郁|委屈/},
+  {key:'excited', img:'/assets/ip/excited.jpg', name:'亢奋',  bg:'#ff8a2b', test:/亢奋|兴奋|高涨|来劲|精神满满/},
+  {key:'happy',   img:'/assets/ip/happy.jpg',   name:'开心',  bg:'#ffd23e', test:/开心|不错|愉快|快乐|平稳|平静|放松|想念|温柔|甜蜜/},
+];
+function moodIP(labels){
+  const s=(labels||[]).join(' ');
+  for(const m of MOOD_IP) if(m.test.test(s)) return m;
+  return {key:'health', img:'/assets/ip/health.jpg', name:'平和', bg:'#8ed081'};
+}
 function buildBrief(date){
   const ev=dedupeEv(S.timeline[date]||[]);
   const ph=cyclePhase();
@@ -1489,14 +1534,21 @@ function buildBrief(date){
   let advice="今晚可以早一点休息，给身体一点修复的时间。";
   if(cats.some(c=>/便秘|偏硬/.test(c))) advice="黄体期孕酮升高会让肠道变慢，多喝温水、吃点富含纤维的食物会舒服一些。";
   else if(cats.some(c=>/精力|低动力/.test(c))) advice="没力气的时候不必硬撑，把今天的 DDL 拆成最小的一步，做一点点就好。";
-  return {date, phase:ph.phase, emoji:ph.emoji, list, encourage, advice, ev};
+  return {date, phase:ph.phase, emoji:ph.emoji, list, encourage, advice, ev, ip:moodIP(cats)};
 }
 function openBrief(date){
   const b=buildBrief(date);
   const ov=document.createElement('div');
   ov.className="overlay"; ov.onclick=(e)=>{if(e.target===ov)ov.remove();};
   ov.innerHTML=`<div class="modal">
-    <div class="brief-head"><div class="day">${date.replace(/-/g,'.')} · ${b.emoji} ${b.phase}</div><h2>今日简报</h2><div style="font-size:13px;color:var(--gray)">温柔看见此刻的你</div></div>
+    <div style="text-align:center;font-size:13px;color:var(--gray);font-weight:600;margin-bottom:10px">${date.replace(/-/g,'.')} · ${b.emoji} ${b.phase}</div>
+    <div style="text-align:center;margin-bottom:6px">
+      <div style="width:160px;height:160px;margin:0 auto;border-radius:28px;overflow:hidden;background:${b.ip.bg};box-shadow:var(--shadow)">
+        <img src="${b.ip.img}" alt="${b.ip.name}" style="width:100%;height:100%;object-fit:cover;display:block">
+      </div>
+      <div style="margin-top:8px;font-size:13px;color:var(--gray)">今天的你，像这只 <b style="color:var(--blue-ink)">${b.ip.name}</b> 桃子</div>
+    </div>
+    <div class="brief-head" style="margin-top:6px"><h2>今日简报</h2><div style="font-size:13px;color:var(--gray)">温柔看见此刻的你</div></div>
     <div class="brief-sec"><div class="st">🗂️ 今天的记录</div>${b.ev.length?`<div class="tags" style="display:flex;flex-wrap:wrap;gap:8px">${b.ev.map(e=>`<div class="tag">${e.icon} ${e.label}</div>`).join("")}</div>`:`<p>${b.list}</p>`}</div>
     <div class="brief-sec"><div class="st">💙 想对你说</div><p>${b.encourage}</p></div>
     <div class="brief-sec"><div class="st">🌿 一个小建议</div><p>${b.advice}</p></div>
@@ -1516,19 +1568,23 @@ function toast(msg){
 
 /* ============ TABBAR ============ */
 const TABS=[
-  ["home","首页",'<path d="M3 11l9-8 9 8v9a2 2 0 01-2 2h-4v-6H9v6H5a2 2 0 01-2-2z"/>'],
-  ["cycle","周期",'<rect x="3" y="4" width="18" height="17" rx="3"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/>'],
-  ["support","支持",'<path d="M21 11.5a8.5 8.5 0 01-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1121 11.5z"/><path d="M12 14s-2-1.3-2-2.6a1.3 1.3 0 012-.9 1.3 1.3 0 012 .9C14 12.7 12 14 12 14z" fill="currentColor" stroke="none"/>'],
-  ["insights","洞察",'<line x1="6" y1="20" x2="6" y2="13"/><line x1="12" y1="20" x2="12" y2="8"/><line x1="18" y1="20" x2="18" y2="4"/>'],
-  ["science","科普",'<path d="M4 5a2 2 0 012-2h5v17H6a2 2 0 00-2 2zM20 5a2 2 0 00-2-2h-5v17h5a2 2 0 012 2z"/>'],
+  ["home","首页",'<path d="M3 11l9-8 9 8v9a2 2 0 01-2 2h-4v-6H9v6H5a2 2 0 01-2-2z"/>', 'var(--orange)'],
+  ["cycle","周期",'<rect x="3" y="4" width="18" height="17" rx="3"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/>', 'var(--sun-deep)'],
+  ["support","支持",'<path d="M21 11.5a8.5 8.5 0 01-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1121 11.5z"/><path d="M12 14s-2-1.3-2-2.6a1.3 1.3 0 012-.9 1.3 1.3 0 012 .9C14 12.7 12 14 12 14z" fill="currentColor" stroke="none"/>', 'var(--blue)'],
+  ["insights","洞察",'<line x1="6" y1="20" x2="6" y2="13"/><line x1="12" y1="20" x2="12" y2="8"/><line x1="18" y1="20" x2="18" y2="4"/>', 'var(--royal)'],
+  ["science","科普",'<path d="M4 5a2 2 0 012-2h5v17H6a2 2 0 00-2 2zM20 5a2 2 0 00-2-2h-5v17h5a2 2 0 012 2z"/>', 'var(--lightblue)'],
 ];
 function renderTabs(){
   const cur = (S.tab==="goals")?"support":S.tab;
-  document.getElementById('tabbar').innerHTML=TABS.map(t=>`
-    <div class="tab ${cur===t[0]?'on':''}" onclick="go('${t[0]}')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${t[2]}</svg>
+  document.getElementById('tabbar').innerHTML=TABS.map(t=>{
+    const on=cur===t[0];
+    const icoStyle=on?`background:${t[3]};box-shadow:0 6px 14px -6px ${t[3]}`:'';
+    const stroke=on?'#fff':'currentColor';
+    return `<div class="tab ${on?'on':''}" onclick="go('${t[0]}')" style="${on?'color:'+t[3]:''}">
+      <div class="tico" style="${icoStyle}"><svg viewBox="0 0 24 24" fill="none" stroke="${stroke}" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px">${t[2]}</svg></div>
       <span>${t[1]}</span>
-    </div>`).join("");
+    </div>`;
+  }).join("");
 }
 
 /* ============ AUTH + ONBOARDING（注册 / 登录 / 引导） ============ */
@@ -1541,8 +1597,7 @@ function viewWelcome(){
   return `<div class="ob">
     <div class="ob-hero">
       <div>${mascot(150)}</div>
-      <div class="logo" style="font-size:36px;margin-top:4px">微澜<span class="sp">✦</span></div>
-      <div style="font-size:14px;letter-spacing:3px;color:var(--blue2);font-weight:700;margin-top:2px">WeLan</div>
+      <img src="/assets/ip/logo.png?v=2" alt="WeLan" style="width:220px;max-width:70%;height:auto;margin-top:10px;display:block">
       <div class="ob-sub" style="max-width:250px;margin-top:14px">懂你的 PMS 陪伴助手<br>每天 10 秒，让身体被看见、被理解</div>
     </div>
     <button class="send-btn" onclick="goRegister()">注册，开启陪伴</button>
