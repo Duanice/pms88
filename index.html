@@ -70,6 +70,7 @@ body{
 .hero-yellow{background:var(--sun);color:var(--ink)}
 .hero-blue{background:var(--blue);color:#fff}
 .hero-red{background:var(--tomato);color:#fff}
+.hero-sky{background:var(--sky-deep,#29a9e1);color:#fff}
 .sub{color:var(--gray);font-size:15px;margin:0 2px 14px}
 /* mascot */
 .mascot{position:absolute;pointer-events:none}
@@ -138,14 +139,17 @@ body{
 /* chat */
 .msg{max-width:82%;margin-bottom:14px;animation:rise .35s ease}
 @keyframes rise{from{transform:translateY(10px);opacity:0}to{transform:translateY(0);opacity:1}}
-.msg .who{display:flex;align-items:center;gap:6px;font-weight:700;font-size:14px;margin-bottom:6px;color:var(--blue-deep)}
-.msg .bub{background:#fff;border-radius:16px;padding:14px 16px;font-size:15px;line-height:1.55;box-shadow:var(--shadow-sm)}
+.msg .who{display:flex;align-items:center;gap:6px;font-weight:800;font-size:13px;margin-bottom:5px;color:var(--royal)}
+.msg .who .av{width:24px;height:24px;border-radius:50%;object-fit:cover;flex:0 0 auto;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.msg .bub{background:#fff;border-radius:4px 16px 16px 16px;padding:13px 15px;font-size:15px;line-height:1.62;box-shadow:0 6px 16px -6px rgba(30,60,20,.28);color:var(--ink);border:1.5px solid rgba(41,169,225,.20)}
 .msg.me{margin-left:auto}
-.msg.me .who{justify-content:flex-end}
-.msg.me .bub{background:#e7f5fb}
-.action-card{background:linear-gradient(120deg,#e6ecff,#eee7ff);border-radius:16px;padding:14px 16px;margin-top:10px}
-.action-card .lbl{display:flex;align-items:center;gap:6px;color:var(--blue);font-weight:700;font-size:14px;margin-bottom:8px}
-.action-card .q{font-size:16px;font-weight:700;color:var(--blue-deep);line-height:1.5}
+.msg.me .who{justify-content:flex-end;color:#fff}
+.msg.me .bub{background:#1f8fc9;color:#fff;border-radius:16px 4px 16px 16px;border:1.5px solid #1878ab;font-weight:600;box-shadow:0 6px 16px -6px rgba(20,60,110,.5)}
+.action-card{background:linear-gradient(120deg,#fff4d6,#e2f4fb);border-radius:14px;padding:13px 15px;margin-top:10px;border:1px solid rgba(41,169,225,.18)}
+.action-card .lbl{display:flex;align-items:center;gap:6px;color:var(--tomato);font-weight:800;font-size:13px;margin-bottom:6px}
+.action-card .q{font-size:15px;font-weight:800;color:var(--royal);line-height:1.5}
+/* chat 面板：托底避免气泡浮在刺眼绿色上 */
+.chat-panel{background:rgba(255,255,255,.5);border-radius:20px;padding:14px 12px 12px;margin-bottom:8px;backdrop-filter:blur(2px)}
 .chat-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
 .chip-btn{background:#fff;border:1px solid var(--line);border-radius:14px;padding:9px 12px;font-size:13px;font-weight:600;color:var(--blue-deep);cursor:pointer;display:flex;align-items:center;gap:5px}
 .chip-btn:active{background:#e7f5fb}
@@ -196,7 +200,14 @@ body{
 .two-btn{display:flex;gap:10px;margin-bottom:16px}
 .two-btn button{flex:1;padding:13px;border-radius:16px;border:1px solid rgba(92,124,250,.4);background:rgba(255,255,255,.7);color:var(--blue-deep);font-weight:700;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
 .symp{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
-.symp span{background:rgba(255,255,255,.7);border:1px solid var(--line);border-radius:14px;padding:8px 12px;font-size:13px;color:var(--blue-deep);font-weight:600}
+.symp span{border-radius:14px;padding:9px 14px;font-size:13px;font-weight:700;color:#fff;box-shadow:var(--shadow-sm)}
+/* ===== 周期页 大色块预测卡 ===== */
+.predict{display:flex;gap:10px;margin-bottom:16px}
+.predict .pcard{flex:1;border-radius:20px;padding:16px 14px;color:#fff;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+.predict .pcard .plabel{font-size:12px;font-weight:700;opacity:.92}
+.predict .pcard .pval{font-size:20px;font-weight:900;margin-top:6px;line-height:1.1}
+.predict .pcard .psub{font-size:11px;opacity:.85;margin-top:3px}
+.predict .pcard .pblob{position:absolute;right:-14px;bottom:-16px;width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.22)}
 /* insights chart */
 .chart{width:100%;height:180px;margin:6px 0}
 .flow{display:flex;align-items:center;gap:6px;overflow-x:auto;padding:4px 0}
@@ -247,9 +258,9 @@ body{
 .ob{padding:34px 24px 24px;min-height:100%;display:flex;flex-direction:column}
 .ob-hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
 .ob-icon{width:92px;height:92px;border-radius:28px;margin:0 auto 22px;display:flex;align-items:center;justify-content:center;font-size:42px;background:linear-gradient(135deg,#52bce8,#29a9e1);box-shadow:var(--shadow);color:#fff}
-.ob-eyebrow{text-align:center;color:var(--blue);font-weight:700;font-size:13px;letter-spacing:1px}
+.ob-eyebrow{text-align:center;color:#1a3f8f;font-weight:800;font-size:13px;letter-spacing:1px;text-shadow:0 1px 3px rgba(255,255,255,.5)}
 .ob-title{text-align:center;font-size:24px;font-weight:800;margin:8px 0;white-space:pre-line;line-height:1.35;color:var(--blue-ink)}
-.ob-sub{text-align:center;color:var(--gray);font-size:14px;line-height:1.7;margin-top:6px}
+.ob-sub{text-align:center;color:#fff;font-size:14px;line-height:1.7;margin-top:6px;text-shadow:0 1px 6px rgba(40,70,10,.22)}
 .ob-list{margin:20px 0 0;display:flex;flex-direction:column;gap:10px;text-align:left}
 .ob-list li{list-style:none;display:flex;gap:10px;font-size:14px;color:var(--blue-ink);background:#fff;border-radius:14px;padding:12px 14px;box-shadow:var(--shadow-sm);align-items:flex-start}
 .ob-num{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#52bce8,#29a9e1);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:0 0 22px;margin-top:1px}
@@ -619,13 +630,13 @@ function extractUser(text){
 用户这句话：「${text}」
 JSON：`;
 }
-function chatSystem(){ return `你是"微澜"，一个温柔、共情的经期PMS情绪陪伴助手，只输出JSON，不闲聊、不说自己是AI或代码助手。`; }
+function chatSystem(){ return `你是"小澜"，一个温柔、共情的经期PMS情绪陪伴助手，只输出JSON，不闲聊、不说自己是AI或代码助手。`; }
 function buildChatContext(have){
   let phase='黄体期'; try{ phase=cyclePhase().phase; }catch(e){}
   let pool=[]; try{ const cat=classifyMsg(window._lastUserText||''); pool=(ACTION_POOL[cat||'default']||[]).concat(ACTION_POOL.default); }catch(e){}
   const hints=[...new Set(pool.map(a=>a.t+'——'+a.q))].slice(0,6).map(s=>'  · '+s).join('\n');
-  const hist=S.chat.slice(-6).map(m=>(m.role==='me'?'用户：':'微澜：')+String(m.text||'').replace(/\n/g,' ')).join('\n');
-  return `你是温柔共情的经期PMS陪伴助手"微澜"。用户当前处于「${phase}」。请对用户最新的话回应，严格只输出一个JSON对象、不要任何多余文字。
+  const hist=S.chat.slice(-6).map(m=>(m.role==='me'?'用户：':'小澜：')+String(m.text||'').replace(/\n/g,' ')).join('\n');
+  return `你是温柔共情的经期PMS陪伴助手"小澜"。用户当前处于「${phase}」。请对用户最新的话回应，严格只输出一个JSON对象、不要任何多余文字。
 要求：
 - reply：1-2句共情确认此刻的感受，温柔、简短、口语化、不说教。
 - action：一个具体、低成本、可马上做的小动作，**紧扣用户这句话的情绪与内容**、**每次都不一样**，绝不总说"晚点再聊/暂停3分钟"。可参考这些贴合她当下的小动作或自创同类：
@@ -804,7 +815,7 @@ function submitRecord(){
   if(!full){ toast("先写一句此刻的感受吧～"); return; }
   S.draft = text; save();
   const area=document.getElementById('recogArea');
-  area.innerHTML=`<div class="card recog"><div class="thinking"><span>✨ 微澜正在识别</span><span class="d"></span><span class="d"></span><span class="d"></span></div></div>`;
+  area.innerHTML=`<div class="card recog"><div class="thinking"><span>✨ 小澜正在识别</span><span class="d"></span><span class="d"></span><span class="d"></span></div></div>`;
   const minDelay=new Promise(r=>setTimeout(r, 500));
   Promise.all([aiExtract(full), minDelay]).then(([res])=>{
     const {events, indicators}=res;
@@ -956,24 +967,28 @@ function viewSupport(){
   ensureGreeting();
   return `
   ${topBar()}
-  <div style="position:relative">
-    <div class="h1">支持</div>
-    <div class="sub">先停一下，不急着下结论。</div>
-    <div class="mascot" style="right:-4px;top:2px">${mascot(110)}</div>
+  <div class="hero-block hero-sky">
+    <div class="blob b1" style="background:var(--sun)"></div>
+    <div class="blob b2" style="background:var(--tomato)"></div>
+    <div class="blob b3" style="background:#fff;opacity:.35"></div>
+    <div class="hb-title">支持</div>
+    <div class="hb-sub">先停一下，不急着下结论</div>
   </div>
   <div class="seg"><button class="on">对话陪伴</button><button onclick="go('goals')">温柔目标</button></div>
-  <div id="chatFlow">${renderChat()}</div>
+  <div class="chat-panel"><div id="chatFlow">${renderChat()}</div></div>
   <div class="chat-input">
     <input id="chatBox" placeholder="说说此刻的感受…" onkeydown="if(event.key==='Enter')sendChat()"/>
     <button class="chat-send" onclick="sendChat()">↑</button>
   </div>`;
 }
 function renderChat(){
+  const av=`<img class="av" src="/assets/ip/avatar.jpg" alt="我">`;
+  const laner=`<span style="color:var(--tomato)">✦</span> 小澜`;
   return S.chat.map((m,idx)=>{
-    if(m.typing) return `<div class="msg"><div class="who">✦ 微澜</div><div class="bub"><div class="thinking"><span class="d"></span><span class="d"></span><span class="d"></span></div></div></div>`;
-    if(m.role==="me") return `<div class="msg me"><div class="who">你 <span style="width:22px;height:22px;border-radius:50%;background:#c3ccf5;display:inline-flex;align-items:center;justify-content:center;font-size:12px">🙂</span></div><div class="bub">${m.text}</div></div>`;
-    let inner=`<div class="who">✦ 微澜</div><div class="bub">${m.text.replace(/\n/g,"<br>")}`;
-    if(m.action) inner+=`<div class="action-card"><div class="lbl">✨ 试一个小动作</div><div style="font-size:14px;color:#54608f;margin-bottom:6px">${m.action.t}</div><div class="q">${m.action.q}</div></div>
+    if(m.typing) return `<div class="msg"><div class="who">${laner}</div><div class="bub"><div class="thinking"><span class="d"></span><span class="d"></span><span class="d"></span></div></div></div>`;
+    if(m.role==="me") return `<div class="msg me"><div class="who">你 ${av}</div><div class="bub">${m.text}</div></div>`;
+    let inner=`<div class="who">${laner}</div><div class="bub">${m.text.replace(/\n/g,"<br>")}`;
+    if(m.action) inner+=`<div class="action-card"><div class="lbl">✨ 试一个小动作</div><div style="font-size:14px;color:var(--ink);margin-bottom:6px">${m.action.t}</div><div class="q">${m.action.q}</div></div>
       <div class="chat-actions"><button class="chip-btn" onclick="chatBtn('try',${idx})">✅ 接受·打卡</button><button class="chip-btn" onclick="chatBtn('another',${idx})">↻ 换一个</button><button class="chip-btn" onclick="chatBtn('nah',${idx})">✗ 不太有帮助</button></div>`;
     if(m.followBtns) inner+=`<div class="chat-actions">${m.followBtns.map(b=>`<button class="chip-btn" onclick="quickReply('${b}')">${b}</button>`).join("")}</div>`;
     inner+=`</div>`;
@@ -1244,24 +1259,31 @@ function viewCycle(){
   }
   const total=first+dim; for(let i=1;i<=(7-total%7)%7;i++) cells+=`<div class="day mute">${i}</div>`;
   const pd=periodDates(); const ph=cyclePhase();
+  const symps=[['💭','焦虑','var(--royal)'],['🍰','想吃甜食','var(--tomato)'],['🫃','腹胀','var(--sun-deep)'],['💗','胸部胀痛','var(--pink)'],['🪫','精力低','var(--blue)']];
   return `
   ${topBar()}
-  <div style="position:relative"><div class="h1">周期</div><div class="sub">轻柔查看你的微澜</div><div class="mascot" style="right:0;top:2px">${mascot(104)}</div></div>
+  <div class="hero-block hero-red">
+    <div class="blob b1" style="background:var(--sun)"></div>
+    <div class="blob b2" style="background:var(--blue)"></div>
+    <div class="blob b3" style="background:#fff;opacity:.35"></div>
+    <div class="hb-title">周期</div>
+    <div class="hb-sub">轻柔查看你的节律</div>
+  </div>
   <div class="phase-pill">${ph.emoji} 当前 · ${ph.phase} · 距月经约 ${ph.toNext} 天</div>
   <div class="card">
     <div class="cal-head"><button class="nav" onclick="calMove(-1)">‹</button><div class="m">${y}年${m+1}月</div><button class="nav" onclick="calMove(1)">›</button></div>
     <div class="grid">${["日","一","二","三","四","五","六"].map(w=>`<div class="wd">${w}</div>`).join("")}${cells}</div>
     <div class="legend"><div><i style="background:var(--pink)"></i>经期</div><div><i style="background:#c3ccf5"></i>易孕期</div><div><i style="background:var(--blue)"></i>排卵日</div></div>
   </div>
-  <div class="card">
-    <div class="info-row"><div class="k">🩸 上次月经开始</div><div class="v">${fmtMD(pd.last)}</div></div>
-    <div class="info-row"><div class="k">📅 预计下次月经</div><div class="v">${fmtMD(pd.next)}</div></div>
-    <div class="info-row"><div class="k">🕐 平均周期</div><div class="v">${S.cycle.avgLen}天</div></div>
+  <div class="predict">
+    <div class="pcard" style="background:var(--tomato)"><div class="pblob"></div><div class="plabel">🩸 上次月经</div><div class="pval">${fmtMD(pd.last)}</div><div class="psub">周期从这天开始</div></div>
+    <div class="pcard" style="background:var(--blue)"><div class="pblob"></div><div class="plabel">📅 下次预计</div><div class="pval">${fmtMD(pd.next)}</div><div class="psub">距今约 ${ph.toNext} 天</div></div>
+    <div class="pcard" style="background:var(--sun);color:var(--ink)"><div class="pblob" style="background:rgba(0,0,0,.08)"></div><div class="plabel">🕐 平均周期</div><div class="pval">${S.cycle.avgLen} 天</div><div class="psub">根据你的记录</div></div>
   </div>
   <div class="two-btn"><button onclick="openDay(TODAY)">✅ 打卡任务</button><button onclick="openBrief(TODAY)">📄 当日简报</button></div>
   <div class="card">
     <div class="sec-title" style="margin:0 0 10px">这段时间我常出现</div>
-    <div class="symp"><span>💭 焦虑</span><span>🍰 想吃甜食</span><span>🫃 腹胀</span><span>💗 胸部胀痛</span><span>🪫 精力低</span></div>
+    <div class="symp">${symps.map(s=>`<span style="background:${s[2]}">${s[0]} ${s[1]}</span>`).join("")}</div>
     <p style="margin:12px 0 0;font-size:12px;color:var(--gray2)">ⓘ 这些规律基于你的记录，可能每个月都会有变化。</p>
   </div>`;
 }
@@ -1355,7 +1377,7 @@ function viewInsights(){
 const KB=[
 {id:'emo',icon:'🧠',title:'为什么月经前情绪会波动',sub:'了解激素变化如何影响你的情绪、睡眠和注意力',html:`<div class="kb">
 <p><b>一句话理解：</b>月经前几天，体内的<b>雌激素</b>和<b>孕酮</b>会自然"退潮"，牵动大脑里的<b>血清素、多巴胺、去甲肾上腺素</b>等情绪化学信号，于是你可能感到低落、焦虑或易怒。</p>
-<div class="kb-tip">这不是你脆弱，也不是矫情——是身体的正常微澜在起作用。</div>
+<div class="kb-tip">这不是你脆弱，也不是矫情——是身体的正常节律在起作用。</div>
 <div class="kb-diagram"><svg viewBox="0 0 320 128"><circle cx="46" cy="58" r="28" fill="#c8d4ff"/><text x="46" y="66" font-size="24" text-anchor="middle">🩸</text><text x="46" y="110" font-size="11" text-anchor="middle" fill="#6b7599">雌/孕酮↓</text><text x="112" y="64" font-size="20" text-anchor="middle" fill="#52bce8">➜</text><circle cx="160" cy="58" r="28" fill="#cfeaf6"/><text x="160" y="66" font-size="24" text-anchor="middle">🧠</text><text x="160" y="110" font-size="10.5" text-anchor="middle" fill="#6b7599">血清素/多巴胺↓</text><text x="226" y="64" font-size="20" text-anchor="middle" fill="#52bce8">➜</text><circle cx="274" cy="58" r="28" fill="#b7c6ff"/><text x="274" y="66" font-size="24" text-anchor="middle">🌧️</text><text x="274" y="110" font-size="11" text-anchor="middle" fill="#6b7599">低落/焦虑</text></svg></div>
 <h3>🔬 发生了什么</h3>
 <table><tr><th>化学信号</th><th>经前变化</th><th>你可能感觉到</th></tr>
@@ -1596,37 +1618,39 @@ function cleanErr(m){ try{ return (JSON.parse(m).error)||m; }catch(e){ return m;
 function viewWelcome(){
   return `<div class="ob">
     <div class="ob-hero">
-      <div>${mascot(150)}</div>
-      <img src="/assets/ip/logo.png?v=2" alt="WeLan" style="width:220px;max-width:70%;height:auto;margin-top:10px;display:block">
-      <div class="ob-sub" style="max-width:250px;margin-top:14px">懂你的 PMS 陪伴助手<br>每天 10 秒，让身体被看见、被理解</div>
+      <img src="/assets/ip/logo.png?v=2" alt="WeLan" style="width:220px;max-width:72%;height:auto;display:block;filter:drop-shadow(0 6px 14px rgba(0,0,0,.15))">
+      <div style="margin-top:26px;text-align:center;line-height:1.7;color:#fff;text-shadow:0 2px 8px rgba(40,70,10,.25)">
+        <div style="font-size:23px;font-weight:800;margin-bottom:6px">懂你的 PMS 陪伴助手</div>
+        <div style="font-size:16px;font-weight:600;opacity:.96">每天 10 秒，让身体被看见、被理解</div>
+      </div>
     </div>
-    <button class="send-btn" onclick="goRegister()">注册，开启陪伴</button>
-    <button class="ghost-btn" style="margin-top:12px" onclick="goLogin()">我已有账号，登录</button>
-    <p style="text-align:center;font-size:11px;color:var(--gray2);margin-top:16px;line-height:1.6">注册即代表同意《用户协议》与《隐私政策》</p>
+    <button onclick="goRegister()" style="width:100%;padding:16px;border-radius:18px;border:none;cursor:pointer;background:var(--tomato);color:#fff;font-size:16px;font-weight:800;letter-spacing:1px;box-shadow:0 10px 24px -8px rgba(150,20,20,.55)">注册，开启陪伴</button>
+    <button onclick="goLogin()" style="width:100%;padding:16px;border-radius:18px;border:none;cursor:pointer;margin-top:14px;background:var(--sun);color:var(--ink);font-size:16px;font-weight:800;letter-spacing:1px;box-shadow:0 10px 24px -8px rgba(180,140,0,.5)">我已有账号，登录</button>
+    <p style="text-align:center;font-size:12px;color:rgba(255,255,255,.92);margin-top:18px;line-height:1.7;font-weight:600">注册即代表同意《用户协议》与《隐私政策》</p>
   </div>`;
 }
 function viewAuthForm(){
   const mode=window.SCREEN==='register'?'register':'login';
   return `<div class="ob" style="padding-top:40px">
-    <div class="backbar"><div class="backbtn" onclick="goWelcome()">‹</div><div style="font-weight:700;color:var(--blue-ink)">${mode==='register'?'注册账号':'登录'}</div></div>
-    <div style="text-align:center;margin:14px 0 6px">${mascot(96)}</div>
-    <div class="ob-title" style="font-size:22px">${mode==='register'?'创建你的微澜账号':'欢迎回来'}</div>
-    <div class="ob-sub">${mode==='register'?'设置账号与密码即可开始，我们不会分享你的信息。':'登录以继续你的微澜。'}</div>
-    <div class="ob-label">邮箱 / 手机号</div>
+    <div class="backbar"><div class="backbtn" onclick="goWelcome()">‹</div><div style="font-weight:800;color:#fff">${mode==='register'?'注册账号':'登录'}</div></div>
+    <div style="text-align:center;margin:10px 0 2px"><img src="/assets/ip/logo.png?v=2" alt="WeLan" style="width:150px;max-width:55%;height:auto;filter:drop-shadow(0 6px 14px rgba(0,0,0,.15))"></div>
+    <div style="font-size:22px;font-weight:800;color:#fff;text-align:center;text-shadow:0 2px 8px rgba(40,70,10,.25)">${mode==='register'?'创建你的微澜账号':'欢迎回来'}</div>
+    <div style="font-size:14px;color:rgba(255,255,255,.92);text-align:center;margin-top:6px;line-height:1.6">${mode==='register'?'设置账号与密码即可开始，我们不会分享你的信息。':'登录以继续你的微澜。'}</div>
+    <div class="ob-label" style="color:#fff">邮箱 / 手机号</div>
     <input id="au_user" class="ob-input" autocomplete="username" placeholder="请输入邮箱或手机号" value="${(window._authUser||'')}" oninput="window._authUser=this.value">
     ${mode==='register'?`
-    <div class="ob-label">验证码</div>
+    <div class="ob-label" style="color:#fff">验证码</div>
     <div style="display:flex;gap:10px;align-items:stretch">
       <input id="au_code" class="ob-input" inputmode="numeric" placeholder="6 位验证码" style="flex:1;min-width:0">
-      <button id="code_btn" type="button" class="ghost-btn" style="width:auto;padding:0 14px;white-space:nowrap;font-size:13.5px;flex:0 0 auto" onclick="sendCode()">获取验证码</button>
+      <button id="code_btn" type="button" onclick="sendCode()" style="flex:0 0 auto;padding:0 16px;white-space:nowrap;font-size:13.5px;font-weight:800;border:none;border-radius:14px;background:var(--blue);color:#fff;cursor:pointer">获取验证码</button>
     </div>`:''}
-    <div class="ob-label">密码</div>
+    <div class="ob-label" style="color:#fff">密码</div>
     <input id="au_pass" class="ob-input" type="password" autocomplete="${mode==='register'?'new-password':'current-password'}" placeholder="至少 4 位" onkeydown="if(event.key==='Enter')doAuth()">
-    <div id="au_err" style="font-size:13px;color:#e03131;min-height:18px;margin:10px 0 4px"></div>
+    <div id="au_err" style="font-size:13px;color:#fff3bf;font-weight:700;min-height:18px;margin:10px 0 4px"></div>
     <div style="flex:1;min-height:10px"></div>
-    <button class="send-btn" onclick="doAuth()">${mode==='register'?'注册并开始设置':'登录'}</button>
-    <div style="text-align:center;margin-top:16px;font-size:13px;color:var(--gray2)">${mode==='register'?'已有账号？<button class="link-btn" onclick="goLogin()">直接登录</button>':'还没有账号？<button class="link-btn" onclick="goRegister()">立即注册</button>'}</div>
-    <div style="text-align:center;font-size:11px;color:var(--gray2);margin-top:14px">🔒 数据存储在 SQLite 数据库中，非本地缓存</div>
+    <button onclick="doAuth()" style="width:100%;padding:16px;border-radius:18px;border:none;cursor:pointer;background:var(--tomato);color:#fff;font-size:16px;font-weight:800;letter-spacing:1px;box-shadow:0 10px 24px -8px rgba(150,20,20,.55)">${mode==='register'?'注册并开始设置':'登录'}</button>
+    <div style="text-align:center;margin-top:16px;font-size:13px;color:rgba(255,255,255,.92)">${mode==='register'?'已有账号？<button onclick="goLogin()" style="background:none;border:none;color:#fff;font-weight:800;text-decoration:underline;cursor:pointer;font-size:13px">直接登录</button>':'还没有账号？<button onclick="goRegister()" style="background:none;border:none;color:#fff;font-weight:800;text-decoration:underline;cursor:pointer;font-size:13px">立即注册</button>'}</div>
+    <div style="text-align:center;font-size:11px;color:rgba(255,255,255,.8);margin-top:14px">🔒 数据存储在 SQLite 数据库中，非本地缓存</div>
   </div>`;
 }
 function validAccount(a){ return /^1[3-9]\d{9}$/.test(a) || /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(a); }
@@ -1673,11 +1697,11 @@ function doLogout(){
 function viewWelcomeBack(){
   return `<div class="ob">
     <div class="ob-hero">
-      <div class="ob-icon" style="font-size:46px">🎉</div>
-      <div class="ob-title">注册成功！</div>
-      <div class="ob-sub" style="max-width:250px">欢迎加入微澜 ✨<br>接下来花 1 分钟，让微澜更懂你。</div>
+      <div style="width:96px;height:96px;border-radius:28px;background:var(--sun);display:flex;align-items:center;justify-content:center;font-size:46px;box-shadow:0 10px 26px -8px rgba(180,140,0,.5)">🎉</div>
+      <div style="font-size:24px;font-weight:800;color:#fff;margin-top:18px;text-shadow:0 2px 8px rgba(40,70,10,.25)">注册成功！</div>
+      <div style="font-size:14px;color:rgba(255,255,255,.95);text-align:center;max-width:250px;margin-top:8px;line-height:1.7">欢迎加入微澜 ✨<br>接下来花 1 分钟，让小澜更懂你。</div>
     </div>
-    <button class="send-btn" onclick="startOnboarding()">开始设置</button>
+    <button onclick="startOnboarding()" style="width:100%;padding:16px;border-radius:18px;border:none;cursor:pointer;background:var(--tomato);color:#fff;font-size:16px;font-weight:800;letter-spacing:1px;box-shadow:0 10px 24px -8px rgba(150,20,20,.55)">开始设置</button>
     <div style="height:4px"></div>
   </div>`;
 }
@@ -1692,7 +1716,7 @@ const onbSlides=[
 function viewOnboarding(){
   const i=ob().step, s=onbSlides[i];
   return `<div class="ob">
-    <div style="display:flex;justify-content:flex-end"><button class="link-btn" style="color:var(--gray2)" onclick="skipOnboarding()">跳过</button></div>
+    <div style="display:flex;justify-content:flex-end"><button class="link-btn" style="color:rgba(255,255,255,.92)" onclick="skipOnboarding()">跳过</button></div>
     <div style="flex:1;display:flex;flex-direction:column">
       <div style="text-align:center">
         <div class="ob-icon">${s.icon}</div>
