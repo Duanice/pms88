@@ -187,6 +187,8 @@ body{
 .day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:14px;border-radius:50%;position:relative;cursor:pointer;font-weight:600;color:var(--blue-ink)}
 .day.mute{color:#c7cde6}
 .day.period{background:var(--pink-soft);color:#c0396a}
+.day.pms{background:#ffe3c2;color:#b5651a}
+.day.pms-peak{background:var(--orange);color:#fff}
 .day.fertile{background:#dfe6ff}
 .day.ovul{background:var(--blue);color:#fff}
 .day.today{outline:2px solid var(--blue2)}
@@ -261,7 +263,7 @@ body{
 .ob-eyebrow{text-align:center;color:#1a3f8f;font-weight:800;font-size:13px;letter-spacing:1px;text-shadow:0 1px 3px rgba(255,255,255,.5)}
 .ob-title{text-align:center;font-size:24px;font-weight:800;margin:8px 0;white-space:pre-line;line-height:1.35;color:var(--blue-ink)}
 .ob-sub{text-align:center;color:#fff;font-size:14px;line-height:1.7;margin-top:6px;text-shadow:0 1px 6px rgba(40,70,10,.22)}
-.ob-list{margin:20px 0 0;display:flex;flex-direction:column;gap:10px;text-align:left}
+.ob-list{margin:20px 0 0;padding:0;display:flex;flex-direction:column;gap:10px;text-align:left}
 .ob-list li{list-style:none;display:flex;gap:10px;font-size:14px;color:var(--blue-ink);background:#fff;border-radius:14px;padding:12px 14px;box-shadow:var(--shadow-sm);align-items:flex-start}
 .ob-num{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#52bce8,#29a9e1);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:0 0 22px;margin-top:1px}
 .ob-dots{display:flex;gap:6px;justify-content:center;margin:18px 0}
@@ -529,16 +531,18 @@ function cyclePhase(){
 }
 /* 由周期模型算出某个月的经期/易孕期/排卵日标记 */
 function cycleMarks(year, month){
-  const period=new Set(), fertile=new Set(), ovul=new Set();
+  const period=new Set(), fertile=new Set(), ovul=new Set(), pms=new Set(), pmsPeak=new Set();
   const base=new Date(S.cycle.last), len=S.cycle.avgLen, plen=S.cycle.periodLen||5;
   for(let k=-4;k<=4;k++){
     const start=new Date(base); start.setDate(start.getDate()+k*len);
     for(let i=0;i<plen;i++){ const d=new Date(start); d.setDate(d.getDate()+i); if(d.getFullYear()===year&&d.getMonth()===month) period.add(d.getDate()); }
+    // PMS 易感期：月经前 5 天（浅橙），前一天为PMS高峰（深橙）
+    for(let i=1;i<=5;i++){ const p=new Date(start); p.setDate(p.getDate()-i); if(p.getFullYear()===year&&p.getMonth()===month){ if(i===1) pmsPeak.add(p.getDate()); else pms.add(p.getDate()); } }
     const ov=new Date(start); ov.setDate(ov.getDate()+len-14);
     if(ov.getFullYear()===year&&ov.getMonth()===month) ovul.add(ov.getDate());
     for(let i=1;i<=5;i++){ const f=new Date(ov); f.setDate(f.getDate()-i); if(f.getFullYear()===year&&f.getMonth()===month) fertile.add(f.getDate()); }
   }
-  return {period, fertile, ovul};
+  return {period, fertile, ovul, pms, pmsPeak};
 }
 /* 最近一次月经开始 & 预计下次 */
 function periodDates(){
@@ -774,26 +778,12 @@ function viewHome(){
       <div class="mood ${S.selectedMoods.includes(m[1])?'on':''}" onclick="toggleMood('${m[1]}')"><div class="ci">${m[0]}</div><span>${m[1]}</span></div>`).join("")}
   </div>
 
-  <div class="card">
-    <div class="cycle-head"><div class="card-title" style="margin:0"><span class="ic">📅</span> 你的周期状态</div><div class="link" onclick="go('cycle')">查看日历 ›</div></div>
-    <div class="ring-wrap">
-      <div>
-        <div style="color:var(--gray);font-size:14px;margin-bottom:2px">预计距离月经</div>
-        <div class="bignum">${ph.toNext}<small>天</small></div>
-        <div class="tiny">这是趋势估计，不是诊断 ⓘ</div>
-      </div>
-      ${ringSVG(ph.prog)}
-    </div>
-  </div>
-
   ${today.length? `<div class="card">
     <div class="card-title"><span class="ic">🕐</span> 今日时间线</div>
     ${today.map(e=>`<div class="tl-item"><div class="tl-dot">${e.icon}</div><div><div class="t">${e.time} · ${e.ind}</div><div class="c">${e.label}</div></div></div>`).join("")}
     <button class="send-btn" style="margin-top:14px" onclick="openBrief('${TODAY}')">✨ 生成今日简报</button>
     <div style="text-align:center;margin-top:10px"><span onclick="clearToday()" style="font-size:12px;color:var(--gray2);cursor:pointer">清除今天的记录</span></div>
   </div>`:""}
-
-  <div class="banner"><span style="font-size:26px">✨</span><div><h3>你的规律只属于你自己</h3><p>我们寻找趋势，不轻易贴标签</p></div><span class="fl">🌸</span></div>
   `;
 }
 function toggleMood(m){
@@ -813,6 +803,7 @@ function submitRecord(){
   const moodText = S.selectedMoods.length? (" "+S.selectedMoods.join(" ")) : "";
   const full = (text+moodText).trim();
   if(!full){ toast("先写一句此刻的感受吧～"); return; }
+  checkCrisis(full);
   S.draft = text; save();
   const area=document.getElementById('recogArea');
   area.innerHTML=`<div class="card recog"><div class="thinking"><span>✨ 小澜正在识别</span><span class="d"></span><span class="d"></span><span class="d"></span></div></div>`;
@@ -820,7 +811,7 @@ function submitRecord(){
   Promise.all([aiExtract(full), minDelay]).then(([res])=>{
     const {events, indicators}=res;
     if(events.length===0){
-      area.innerHTML=`<div class="card recog"><div class="card-title"><span class="ic">✨</span> 已收到</div><p style="margin:0 0 12px;font-size:14px;color:#54608f">我记下了你的这句话。要不要去「支持」聊两句？</p><div class="row"><button class="ghost" onclick="clearRecog()">好的</button><button class="fill" onclick="go('support')">去聊聊</button></div></div>`;
+      area.innerHTML=`<div class="card recog"><div class="card-title"><span class="ic">✨</span> 已收到</div><p style="margin:0 0 12px;font-size:14px;color:#54608f">我记下了你的这句话。要不要去「互动」聊两句？</p><div class="row"><button class="ghost" onclick="clearRecog()">好的</button><button class="fill" onclick="go('support')">去聊聊</button></div></div>`;
       return;
     }
     window._pending={events, indicators, text:full};
@@ -846,13 +837,7 @@ function confirmRecord(){
   }
   S.draft=""; S.selectedMoods=[]; window._pending=null;
   save(); render();
-  toast(evs.length? "✓ 已保存到你的时间线" : "今天已经记录过这些啦～");
-  // if indicators <=1, nudge multi-turn dialogue
-  if(p.indicators.length<=1){
-    setTimeout(()=> nudgeDialogue(p.indicators), 700);
-  } else {
-    setTimeout(()=> openBrief(TODAY), 700);
-  }
+  toast(evs.length? "小澜已经为你记好啦，可以在日历查看哦~" : "今天已经记录过这些啦～");
 }
 function clearToday(){
   api('DELETE','/api/entries?date='+TODAY).then(()=>{ S.timeline[TODAY]=[]; render(); toast('已清除今天的记录'); })
@@ -971,10 +956,10 @@ function viewSupport(){
     <div class="blob b1" style="background:var(--sun)"></div>
     <div class="blob b2" style="background:var(--tomato)"></div>
     <div class="blob b3" style="background:#fff;opacity:.35"></div>
-    <div class="hb-title">支持</div>
+    <div class="hb-title">互动</div>
     <div class="hb-sub">先停一下，不急着下结论</div>
   </div>
-  <div class="seg"><button class="on">对话陪伴</button><button onclick="go('goals')">温柔目标</button></div>
+  <div class="seg"><button class="on">对话陪伴</button><button onclick="go('goals')">小小目标</button></div>
   <div class="chat-panel"><div id="chatFlow">${renderChat()}</div></div>
   <div class="chat-input">
     <input id="chatBox" placeholder="说说此刻的感受…" onkeydown="if(event.key==='Enter')sendChat()"/>
@@ -1049,6 +1034,7 @@ function quickOptions(ind){
 function sendChat(){
   const box=document.getElementById('chatBox'); const t=box.value.trim();
   if(!t)return; box.value="";
+  checkCrisis(t);
   S.chat.push({role:"me", text:t}); save(); render(); scrollChat();
   aiRespond(t).then(()=>{ render(); scrollChat(); });
 }
@@ -1073,7 +1059,7 @@ async function acceptChatAction(act){
   try{ const row=await api('POST','/api/tasks',{date:TODAY,emoji:taskEmoji(title),title}); S.tasks.unshift(row); }
   catch(e){ toast('保存失败：'+e.message); return; }
   S.chat.push({role:"me",text:"好，我试试。"});
-  S.chat.push({role:"ai",text:"已经帮你记进今天的打卡啦，做完回来打个勾就好 💙\n（在「温柔目标」页可以看到哦）"});
+  S.chat.push({role:"ai",text:"已经帮你记进今天的打卡啦，做完回来打个勾就好 💙\n（在「小小目标」页可以看到哦）"});
   save(); render(); scrollChat();
   toast("已加入今日打卡 ✓");
 }
@@ -1156,11 +1142,11 @@ function viewGoals(){
   return `
   ${topBar()}
   <div style="position:relative">
-    <div class="h1">温柔目标</div>
+    <div class="h1">小小目标</div>
     <div class="sub">选择今天真正能帮到你的事</div>
     <div class="mascot" style="right:-4px;top:0">${mascot(110)}</div>
   </div>
-  <div class="seg"><button onclick="go('support')">对话陪伴</button><button class="on">温柔目标</button></div>
+  <div class="seg"><button onclick="go('support')">对话陪伴</button><button class="on">小小目标</button></div>
   <div class="card">
     <div class="card-title"><span class="ic">✨</span> 今日建议任务 <span style="margin-left:auto;font-size:12px;font-weight:700;color:var(--blue)">${ph.emoji} ${ph.phase}</span></div>
     ${rec ? `
@@ -1244,12 +1230,14 @@ function viewCycle(){
   const dim=new Date(y,m+1,0).getDate();
   const prevDim=new Date(y,m,0).getDate();
   const marks=cycleMarks(y,m);
-  const period=marks.period, fertile=marks.fertile, ovul=marks.ovul;
+  const period=marks.period, fertile=marks.fertile, ovul=marks.ovul, pms=marks.pms, pmsPeak=marks.pmsPeak;
   let cells="";
   for(let i=0;i<first;i++) cells+=`<div class="day mute">${prevDim-first+1+i}</div>`;
   for(let d=1;d<=dim;d++){
     let cls="day";
     if(period.has(d))cls+=" period";
+    else if(pmsPeak.has(d))cls+=" pms-peak";
+    else if(pms.has(d))cls+=" pms";
     else if(fertile.has(d))cls+=" fertile";
     if(ovul.has(d))cls+=" ovul";
     const ds=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
@@ -1266,14 +1254,14 @@ function viewCycle(){
     <div class="blob b1" style="background:var(--sun)"></div>
     <div class="blob b2" style="background:var(--blue)"></div>
     <div class="blob b3" style="background:#fff;opacity:.35"></div>
-    <div class="hb-title">周期</div>
+    <div class="hb-title">日历</div>
     <div class="hb-sub">轻柔查看你的节律</div>
   </div>
   <div class="phase-pill">${ph.emoji} 当前 · ${ph.phase} · 距月经约 ${ph.toNext} 天</div>
   <div class="card">
     <div class="cal-head"><button class="nav" onclick="calMove(-1)">‹</button><div class="m">${y}年${m+1}月</div><button class="nav" onclick="calMove(1)">›</button></div>
     <div class="grid">${["日","一","二","三","四","五","六"].map(w=>`<div class="wd">${w}</div>`).join("")}${cells}</div>
-    <div class="legend"><div><i style="background:var(--pink)"></i>经期</div><div><i style="background:#c3ccf5"></i>易孕期</div><div><i style="background:var(--blue)"></i>排卵日</div></div>
+    <div class="legend"><div><i style="background:var(--pink)"></i>经期</div><div><i style="background:#ffe3c2"></i>PMS 易感</div><div><i style="background:var(--orange)"></i>PMS高峰</div><div><i style="background:var(--blue)"></i>排卵日</div></div>
   </div>
   <div class="predict">
     <div class="pcard" style="background:var(--tomato)"><div class="pblob"></div><div class="plabel">🩸 上次月经</div><div class="pval">${fmtMD(pd.last)}</div><div class="psub">周期从这天开始</div></div>
@@ -1309,7 +1297,7 @@ function dayModalHTML(ds){
     <div style="font-size:22px;font-weight:800;color:var(--blue-ink)">${md} 打卡任务</div>
     <div style="font-size:13px;color:var(--gray);margin-top:3px">${ds.replace(/-/g,'.')} · ${ph.emoji} ${ph.phase}${tasks.length?` · 已完成 ${done}/${tasks.length}`:''}</div>
   </div>
-  ${tasks.length? tasks.map(taskRow).join('') : '<p style="font-size:14px;color:var(--gray2);line-height:1.7;margin:8px 0 4px">这一天还没有任务～<br>可以去「温柔目标」领一个，或在「支持」的对话里接受一个小动作。</p>'}
+  ${tasks.length? tasks.map(taskRow).join('') : '<p style="font-size:14px;color:var(--gray2);line-height:1.7;margin:8px 0 4px">这一天还没有任务～<br>可以去「小小目标」领一个，或在「互动」的对话里接受一个小动作。</p>'}
   <button class="close-btn" style="margin-top:18px" onclick="this.closest('.overlay').remove();window._openDay=null;">关闭</button>`;
 }
 function openDay(ds){
@@ -1321,6 +1309,65 @@ function openDay(ds){
 }
 
 /* ============ INSIGHTS ============ */
+function aggregateRecords(){
+  const labelCount={}, indCount={}, iconByLabel={}, days=new Set(); let total=0;
+  Object.entries(S.timeline||{}).forEach(([date,evs])=>{
+    (evs||[]).forEach(e=>{
+      total++; days.add(date);
+      labelCount[e.label]=(labelCount[e.label]||0)+1;
+      if(e.icon) iconByLabel[e.label]=e.icon;
+      if(e.ind) indCount[e.ind]=(indCount[e.ind]||0)+1;
+    });
+  });
+  const topLabels=Object.entries(labelCount).sort((a,b)=>b[1]-a[1]);
+  const indEntries=Object.entries(indCount).sort((a,b)=>b[1]-a[1]);
+  return {labelCount,indCount,iconByLabel,topLabels,indEntries,total,days:days.size,kinds:topLabels.length};
+}
+function insightSummary(){
+  const a=aggregateRecords();
+  if(a.total===0){
+    return `<div class="card"><div class="card-title" style="font-size:16px">📊 记录归纳</div>
+      <p style="margin:0;font-size:14px;color:var(--gray);line-height:1.7">还没有足够的记录～去首页用一句话记录几次，这里就会自动帮你汇总出高频信号和规律。</p></div>`;
+  }
+  const tile=(n,l,col)=>`<div style="flex:1;background:#fff;border-radius:16px;padding:14px 6px;text-align:center;box-shadow:var(--shadow-sm)"><div style="font-size:26px;font-weight:900;color:${col};line-height:1">${n}</div><div style="font-size:12px;color:var(--gray);margin-top:5px">${l}</div></div>`;
+  const maxL=a.topLabels[0][1];
+  const labelBars=a.topLabels.slice(0,6).map(([lb,c])=>{
+    const pct=Math.max(8,Math.round(c/maxL*100));
+    return `<div style="display:flex;align-items:center;gap:10px;margin:10px 0">
+      <div style="width:118px;flex:0 0 auto;font-size:13.5px;color:var(--blue-ink);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.iconByLabel[lb]||'•'} ${lb}</div>
+      <div style="flex:1;height:14px;background:#eef3f8;border-radius:7px;overflow:hidden"><div style="width:${pct}%;height:100%;background:linear-gradient(90deg,#52bce8,#29a9e1);border-radius:7px"></div></div>
+      <div style="width:40px;text-align:right;font-size:13px;font-weight:800;color:var(--blue-deep)">${c} 次</div>
+    </div>`;
+  }).join('');
+  const INDCOLOR={'情绪':'var(--tomato)','睡眠':'var(--royal)','精力':'var(--blue)','排便':'var(--sun-deep)','皮肤':'#d47ba6','生活事件':'var(--orange)'};
+  const maxI=a.indEntries[0][1];
+  const indBars=a.indEntries.map(([ind,c])=>{
+    const pct=Math.max(8,Math.round(c/maxI*100)); const col=INDCOLOR[ind]||'var(--blue)';
+    return `<div style="display:flex;align-items:center;gap:10px;margin:10px 0">
+      <div style="width:66px;flex:0 0 auto;font-size:13px;color:var(--gray);font-weight:600">${ind}</div>
+      <div style="flex:1;height:14px;background:#eef3f8;border-radius:7px;overflow:hidden"><div style="width:${pct}%;height:100%;background:${col};border-radius:7px"></div></div>
+      <div style="width:40px;text-align:right;font-size:13px;font-weight:800;color:var(--blue-ink)">${c} 条</div>
+    </div>`;
+  }).join('');
+  const topN=a.topLabels.slice(0,3).map(([lb,c])=>`<b style="color:var(--blue-deep)">${lb}</b>（${c} 次）`).join('、');
+  return `
+  <div style="display:flex;gap:10px;margin-bottom:16px">
+    ${tile(a.total,'记录条数','var(--blue)')}
+    ${tile(a.days,'覆盖天数','var(--orange)')}
+    ${tile(a.kinds,'信号种类','var(--tomato)')}
+  </div>
+  <div class="card">
+    <div class="card-title" style="font-size:16px">📊 你最近常记录的信号</div>
+    <p style="margin:-2px 0 8px;font-size:13px;color:#54608f;line-height:1.6">在最近 ${a.days} 天里你一共记录了 ${a.total} 条，最常出现的是 ${topN}。</p>
+    ${labelBars}
+    <div class="disclaimer" style="margin-top:10px">✨ 这些是你亲手记录的高频信号，看见它们，就是了解自己的开始。</div>
+  </div>
+  <div class="card">
+    <div class="card-title" style="font-size:16px">🗂️ 记录都落在哪些方面</div>
+    ${indBars}
+    <p style="margin:8px 0 0;font-size:12px;color:var(--gray2)">按情绪 / 睡眠 / 精力 / 排便 / 皮肤 / 生活事件归类统计。</p>
+  </div>`;
+}
 function viewInsights(){
   const data=[2.2,2.1,2.3,2.7,3.3,3.4,3.1,2.9,2.7,2.5,2.3,2.2,2.1,2.2,2.3,2.1,1.9,1.7,1.6,1.7,1.9,2.1,2.2,2.1,2.4,2.7,2.5,2.3];
   const W=320,H=150,pad=24; const maxV=4;
@@ -1330,7 +1377,9 @@ function viewInsights(){
   const hlX1=pts[3][0], hlX2=pts[6][0];
   return `
   ${topBar()}
-  <div style="position:relative"><div class="h1">洞察</div><div class="sub">来自最近 3 个周期的模式</div><div class="mascot" style="right:-2px;top:0">${mascot(104,'search')}</div></div>
+  <div style="position:relative"><div class="h1">洞察</div><div class="sub">来自你亲手记录的归纳</div><div class="mascot" style="right:-2px;top:0">${mascot(104,'search')}</div></div>
+  ${insightSummary()}
+  <div class="sec-title" style="margin:2px 0 10px">周期相关的模式</div>
   <div class="card">
     <div class="card-title" style="font-size:17px">📈 你经常在月经前 4–6 天记录焦虑。</div>
     <div style="font-size:12px;color:var(--gray);margin-bottom:2px">情绪强度（平均）</div>
@@ -1365,7 +1414,7 @@ function viewInsights(){
   </div>
   <div class="card">
     <div class="card-title" style="font-size:16px">🍃 什么似乎有帮助</div>
-    <div class="symp"><span>🚶 短暂散步</span><span>✍️ 发消息前先暂停</span><span>🌙 早点睡</span></div>
+    <div class="symp"><span style="background:#e7f5fb;color:var(--blue-deep)">🚶 短暂散步</span><span style="background:#e7f5fb;color:var(--blue-deep)">✍️ 发消息前先暂停</span><span style="background:#e7f5fb;color:var(--blue-deep)">🌙 早点睡</span></div>
     <p style="margin:10px 0 0;font-size:12px;color:var(--gray2)">在容易出现烦躁的阶段，你更常提到这些方法对你有帮助。</p>
   </div>
   <div class="disclaimer">🛡️ 这些是基于你记录的规律，不是医学结论。</div>
@@ -1580,6 +1629,39 @@ function openBrief(date){
   document.querySelector('.screen').appendChild(ov);
 }
 
+/* ============ 危机干预：识别自杀/自伤倾向，弹出求助热线 ============ */
+const CRISIS_RE=/自杀|轻生|不想活|活不下去|活不下来|不想再活|不如死了|死了算了|了结自己|结束(自己的?)?生命|想不开|一了百了|想死|不想活下去|活着(没|真没)?(意思|意义)/;
+const CRISIS_LINES=[
+  ['北京','010-82951332'],['上海','021-12320-5'],
+  ['甘肃','0931-4638858'],['福建','0592-5395159'],
+  ['广东','020-81899120'],['浙江','0571-85029595'],
+  ['江苏','0512-65791001'],['吉林','0431-89685000']
+];
+function checkCrisis(text){ if(text && CRISIS_RE.test(text)){ showCrisis(); return true; } return false; }
+function telify(num){ return 'tel:'+num.replace(/[^0-9]/g,''); }
+function showCrisis(){
+  if(document.querySelector('.crisis-overlay')) return; // 避免重复弹出
+  const ov=document.createElement('div'); ov.className='overlay crisis-overlay';
+  ov.onclick=(e)=>{ if(e.target===ov) ov.remove(); };
+  ov.innerHTML=`<div class="modal" style="text-align:center">
+    <div style="width:120px;height:120px;margin:2px auto 10px;border-radius:28px;overflow:hidden;background:#eef7fb;box-shadow:var(--shadow)">
+      <img src="/assets/ip/health.jpg" alt="陪着你" style="width:100%;height:100%;object-fit:cover;display:block">
+    </div>
+    <div style="font-size:19px;font-weight:800;color:var(--blue-ink);line-height:1.5;margin-bottom:6px">这个世界虽然不完美，<br>但总有人守护着你。</div>
+    <div style="font-size:13px;color:var(--gray);margin-bottom:14px">如果你正被这些念头困住，请一定和专业的人聊一聊——你值得被认真对待。</div>
+    <div style="background:linear-gradient(120deg,#fff4d6,#e2f4fb);border-radius:16px;padding:14px;margin-bottom:14px">
+      <div style="font-size:13px;color:var(--blue-deep);font-weight:700;margin-bottom:4px">北京 24 小时免费心理危机咨询热线</div>
+      <a href="tel:01082951332" style="font-size:24px;font-weight:900;color:var(--tomato);text-decoration:none;letter-spacing:1px">010-82951332</a>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;text-align:left;margin-bottom:14px">
+      ${CRISIS_LINES.map(([r,n])=>`<a href="${telify(n)}" style="display:block;background:rgba(255,255,255,.7);border:1px solid var(--line);border-radius:12px;padding:9px 11px;text-decoration:none"><div style="font-size:11px;color:var(--gray)">${r}热线</div><div style="font-size:14px;font-weight:800;color:var(--blue-ink)">${n}</div></a>`).join('')}
+    </div>
+    <div style="font-size:12px;color:var(--gray2);margin-bottom:14px">🚑 若有紧急危险，请立即拨打 <b style="color:var(--tomato)">120</b> 或前往就近急诊</div>
+    <button class="close-btn" onclick="this.closest('.overlay').remove()">我知道了</button>
+  </div>`;
+  document.querySelector('.screen').appendChild(ov);
+}
+
 /* ============ TOAST ============ */
 function toast(msg){
   const t=document.createElement('div'); t.className="toast"; t.textContent=msg;
@@ -1591,8 +1673,8 @@ function toast(msg){
 /* ============ TABBAR ============ */
 const TABS=[
   ["home","首页",'<path d="M3 11l9-8 9 8v9a2 2 0 01-2 2h-4v-6H9v6H5a2 2 0 01-2-2z"/>', 'var(--orange)'],
-  ["cycle","周期",'<rect x="3" y="4" width="18" height="17" rx="3"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/>', 'var(--sun-deep)'],
-  ["support","支持",'<path d="M21 11.5a8.5 8.5 0 01-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1121 11.5z"/><path d="M12 14s-2-1.3-2-2.6a1.3 1.3 0 012-.9 1.3 1.3 0 012 .9C14 12.7 12 14 12 14z" fill="currentColor" stroke="none"/>', 'var(--blue)'],
+  ["cycle","日历",'<rect x="3" y="4" width="18" height="17" rx="3"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/>', 'var(--sun-deep)'],
+  ["support","互动",'<path d="M21 11.5a8.5 8.5 0 01-12.5 7.5L3 21l2-5.5A8.5 8.5 0 1121 11.5z"/><path d="M12 14s-2-1.3-2-2.6a1.3 1.3 0 012-.9 1.3 1.3 0 012 .9C14 12.7 12 14 12 14z" fill="currentColor" stroke="none"/>', 'var(--blue)'],
   ["insights","洞察",'<line x1="6" y1="20" x2="6" y2="13"/><line x1="12" y1="20" x2="12" y2="8"/><line x1="18" y1="20" x2="18" y2="4"/>', 'var(--royal)'],
   ["science","科普",'<path d="M4 5a2 2 0 012-2h5v17H6a2 2 0 00-2 2zM20 5a2 2 0 00-2-2h-5v17h5a2 2 0 012 2z"/>', 'var(--lightblue)'],
 ];
@@ -1611,7 +1693,7 @@ function renderTabs(){
 
 /* ============ AUTH + ONBOARDING（注册 / 登录 / 引导） ============ */
 // window.SCREEN: welcome | register | login | welcomeBack | onboarding | profileSetup | cycleSetup | app
-function ob(){ if(!window._onb) window._onb={step:0,nickname:'',gender:'女性',age:'',lastPeriod:'2025-06-18',cycleLen:28,periodUnknown:false}; return window._onb; }
+function ob(){ if(!window._onb) window._onb={step:0,nickname:'',gender:'女性',age:'',lastPeriod:'2025-06-18',periodEnd:'',cycleLen:28,periodUnknown:false}; return window._onb; }
 function authErr(msg,ok){ const e=document.getElementById('au_err'); if(e){ e.style.color=ok?'var(--blue)':'#e03131'; e.textContent=msg; } }
 function cleanErr(m){ try{ return (JSON.parse(m).error)||m; }catch(e){ return m; } }
 
@@ -1632,7 +1714,7 @@ function viewWelcome(){
 function viewAuthForm(){
   const mode=window.SCREEN==='register'?'register':'login';
   return `<div class="ob" style="padding-top:40px">
-    <div class="backbar"><div class="backbtn" onclick="goWelcome()">‹</div><div style="font-weight:800;color:#fff">${mode==='register'?'注册账号':'登录'}</div></div>
+    <div class="backbar"><div class="backbtn" onclick="window.SCREEN='onboarding';render()">‹</div><div style="font-weight:800;color:#fff">${mode==='register'?'注册账号':'登录'}</div></div>
     <div style="text-align:center;margin:10px 0 2px"><img src="/assets/ip/logo.png?v=2" alt="WeLan" style="width:150px;max-width:55%;height:auto;filter:drop-shadow(0 6px 14px rgba(0,0,0,.15))"></div>
     <div style="font-size:22px;font-weight:800;color:#fff;text-align:center;text-shadow:0 2px 8px rgba(40,70,10,.25)">${mode==='register'?'创建你的微澜账号':'欢迎回来'}</div>
     <div style="font-size:14px;color:rgba(255,255,255,.92);text-align:center;margin-top:6px;line-height:1.6">${mode==='register'?'设置账号与密码即可开始，我们不会分享你的信息。':'登录以继续你的微澜。'}</div>
@@ -1683,7 +1765,7 @@ async function doAuth(){
   try{
     const data=await api('POST', mode==='register'?'/api/register':'/api/login', {username:u,password:p});
     applyServerData(data); window.AUTH=true; window._authUser=''; window._codeSent=false;
-    if(mode==='register'){ window._onb={step:0,nickname:'',gender:'女性',age:'',lastPeriod:S.cycle.last||'2025-06-18',cycleLen:S.cycle.avgLen||28,periodUnknown:false}; window.SCREEN='welcomeBack'; }
+    if(mode==='register'){ window._onb={step:0,nickname:'',gender:'女性',age:'',lastPeriod:S.cycle.last||'',periodEnd:'',cycleLen:S.cycle.avgLen||28,periodUnknown:false}; window.SCREEN='welcomeBack'; }
     else { window.SCREEN='app'; S.tab='home'; }
     render();
   }catch(e){ authErr(cleanErr(e.message)); }
@@ -1701,7 +1783,7 @@ function viewWelcomeBack(){
       <div style="font-size:24px;font-weight:800;color:#fff;margin-top:18px;text-shadow:0 2px 8px rgba(40,70,10,.25)">注册成功！</div>
       <div style="font-size:14px;color:rgba(255,255,255,.95);text-align:center;max-width:250px;margin-top:8px;line-height:1.7">欢迎加入微澜 ✨<br>接下来花 1 分钟，让小澜更懂你。</div>
     </div>
-    <button onclick="startOnboarding()" style="width:100%;padding:16px;border-radius:18px;border:none;cursor:pointer;background:var(--tomato);color:#fff;font-size:16px;font-weight:800;letter-spacing:1px;box-shadow:0 10px 24px -8px rgba(150,20,20,.55)">开始设置</button>
+    <button onclick="window.SCREEN='profileSetup';render()" style="width:100%;padding:16px;border-radius:18px;border:none;cursor:pointer;background:var(--tomato);color:#fff;font-size:16px;font-weight:800;letter-spacing:1px;box-shadow:0 10px 24px -8px rgba(150,20,20,.55)">开始设置</button>
     <div style="height:4px"></div>
   </div>`;
 }
@@ -1730,8 +1812,8 @@ function viewOnboarding(){
     <button class="send-btn" onclick="nextOnboarding()">${i===onbSlides.length-1?'开始设置':'下一步'}</button>
   </div>`;
 }
-function nextOnboarding(){ if(ob().step<onbSlides.length-1) ob().step++; else window.SCREEN='profileSetup'; render(); }
-function skipOnboarding(){ window.SCREEN='profileSetup'; render(); }
+function nextOnboarding(){ if(ob().step<onbSlides.length-1){ ob().step++; render(); } else { window.SCREEN='register'; render(); } }
+function skipOnboarding(){ window.SCREEN='register'; render(); }
 
 /* ---- 认识你：昵称 / 性别 / 年龄 ---- */
 function viewProfileSetup(){
@@ -1755,29 +1837,40 @@ function setOb(k,v){ ob()[k]=v; render(); }
 /* ---- 经期设置：上次月经 / 平均周期 ---- */
 function viewCycleSetup(){
   const o=ob();
+  const len=o.cycleLen||28;
   return `<div class="ob" style="padding-top:46px">
     <div class="ob-eyebrow" style="text-align:left">经期信息</div>
     <div class="ob-title" style="text-align:left;margin:6px 0">最近一次月经\n从哪天开始？</div>
     <div class="ob-sub" style="text-align:left">帮助微澜估算你现在所处的周期阶段，随时可在设置里修改。</div>
-    <div class="ob-label">选择日期</div>
+    <div class="ob-label">月经开始日期</div>
     <input class="ob-input" type="date" ${o.periodUnknown?'disabled':''} value="${o.lastPeriod||''}" onchange="setPeriodDate(this.value)">
+    <div class="ob-label">月经结束日期 <span style="color:rgba(255,255,255,.72);font-weight:600">（可不填）</span></div>
+    <input class="ob-input" type="date" ${o.periodUnknown?'disabled':''} value="${o.periodEnd||''}" min="${o.lastPeriod||''}" onchange="setPeriodEnd(this.value)">
+    <div style="font-size:12px;color:rgba(255,255,255,.85);margin:6px 2px 0">这次还没结束也没关系，之后可以补记结束时间。</div>
     <div class="unclear"><span>记不清具体日期也没关系</span>
-      <button class="chip ${o.periodUnknown?'sel':''}" style="padding:8px 14px;font-size:12px" onclick="toggleUnclear()">${o.periodUnknown?'已选择"不清楚"':'写不清楚'}</button>
+      <button class="chip ${o.periodUnknown?'sel':''}" style="padding:8px 14px;font-size:12px" onclick="toggleUnclear()">${o.periodUnknown?'已选择"不太记得"':'不太记得'}</button>
     </div>
-    <div class="ob-label">平均周期长度</div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap">${[24,26,28,30,32].map(n=>`<div class="chip ${o.cycleLen===n?'sel':''}" onclick="setOb('cycleLen',${n})">${n} 天</div>`).join('')}</div>
+    <div class="ob-label">平均周期长度 <span id="cyclelen_val" style="color:#fff;font-weight:800">${len} 天</span></div>
+    <input type="range" min="21" max="50" value="${len}" oninput="setCycleLen(this.value)" style="width:100%;accent-color:var(--sun);height:30px;cursor:pointer">
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,.72);margin-top:-2px"><span>21 天</span><span>50 天</span></div>
+    <div style="font-size:12.5px;color:rgba(255,255,255,.92);margin:10px 2px 0;line-height:1.6">通常为 21~35 天，随着记录的增加，我们会帮你更准确地预测。</div>
     <div style="flex:1"></div>
     <button class="send-btn" style="margin-top:24px" onclick="finishOnboarding()">完成，进入微澜</button>
   </div>`;
 }
 function setPeriodDate(v){ ob().lastPeriod=v; if(v) ob().periodUnknown=false; render(); }
+function setPeriodEnd(v){ ob().periodEnd=v; if(v) ob().periodUnknown=false; render(); }
+function setCycleLen(v){ ob().cycleLen=Number(v); const el=document.getElementById('cyclelen_val'); if(el) el.textContent=v+' 天'; }
 function toggleUnclear(){ const o=ob(); o.periodUnknown=!o.periodUnknown; render(); }
 function finishOnboarding(){
   const o=ob();
   S.nickname=(o.nickname||'').trim()||S.user.username;
   S.profile={gender:o.gender, age:o.age?Number(o.age):null}; S.onboarded=true;
   S.cycle=S.cycle||{}; S.cycle.avgLen=o.cycleLen;
-  if(!o.periodUnknown && o.lastPeriod){ S.cycle.last=o.lastPeriod; S.cycle.conf="中"; }
+  if(!o.periodUnknown && o.lastPeriod){
+    S.cycle.last=o.lastPeriod; S.cycle.conf="中";
+    if(o.periodEnd && o.periodEnd>=o.lastPeriod){ const pl=daysBetween(o.lastPeriod,o.periodEnd)+1; S.cycle.periodLen=Math.min(10,Math.max(1,pl)); }
+  }
   else { S.cycle.conf="低"; }
   S.cycle.periodLen=S.cycle.periodLen||5;
   save();
@@ -1799,10 +1892,10 @@ function render(){
 async function boot(){
   try{
     const data=await api('GET','/api/me'); applyServerData(data); window.AUTH=true;
-    if(S.onboarded===false){ window._onb={step:0,nickname:S.nickname,gender:(S.profile&&S.profile.gender)||'女性',age:(S.profile&&S.profile.age)||'',lastPeriod:S.cycle.last||'2025-06-18',cycleLen:S.cycle.avgLen||28,periodUnknown:false}; window.SCREEN='onboarding'; }
+    if(S.onboarded===false){ window._onb={step:0,nickname:S.nickname,gender:(S.profile&&S.profile.gender)||'女性',age:(S.profile&&S.profile.age)||'',lastPeriod:S.cycle.last||'',periodEnd:'',cycleLen:S.cycle.avgLen||28,periodUnknown:false}; window.SCREEN='profileSetup'; }
     else window.SCREEN='app';
   }
-  catch(e){ window.AUTH=false; window.SCREEN='welcome'; }
+  catch(e){ window.AUTH=false; if(!window._onb) window._onb={step:0,nickname:'',gender:'女性',age:'',lastPeriod:'',periodEnd:'',cycleLen:28,periodUnknown:false}; window.SCREEN='onboarding'; }
   render();
 }
 boot();

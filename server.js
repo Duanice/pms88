@@ -140,7 +140,7 @@ const server=createServer(async (req,res)=>{
 
   // 静态：首页
   if(req.method==='GET' && (path==='/'||path==='/index.html')){
-    try{ res.writeHead(200,{'content-type':'text/html; charset=utf-8'}); res.end(readFileSync(join(__dirname,'index.html'))); }
+    try{ res.writeHead(200,{'content-type':'text/html; charset=utf-8','cache-control':'no-store, must-revalidate'}); res.end(readFileSync(join(__dirname,'index.html'))); }
     catch(e){ res.writeHead(500); res.end('index.html not found'); }
     return;
   }
